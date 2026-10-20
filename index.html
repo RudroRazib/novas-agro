@@ -170,7 +170,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 </div>
 
 <script>
-  // ১. Firebase Config (একই কনফিগ)
   const firebaseConfig = {
     apiKey: "AIzaSyD4-daxO-6RYTHN-1tTtOWsUzFmYWyGpSk",
     authDomain: "novas-agro.firebaseapp.com",
@@ -181,18 +180,15 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     appId: "1:71814265788:web:8e1054a70772a9ad30c9b9"
   };
 
-  // ২. Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
 
-  // ৩. গ্লোবাল ভ্যারিয়েবল
   window.db = { products: [], batches: [], myApplications: [] };
   
-  // ডেমো এসআর (লগইন করলে আইডি ডাইনামিক করতে হবে)
+  // ডেমো এসআর আইডি
   const CURRENT_SR_ID = "sr_1";
   const CURRENT_SR_NAME = "কামরুল হাসান";
 
-  // ৪. রিয়েল-টাইম ডেটা লিসেনার (v8)
   function listenToData() {
     database.ref('products').on('value', (snap) => { window.db.products = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('batches').on('value', (snap) => { window.db.batches = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
@@ -210,7 +206,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     });
   }
 
-  // ৫. অর্ডার পাঠানো (v8)
   window.submitOrderToDB = function(appData) {
     const id = Date.now().toString(36);
     appData.id = id;
@@ -224,7 +219,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     });
   };
 
-  // ====== UI লজিক ======
   const $ = id => document.getElementById(id);
   const money = n => '৳ ' + Number(n).toLocaleString('bn-BD', {minimumFractionDigits:2, maximumFractionDigits:2});
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -250,6 +244,7 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
   window.closeModal = function(){ modal.classList.remove('open'); modalHandler = null; $('dataForm').reset(); };
   $('dataForm').addEventListener('submit', e => { e.preventDefault(); if(modalHandler) modalHandler(e); });
 
+  // ⭐ আপডেট করা স্টক লিমিট চেক
   window.openSaleForm = function() {
     if(window.db.products.length === 0) return alert('স্টক ডেটা লোড হচ্ছে, অপেক্ষা করুন...');
 
@@ -288,8 +283,24 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     const p = window.db.products.find(x => x.id === pid);
     if(p) { $('saleRate').value = p.saleRate || 0; calcTotal(); }
   };
+  
   window.calcTotal = function() {
-    $('saleTotal').value = money(Number($('saleQty').value) * Number($('saleRate').value));
+    const pid = $('saleProd').value;
+    if(!pid) return;
+    
+    const qtyInput = $('saleQty');
+    const qty = Number(qtyInput.value);
+    const p = window.db.products.find(x => x.id === pid);
+    
+    // স্টক লিমিট চেক
+    let stock = window.db.batches.filter(b=>b.productId===pid).reduce((a,b)=>a+Number(b.qty),0);
+
+    if(qty > stock) {
+      alert(`সতর্কতা: "${p.name}" এর স্টক মাত্র ${stock} টি!`);
+      qtyInput.value = stock > 0 ? stock : 1;
+    }
+
+    $('saleTotal').value = money(Number(qtyInput.value) * Number($('saleRate').value));
   };
 
   window.renderAll = function() {
