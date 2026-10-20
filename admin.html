@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#635BFF">
+<title>Novas Agro - Admin</title>
+<style>
+:root { --primary: #635BFF; --primary-light: #ecebff; --bg: #F8F9FA; --card: #FFFFFF; --text: #1A1A1A; --text-muted: #7A7A7A; --red: #FF6B6B; --green: #4ECB71; --blue: #4EA8DE; --orange: #F4A261; --border: #EFEFEF; --shadow: 0 4px 15px rgba(0,0,0,0.03); }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
+button, input, select, textarea { font-family: inherit; outline: none; border: none; }
+.app-header { background: var(--primary); color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+.header-left { display: flex; align-items: center; gap: 15px; }
+.menu-btn { background: none; color: white; font-size: 24px; padding: 5px; }
+.app-title { font-size: 20px; font-weight: 600; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;}
+.admin-badge { background: var(--red); font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; letter-spacing: 1px; }
+.header-right { display: flex; gap: 15px; font-size: 20px; }
+.header-right span { position: relative; }
+.badge { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 1px solid var(--primary); }
+.content-area { padding: 15px 20px; }
+.balance-card { background: var(--primary); border-radius: 16px; padding: 20px; color: white; box-shadow: 0 8px 20px rgba(99, 91, 255, 0.2); margin-bottom: 20px; }
+.balance-header { display: flex; justify-content: space-between; align-items: center; font-size: 15px; opacity: 0.9; }
+.balance-amount { text-align: center; font-size: 32px; font-weight: bold; margin: 15px 0 20px; }
+.balance-split { background: rgba(255,255,255,0.1); border-radius: 12px; display: flex; padding: 15px; }
+.split-item { flex: 1; display: flex; align-items: center; gap: 10px; }
+.split-item:first-child { border-right: 1px solid rgba(255,255,255,0.2); }
+.split-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.split-icon.in { background: rgba(78, 203, 113, 0.2); color: var(--green); }
+.split-icon.out { background: rgba(255, 107, 107, 0.2); color: var(--red); }
+.split-info { display: flex; flex-direction: column; }
+.split-info span { font-size: 12px; opacity: 0.8; }
+.split-info strong { font-size: 16px; margin-top: 2px; }
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+.dash-card { background: var(--card); border-radius: 16px; padding: 18px 15px; box-shadow: var(--shadow); position: relative; display: flex; flex-direction: column; justify-content: center; border: 1px solid transparent; }
+.dash-card.payable { border-color: #FFEDED; }
+.dash-card.receivable { border-color: #EAF3FF; }
+.dash-card.products { border-color: #E6F7EF; }
+.dash-card.parties { border-color: #FFF4E6; }
+.card-icon { position: absolute; top: -15px; left: 15px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.bg-red { background: #FF8A8A; } .bg-blue { background: #76B5F5; } .bg-teal { background: #4DD0E1; } .bg-yellow { background: #FFD54F; }
+.dash-card-title { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-top: 15px; margin-bottom: 8px; }
+.dash-card-value { font-size: 20px; font-weight: 600; color: var(--text); display: flex; align-items: center; justify-content: space-between; }
+.dash-card-value.blue-text { color: var(--primary); font-size: 16px; font-weight: 600; }
+.action-row { background: var(--card); border-radius: 16px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 15px; cursor: pointer;}
+.action-left { display: flex; align-items: center; gap: 15px; }
+.action-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.action-info h4 { font-size: 14px; color: var(--text-muted); font-weight: normal; margin-bottom: 4px; }
+.action-info p { font-size: 15px; color: var(--primary); font-weight: 600; }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: white; border-top-left-radius: 20px; border-top-right-radius: 20px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 50; }
+.nav-btn { background: var(--primary); color: white; padding: 12px 25px; border-radius: 25px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(99, 91, 255, 0.3); }
+.nav-btn.blue { background: var(--blue); box-shadow: 0 4px 10px rgba(78, 168, 222, 0.3); }
+.fab { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: var(--primary); font-size: 28px; font-weight: 300; border: 2px solid var(--primary-light); }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 60; }
+.overlay.open { opacity: 1; visibility: visible; }
+.sidebar { position: fixed; top: 0; left: -300px; bottom: 0; width: 290px; background: white; z-index: 70; transition: 0.3s ease-in-out; display: flex; flex-direction: column; box-shadow: 5px 0 20px rgba(0,0,0,0.1); }
+.sidebar.open { left: 0; }
+.side-profile { background: var(--primary); color: white; padding: 30px 20px 20px; display: flex; flex-direction: column; align-items: center; }
+.profile-pic { width: 70px; height: 70px; border-radius: 50%; background: #D8D6FF; display: flex; align-items: center; justify-content: center; font-size: 35px; color: var(--primary); margin-bottom: 10px; position: relative; border: 3px solid rgba(255,255,255,0.2); }
+.side-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.side-phone { font-size: 13px; opacity: 0.9; margin-bottom: 15px; }
+.business-select { background: white; color: var(--primary); padding: 8px 16px; border-radius: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.side-menu { padding: 15px 10px; overflow-y: auto; flex: 1; }
+.side-menu-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; color: var(--text); font-weight: 500; font-size: 15px; border-radius: 10px; cursor: pointer; }
+.side-menu-item:active { background: var(--bg); }
+.side-menu-left { display: flex; align-items: center; gap: 15px; }
+.side-menu-left .icon { font-size: 18px; color: var(--primary); width: 24px; text-align: center; }
+.side-menu-item.divider { border-bottom: 1px dashed var(--border); padding-bottom: 15px; margin-bottom: 15px; border-radius: 0; }
+.view { display: none; animation: fadeIn 0.2s ease; }
+.view.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.section-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+.btn-add { background: var(--primary); color: white; padding: 8px 15px; border-radius: 10px; font-size: 13px; font-weight: 600; }
+.table-wrap { overflow-x: auto; background: white; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 15px; border: 1px solid var(--border);}
+table { width: 100%; border-collapse: collapse; min-width: 600px; }
+th, td { padding: 14px 15px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+th { background: #FAFAFA; color: var(--text-muted); font-weight: 600; }
+td.right { text-align: right; }
+.pill { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.pill.green { background: #E6F7EF; color: var(--green); }
+.pill.red { background: #FFEDED; color: var(--red); }
+.pill.amber { background: #FFF4E6; color: var(--orange); }
+.actions { display: flex; gap: 8px; }
+.actions button { padding: 5px 10px; border-radius: 8px; font-size: 12px; background: var(--bg); color: var(--text-muted); font-weight: 600; }
+.actions button.danger { background: #FFEDED; color: var(--red); }
+.empty-state { text-align: center; padding: 30px; color: var(--text-muted); font-size: 14px; }
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; align-items: flex-end; }
+.modal.open { display: flex; }
+.modal-box { background: white; width: 100%; max-height: 90vh; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 20px; overflow-y: auto; animation: slideUp 0.3s ease; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-head h3 { font-size: 18px; }
+.close-btn { background: var(--bg); color: var(--text); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+.form-group input, .form-group select, .form-group textarea { padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--bg); }
+.form-group input:focus { border-color: var(--primary); background: white; }
+.form-actions { display: flex; gap: 10px; margin-top: 20px; }
+.form-actions button { flex: 1; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 15px; }
+.btn-cancel { background: var(--bg); color: var(--text); }
+.btn-submit { background: var(--primary); color: white; }
+.req-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+.req-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 15px; }
+.req-body { font-size: 13px; color: var(--text-muted); margin-bottom: 15px; }
+.req-actions { display: flex; gap: 10px; }
+.req-actions button { flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; }
+.btn-approve { background: var(--green); color: white; }
+.btn-reject { background: var(--red); color: white; }
+</style>
+<!-- Firebase SDK v8 -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-left">
+    <button class="menu-btn" id="menuBtn">☰</button>
+    <div class="app-title">Novas Agro <span class="admin-badge">ADMIN</span></div>
+  </div>
+  <div class="header-right"><span>🔔<div class="badge"></div></span></div>
+</header>
+
+<main class="content-area">
+  <section id="dashboard" class="view active">
+    <div class="balance-card">
+      <div class="balance-header"><span>মোট ক্যাশ ইন-হ্যান্ড ❯</span><span>👁</span></div>
+      <div class="balance-amount" id="cashBalance">৳ ০.০০</div>
+      <div class="balance-split">
+        <div class="split-item"><div class="split-icon in">↓</div><div class="split-info"><span>নগদ প্রাপ্তি</span><strong id="cashIn">৳ ০.০০</strong></div></div>
+        <div class="split-item" style="padding-left: 15px;"><div class="split-icon out">↑</div><div class="split-info"><span>নগদ প্রদান</span><strong id="cashOut">৳ ০.০০</strong></div></div>
+      </div>
+    </div>
+    <div class="dash-grid">
+      <div class="dash-card payable"><div class="card-icon bg-red">⏳</div><div class="dash-card-title">পেন্ডিং রিকোয়েস্ট</div><div class="dash-card-value" id="pendingCount" onclick="switchView('approvals')" style="cursor:pointer">০ টি <span>→</span></div></div>
+      <div class="dash-card receivable"><div class="card-icon bg-blue">🚚</div><div class="dash-card-title">পেন্ডিং ডেলিভারি</div><div class="dash-card-value" id="deliveryCount" onclick="switchView('delivery')" style="cursor:pointer">০ টি <span>→</span></div></div>
+      <div class="dash-card products"><div class="card-icon bg-teal">📦</div><div class="dash-card-title">মোট স্টক আইটেম</div><div class="dash-card-value" id="totalStock">০ <span>→</span></div></div>
+      <div class="dash-card parties"><div class="card-icon bg-yellow">👥</div><div class="dash-card-title">মোট এসআর (SR)</div><div class="dash-card-value" id="totalSR">০ জন <span>→</span></div></div>
+    </div>
+    <div class="action-row" onclick="switchView('approvals')">
+      <div class="action-left"><div class="action-icon" style="background: #FFF4E6; color: var(--orange);">📝</div><div class="action-info"><h4>বিক্রয়ের আবেদন সমূহ</h4><p>নতুন রিকোয়েস্ট চেক করুন</p></div></div>
+      <div style="color: var(--text-muted);">❯</div>
+    </div>
+  </section>
+
+  <section id="approvals" class="view">
+    <div class="section-title">বিক্রয়ের আবেদন (SR)</div>
+    <div id="approvalsList"></div>
+  </section>
+
+  <section id="delivery" class="view">
+    <div class="section-title">ডেলিভারি কনফার্মেশন</div>
+    <div class="table-wrap"><table><thead><tr><th>SR</th><th>ক্রেতা</th><th>টাকা</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="deliveryTableBody"></tbody></table></div>
+  </section>
+
+  <section id="products" class="view">
+    <div class="section-title">পণ্য ও স্টক <button class="btn-add" onclick="openForm('product')">+ পণ্য যোগ</button></div>
+    <div id="productsTable"></div>
+  </section>
+
+  <section id="users" class="view">
+    <div class="section-title">ইউজার (SR) <button class="btn-add" onclick="openForm('sr')">+ নতুন SR</button></div>
+    <div id="srTable"></div>
+  </section>
+</main>
+
+<nav class="bottom-nav">
+  <button class="nav-btn" onclick="switchView('products')">📦 স্টক</button>
+  <button class="fab" onclick="switchView('approvals')">✓</button>
+  <button class="nav-btn blue" onclick="switchView('dashboard')">🏠 হোম</button>
+</nav>
+
+<div class="overlay" id="overlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="side-profile">
+    <div class="profile-pic">👨‍💼</div>
+    <div class="side-name">Admin Panel</div>
+    <div class="side-phone">Novas Agro</div>
+    <div class="business-select">Owner ⌄</div>
+  </div>
+  <div class="side-menu">
+    <div class="side-menu-item" onclick="switchView('dashboard')"><div class="side-menu-left"><span class="icon">📊</span> ড্যাশবোর্ড</div></div>
+    <div class="side-menu-item" onclick="switchView('approvals')"><div class="side-menu-left"><span class="icon">📝</span> বিক্রয়ের আবেদন</div></div>
+    <div class="side-menu-item" onclick="switchView('delivery')"><div class="side-menu-left"><span class="icon">🚚</span> ডেলিভারি কনফার্ম</div></div>
+    <div class="side-menu-item" onclick="switchView('products')"><div class="side-menu-left"><span class="icon">📦</span> পণ্য ও স্টক</div></div>
+    <div class="side-menu-item" onclick="switchView('users')"><div class="side-menu-left"><span class="icon">👥</span> ইউজার (SR)</div></div>
+  </div>
+</aside>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="modalTitle">নতুন তথ্য</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <form id="dataForm" autocomplete="off"><div id="formFields" class="form-grid"></div>
+      <div class="form-actions"><button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button><button type="submit" class="btn-submit" id="submitBtn">সংরক্ষণ</button></div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ১. Firebase Config (আপনার দেওয়া)
+  const firebaseConfig = {
+    apiKey: "AIzaSyD4-daxO-6RYTHN-1tTtOWsUzFmYWyGpSk",
+    authDomain: "novas-agro.firebaseapp.com",
+    databaseURL: "https://novas-agro-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "novas-agro",
+    storageBucket: "novas-agro.firebasestorage.app",
+    messagingSenderId: "71814265788",
+    appId: "1:71814265788:web:8e1054a70772a9ad30c9b9"
+  };
+
+  // ২. Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+  // ৩. গ্লোবাল ভ্যারিয়েবল
+  window.db = { products: [], batches: [], srs: [], pendingSales: [], approvedSales: [], deliveries: [] };
+
+  // ৪. রিয়েল-টাইম ডেটা লিসেনার (v8 সিনট্যাক্স)
+  function listenToData() {
+    database.ref('products').on('value', (snap) => { window.db.products = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
+    database.ref('batches').on('value', (snap) => { window.db.batches = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
+    database.ref('srs').on('value', (snap) => { window.db.srs = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
+    database.ref('pendingSales').on('value', (snap) => { window.db.pendingSales = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
+    database.ref('approvedSales').on('value', (snap) => { window.db.approvedSales = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
+    database.ref('deliveries').on('value', (snap) => { window.db.deliveries = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
+  }
+
+  // ৫. ডেটা রাইট (Set/Update) ফাংশন
+  window.saveProductToDB = function(data, stock) {
+    const pId = Date.now().toString(36);
+    database.ref('products/' + pId).set({ id: pId, name: data.name, saleRate: Number(data.saleRate) }).then(() => {
+      if(stock > 0) {
+        const bId = Date.now().toString(36) + 'b';
+        database.ref('batches/' + bId).set({ id: bId, productId: pId, qty: Number(stock), batchNo: 'INITIAL' });
+      }
+    });
+  };
+
+  window.saveSRToDB = function(data) {
+    const id = Date.now().toString(36);
+    database.ref('srs/' + id).set({ id: id, name: data.name, phone: data.phone, pin: data.pin });
+  };
+
+  window.approveSaleToDB = function(reqId, reqData) {
+    for(let item of reqData.items) {
+      let totalStock = window.db.batches.filter(x => x.productId === item.productId).reduce((a,b)=>a+Number(b.qty),0);
+      if(totalStock < item.qty) return alert(`পণ্য "${item.productName}" এর স্টক নেই! বর্তমান: ${totalStock}`);
+    }
+
+    for(let item of reqData.items) {
+      let b = window.db.batches.find(x => x.productId === item.productId && Number(x.qty) > 0);
+      if(b) database.ref('batches/' + b.id).update({ qty: Number(b.qty) - item.qty });
+    }
+
+    database.ref('pendingSales/' + reqId).update({ status: 'approved' }).then(() => {
+      database.ref('approvedSales/' + reqId).set({ ...reqData, status: 'approved' });
+      database.ref('pendingSales/' + reqId).remove();
+      alert('অনুমোদিত হয়েছে!');
+    });
+  };
+
+  window.rejectSaleFromDB = function(reqId) {
+    if(confirm('বাতিল করবেন?')) database.ref('pendingSales/' + reqId).remove();
+  };
+
+  window.confirmDeliveryDB = function(id) {
+    database.ref('deliveries/' + id).update({ status: 'delivered' });
+  };
+
+  // ====== UI লজিক ======
+  const $ = id => document.getElementById(id);
+  const money = n => '৳ ' + Number(n).toLocaleString('bn-BD', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  const sidebar = $('sidebar'), overlay = $('overlay'), modal = $('modal');
+  $('menuBtn').addEventListener('click', () => { sidebar.classList.add('open'); overlay.classList.add('open'); });
+  overlay.addEventListener('click', () => { sidebar.classList.remove('open'); overlay.classList.remove('open'); });
+
+  window.switchView = function(viewId) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    $(viewId).classList.add('active');
+    sidebar.classList.remove('open'); overlay.classList.remove('open');
+  };
+
+  let modalHandler = null;
+  window.showModal = function(title, bodyHTML, handler, btnLabel){
+    $('modalTitle').textContent = title;
+    $('formFields').innerHTML = bodyHTML;
+    $('submitBtn').textContent = btnLabel || 'সংরক্ষণ';
+    modalHandler = handler;
+    modal.classList.add('open');
+  };
+  window.closeModal = function(){ modal.classList.remove('open'); modalHandler = null; $('dataForm').reset(); };
+  $('dataForm').addEventListener('submit', e => { e.preventDefault(); if(modalHandler) modalHandler(e); });
+
+  window.openForm = function(type) {
+    if(type === 'product') {
+      showModal('পণ্য যোগ', `<div class="form-group"><label>পণ্যের নাম *</label><input type="text" name="name" required></div>
+        <div class="form-group"><label>বিক্রয় মূল্য</label><input type="number" name="saleRate" value="0" min="0"></div>
+        <div class="form-group"><label>প্রাথমিক স্টক</label><input type="number" name="stock" value="0" min="0"></div>`, (e) => {
+        const d = Object.fromEntries(new FormData($('dataForm')).entries());
+        saveProductToDB(d, d.stock); closeModal();
+      });
+    } else if(type === 'sr') {
+      showModal('নতুন এসআর (SR)', `<div class="form-group"><label>নাম *</label><input type="text" name="name" required></div>
+        <div class="form-group"><label>ফোন *</label><input type="text" name="phone" required></div>
+        <div class="form-group"><label>পিন</label><input type="password" name="pin" value="1234"></div>`, (e) => {
+        const d = Object.fromEntries(new FormData($('dataForm')).entries());
+        saveSRToDB(d); closeModal();
+      });
+    }
+  };
+
+  window.renderAll = function() {
+    const db = window.db;
+    let pending = db.pendingSales.filter(s=>s.status === 'pending');
+    let deliveries = db.deliveries.filter(d=>d.status !== 'delivered');
+    
+    if($('pendingCount')) $('pendingCount').innerText = pending.length + ' টি';
+    if($('deliveryCount')) $('deliveryCount').innerText = deliveries.length + ' টি';
+    if($('totalStock')) $('totalStock').innerText = db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস';
+    if($('totalSR')) $('totalSR').innerText = db.srs.length + ' জন';
+    if($('cashBalance')) $('cashBalance').innerText = money(db.approvedSales.reduce((a,s)=>a+Number(s.paid||0),0));
+
+    if($('approvalsList')) {
+      if(pending.length === 0) $('approvalsList').innerHTML = '<div class="empty-state">কোনো পেন্ডিং নেই</div>';
+      else $('approvalsList').innerHTML = pending.map(req => `
+        <div class="req-card">
+          <div class="req-header"><span>${esc(req.srName)}</span><span style="color:var(--primary)">${money(req.total)}</span></div>
+          <div class="req-body">ক্রেতা: ${esc(req.customerName)}<br>পণ্য: ${req.items.map(i=>esc(i.productName) + ' (' + i.qty + ')').join(', ')}</div>
+          <div class="req-actions"><button class="btn-reject" onclick="rejectSaleFromDB('${req.id}')">বাতিল</button><button class="btn-approve" onclick='approveSaleToDB("${req.id}", ${JSON.stringify(req)})'>অনুমোদন</button></div>
+        </div>
+      `).join('');
+    }
+
+    if($('deliveryTableBody')) {
+      if(db.deliveries.length === 0) $('deliveryTableBody').innerHTML = '<tr><td colspan="5" class="empty-state">নেই</td></tr>';
+      else $('deliveryTableBody').innerHTML = db.deliveries.map(d => `<tr>
+        <td>${esc(d.srName)}</td><td>${esc(d.customerName)}</td><td class="right">${money(d.total)}</td>
+        <td><span class="pill ${d.status==='delivered'?'green':'amber'}">${d.status==='delivered'?'ডেলিভারড':'পেন্ডিং'}</span></td>
+        <td>${d.status !== 'delivered' ? `<button class="btn-add" style="padding:4px 8px; font-size:11px;" onclick="confirmDeliveryDB('${d.id}')">কনফার্ম</button>` : ''}</td>
+      </tr>`).join('');
+    }
+
+    if($('productsTable')) {
+      $('productsTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>পণ্য</th><th>স্টক</th></tr></thead>
+        <tbody>${db.products.map(p => {
+          let stock = db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0);
+          return `<tr><td>${esc(p.name)}</td><td>${stock} পিস</td></tr>`;
+        }).join('')}</tbody></table></div>`;
+    }
+
+    if($('srTable')) {
+      $('srTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>ফোন</th></tr></thead>
+        <tbody>${db.srs.map(s => `<tr><td>${esc(s.name)}</td><td>${esc(s.phone)}</td></tr>`).join('')}</tbody></table></div>`;
+    }
+  };
+
+  listenToData();
+</script>
+</body>
+</html>
