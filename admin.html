@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#635BFF">
 <title>Novas Agro - Admin</title>
 <style>
+/* ==== মূল CSS ==== */
 :root { --primary: #635BFF; --primary-light: #ecebff; --bg: #F8F9FA; --card: #FFFFFF; --text: #1A1A1A; --text-muted: #7A7A7A; --red: #FF6B6B; --green: #4ECB71; --blue: #4EA8DE; --orange: #F4A261; --border: #EFEFEF; --shadow: 0 4px 15px rgba(0,0,0,0.03); }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
@@ -107,98 +108,159 @@ td.right { text-align: right; }
 .req-actions button { flex: 1; padding: 10px; border-radius: 8px; font-weight: bold; }
 .btn-approve { background: var(--green); color: white; }
 .btn-reject { background: var(--red); color: white; }
+
+/* ==== Login Screen CSS ==== */
+#loginScreen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(135deg, #635BFF, #3A2EC2);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.login-box {
+  background: white; padding: 30px; border-radius: 20px;
+  width: 100%; max-width: 400px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  animation: popIn 0.3s ease;
+}
+@keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.login-box .icon { font-size: 45px; text-align: center; margin-bottom: 10px; }
+.login-box h2 { font-size: 22px; margin: 0; color: #333; text-align: center; }
+.login-box p { color: #777; font-size: 14px; text-align: center; margin-top: 5px; margin-bottom: 20px; }
+.login-input-group { margin-bottom: 15px; }
+.login-input-group label { font-size: 13px; color: #555; font-weight: 600; display: block; margin-bottom: 5px; }
+.login-input-group input {
+  width: 100%; padding: 12px; border: 1px solid #ddd;
+  border-radius: 10px; font-size: 15px; outline: none; background: #f9f9f9;
+}
+.login-input-group input:focus { border-color: var(--primary); background: white; }
+.login-btn {
+  width: 100%; padding: 14px; background: var(--primary);
+  color: white; border: none; border-radius: 10px;
+  font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 5px;
+}
+.login-btn:disabled { opacity: 0.7; }
+.login-error { color: var(--red); font-size: 13px; text-align: center; margin-top: 10px; display: none; }
 </style>
-<!-- Firebase SDK v8 -->
+
+<!-- Firebase SDKs (App, Database, Auth) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 </head>
 <body>
 
-<header class="app-header">
-  <div class="header-left">
-    <button class="menu-btn" id="menuBtn">☰</button>
-    <div class="app-title">Novas Agro <span class="admin-badge">ADMIN</span></div>
-  </div>
-  <div class="header-right"><span>🔔<div class="badge"></div></span></div>
-</header>
-
-<main class="content-area">
-  <section id="dashboard" class="view active">
-    <div class="balance-card">
-      <div class="balance-header"><span>মোট ক্যাশ ইন-হ্যান্ড ❯</span><span>👁</span></div>
-      <div class="balance-amount" id="cashBalance">৳ ০.০০</div>
-      <div class="balance-split">
-        <div class="split-item"><div class="split-icon in">↓</div><div class="split-info"><span>নগদ প্রাপ্তি</span><strong id="cashIn">৳ ০.০০</strong></div></div>
-        <div class="split-item" style="padding-left: 15px;"><div class="split-icon out">↑</div><div class="split-info"><span>নগদ প্রদান</span><strong id="cashOut">৳ ০.০০</strong></div></div>
+<!-- ================= লগইন স্ক্রিন ================= -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="icon">👨‍💼</div>
+    <h2>Novas Agro Admin</h2>
+    <p>শুধুমাত্র মালিক পক্ষের জন্য</p>
+    
+    <form id="loginForm">
+      <div class="login-input-group">
+        <label>অ্যাডমিন ইমেইল</label>
+        <input type="email" id="loginEmail" placeholder="admin@novasagro.com" required>
       </div>
-    </div>
-    <div class="dash-grid">
-      <div class="dash-card payable"><div class="card-icon bg-red">⏳</div><div class="dash-card-title">পেন্ডিং রিকোয়েস্ট</div><div class="dash-card-value" id="pendingCount" onclick="switchView('approvals')" style="cursor:pointer">০ টি <span>→</span></div></div>
-      <div class="dash-card receivable"><div class="card-icon bg-blue">🚚</div><div class="dash-card-title">পেন্ডিং ডেলিভারি</div><div class="dash-card-value" id="deliveryCount" onclick="switchView('delivery')" style="cursor:pointer">০ টি <span>→</span></div></div>
-      <div class="dash-card products"><div class="card-icon bg-teal">📦</div><div class="dash-card-title">মোট স্টক আইটেম</div><div class="dash-card-value" id="totalStock">০ <span>→</span></div></div>
-      <div class="dash-card parties"><div class="card-icon bg-yellow">👥</div><div class="dash-card-title">মোট এসআর (SR)</div><div class="dash-card-value" id="totalSR">০ জন <span>→</span></div></div>
-    </div>
-    <div class="action-row" onclick="switchView('approvals')">
-      <div class="action-left"><div class="action-icon" style="background: #FFF4E6; color: var(--orange);">📝</div><div class="action-info"><h4>বিক্রয়ের আবেদন সমূহ</h4><p>নতুন রিকোয়েস্ট চেক করুন</p></div></div>
-      <div style="color: var(--text-muted);">❯</div>
-    </div>
-  </section>
-
-  <section id="approvals" class="view">
-    <div class="section-title">বিক্রয়ের আবেদন (SR)</div>
-    <div id="approvalsList"></div>
-  </section>
-
-  <section id="delivery" class="view">
-    <div class="section-title">ডেলিভারি কনফার্মেশন</div>
-    <div class="table-wrap"><table><thead><tr><th>SR</th><th>ক্রেতা</th><th>টাকা</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="deliveryTableBody"></tbody></table></div>
-  </section>
-
-  <section id="products" class="view">
-    <div class="section-title">পণ্য ও স্টক <button class="btn-add" onclick="openForm('product')">+ পণ্য যোগ</button></div>
-    <div id="productsTable"></div>
-  </section>
-
-  <section id="users" class="view">
-    <div class="section-title">ইউজার (SR) <button class="btn-add" onclick="openForm('sr')">+ নতুন SR</button></div>
-    <div id="srTable"></div>
-  </section>
-</main>
-
-<nav class="bottom-nav">
-  <button class="nav-btn" onclick="switchView('products')">📦 স্টক</button>
-  <button class="fab" onclick="switchView('approvals')">✓</button>
-  <button class="nav-btn blue" onclick="switchView('dashboard')">🏠 হোম</button>
-</nav>
-
-<div class="overlay" id="overlay"></div>
-<aside class="sidebar" id="sidebar">
-  <div class="side-profile">
-    <div class="profile-pic">👨‍💼</div>
-    <div class="side-name">Admin Panel</div>
-    <div class="side-phone">Novas Agro</div>
-    <div class="business-select">Owner ⌄</div>
-  </div>
-  <div class="side-menu">
-    <div class="side-menu-item" onclick="switchView('dashboard')"><div class="side-menu-left"><span class="icon">📊</span> ড্যাশবোর্ড</div></div>
-    <div class="side-menu-item" onclick="switchView('approvals')"><div class="side-menu-left"><span class="icon">📝</span> বিক্রয়ের আবেদন</div></div>
-    <div class="side-menu-item" onclick="switchView('delivery')"><div class="side-menu-left"><span class="icon">🚚</span> ডেলিভারি কনফার্ম</div></div>
-    <div class="side-menu-item" onclick="switchView('products')"><div class="side-menu-left"><span class="icon">📦</span> পণ্য ও স্টক</div></div>
-    <div class="side-menu-item" onclick="switchView('users')"><div class="side-menu-left"><span class="icon">👥</span> ইউজার (SR)</div></div>
-  </div>
-</aside>
-
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <div class="modal-head"><h3 id="modalTitle">নতুন তথ্য</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
-    <form id="dataForm" autocomplete="off"><div id="formFields" class="form-grid"></div>
-      <div class="form-actions"><button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button><button type="submit" class="btn-submit" id="submitBtn">সংরক্ষণ</button></div>
+      <div class="login-input-group">
+        <label>পাসওয়ার্ড</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">লগইন করুন</button>
+      <div class="login-error" id="loginError"></div>
     </form>
   </div>
 </div>
 
+<!-- ================= মূল অ্যাপ ================= -->
+<div id="appContent" style="display: none;">
+  <header class="app-header">
+    <div class="header-left">
+      <button class="menu-btn" id="menuBtn">☰</button>
+      <div class="app-title">Novas Agro <span class="admin-badge">ADMIN</span></div>
+    </div>
+    <div class="header-right"><span>🔔<div class="badge"></div></span></div>
+  </header>
+
+  <main class="content-area">
+    <section id="dashboard" class="view active">
+      <div class="balance-card">
+        <div class="balance-header"><span>মোট ক্যাশ ইন-হ্যান্ড ❯</span><span>👁</span></div>
+        <div class="balance-amount" id="cashBalance">৳ ০.০০</div>
+        <div class="balance-split">
+          <div class="split-item"><div class="split-icon in">↓</div><div class="split-info"><span>নগদ প্রাপ্তি</span><strong id="cashIn">৳ ০.০০</strong></div></div>
+          <div class="split-item" style="padding-left: 15px;"><div class="split-icon out">↑</div><div class="split-info"><span>নগদ প্রদান</span><strong id="cashOut">৳ ০.০০</strong></div></div>
+        </div>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-card payable"><div class="card-icon bg-red">⏳</div><div class="dash-card-title">পেন্ডিং রিকোয়েস্ট</div><div class="dash-card-value" id="pendingCount" onclick="switchView('approvals')" style="cursor:pointer">০ টি <span>→</span></div></div>
+        <div class="dash-card receivable"><div class="card-icon bg-blue">🚚</div><div class="dash-card-title">পেন্ডিং ডেলিভারি</div><div class="dash-card-value" id="deliveryCount" onclick="switchView('delivery')" style="cursor:pointer">০ টি <span>→</span></div></div>
+        <div class="dash-card products"><div class="card-icon bg-teal">📦</div><div class="dash-card-title">মোট স্টক আইটেম</div><div class="dash-card-value" id="totalStock">০ <span>→</span></div></div>
+        <div class="dash-card parties"><div class="card-icon bg-yellow">👥</div><div class="dash-card-title">মোট এসআর (SR)</div><div class="dash-card-value" id="totalSR">০ জন <span>→</span></div></div>
+      </div>
+      <div class="action-row" onclick="switchView('approvals')">
+        <div class="action-left"><div class="action-icon" style="background: #FFF4E6; color: var(--orange);">📝</div><div class="action-info"><h4>বিক্রয়ের আবেদন সমূহ</h4><p>নতুন রিকোয়েস্ট চেক করুন</p></div></div>
+        <div style="color: var(--text-muted);">❯</div>
+      </div>
+    </section>
+
+    <section id="approvals" class="view">
+      <div class="section-title">বিক্রয়ের আবেদন (SR)</div>
+      <div id="approvalsList"></div>
+    </section>
+
+    <section id="delivery" class="view">
+      <div class="section-title">ডেলিভারি কনফার্মেশন</div>
+      <div class="table-wrap"><table><thead><tr><th>SR</th><th>ক্রেতা</th><th>টাকা</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="deliveryTableBody"></tbody></table></div>
+    </section>
+
+    <section id="products" class="view">
+      <div class="section-title">পণ্য ও স্টক <button class="btn-add" onclick="openForm('product')">+ পণ্য যোগ</button></div>
+      <div id="productsTable"></div>
+    </section>
+
+    <section id="users" class="view">
+      <div class="section-title">ইউজার (SR) <button class="btn-add" onclick="openForm('sr')">+ নতুন SR</button></div>
+      <div id="srTable"></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="switchView('products')">📦 স্টক</button>
+    <button class="fab" onclick="switchView('approvals')">✓</button>
+    <button class="nav-btn blue" onclick="switchView('dashboard')">🏠 হোম</button>
+  </nav>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="side-profile">
+      <div class="profile-pic">👨‍💼</div>
+      <div class="side-name">Admin Panel</div>
+      <div class="side-phone">Novas Agro</div>
+      <div class="business-select">Owner ⌄</div>
+    </div>
+    <div class="side-menu">
+      <div class="side-menu-item" onclick="switchView('dashboard')"><div class="side-menu-left"><span class="icon">📊</span> ড্যাশবোর্ড</div></div>
+      <div class="side-menu-item" onclick="switchView('approvals')"><div class="side-menu-left"><span class="icon">📝</span> বিক্রয়ের আবেদন</div></div>
+      <div class="side-menu-item" onclick="switchView('delivery')"><div class="side-menu-left"><span class="icon">🚚</span> ডেলিভারি কনফার্ম</div></div>
+      <div class="side-menu-item" onclick="switchView('products')"><div class="side-menu-left"><span class="icon">📦</span> পণ্য ও স্টক</div></div>
+      <div class="side-menu-item" onclick="switchView('users')"><div class="side-menu-left"><span class="icon">👥</span> ইউজার (SR)</div></div>
+      <div class="side-menu-item divider"></div>
+      <div class="side-menu-item" onclick="logoutUser()" style="color: var(--red);"><div class="side-menu-left"><span class="icon" style="color:var(--red);">🚪</span> লগআউট করুন</div></div>
+    </div>
+  </aside>
+
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-head"><h3 id="modalTitle">নতুন তথ্য</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+      <form id="dataForm" autocomplete="off"><div id="formFields" class="form-grid"></div>
+        <div class="form-actions"><button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button><button type="submit" class="btn-submit" id="submitBtn">সংরক্ষণ</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
-  // ১. Firebase Config
+  // ==== Firebase Config ====
   const firebaseConfig = {
     apiKey: "AIzaSyD4-daxO-6RYTHN-1tTtOWsUzFmYWyGpSk",
     authDomain: "novas-agro.firebaseapp.com",
@@ -211,9 +273,72 @@ td.right { text-align: right; }
 
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
+  const auth = firebase.auth();
 
   window.db = { products: [], batches: [], srs: [], pendingSales: [], approvedSales: [], deliveries: [] };
 
+  // ==========================================
+  // ==== লগইন সিস্টেম লজিক ====
+  // ==========================================
+  const loginScreen = document.getElementById('loginScreen');
+  const appContent = document.getElementById('appContent');
+  const loginForm = document.getElementById('loginForm');
+  const loginBtn = document.getElementById('loginBtn');
+  const loginError = document.getElementById('loginError');
+
+  // ১. অথেনটিকেশন স্টেট চেক
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      // ইউজার লগইন করা আছে
+      loginScreen.style.display = 'none';
+      appContent.style.display = 'block';
+      listenToData(); // ডেটা লোড শুরু
+    } else {
+      // লগইন করা নেই
+      loginScreen.style.display = 'flex';
+      appContent.style.display = 'none';
+    }
+  });
+
+  // ২. লগইন ফর্ম সাবমিট
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    loginBtn.textContent = 'অপেক্ষা করুন...';
+    loginBtn.disabled = true;
+    loginError.style.display = 'none';
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => {
+        loginBtn.textContent = 'লগইন করুন';
+        loginBtn.disabled = false;
+        loginForm.reset();
+      })
+      .catch((error) => {
+        loginBtn.textContent = 'লগইন করুন';
+        loginBtn.disabled = false;
+        loginError.style.display = 'block';
+        
+        // এরর মেসেজ বাংলায়
+        if(error.code === 'auth/invalid-email') loginError.textContent = 'ইমেইলটি সঠিক নয়।';
+        else if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') loginError.textContent = 'ইমেইল বা পাসওয়ার্ড ভুল।';
+        else if(error.code === 'auth/too-many-requests') loginError.textContent = 'অনেকবার ভুল করেছেন। কিছুক্ষণ পর চেষ্টা করুন।';
+        else loginError.textContent = 'লগইন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।';
+      });
+  });
+
+  // ৩. লগআউট ফাংশন
+  window.logoutUser = function() {
+    if(confirm('আপনি কি লগআউট করতে চান?')) {
+      auth.signOut();
+    }
+  };
+
+  // ==========================================
+  // ==== মূল অ্যাপ লজিক ====
+  // ==========================================
   function listenToData() {
     database.ref('products').on('value', (snap) => { window.db.products = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('batches').on('value', (snap) => { window.db.batches = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
@@ -238,15 +363,12 @@ td.right { text-align: right; }
     database.ref('srs/' + id).set({ id: id, name: data.name, phone: data.phone, pin: data.pin });
   };
 
-  // ⭐ আপডেট করা অ্যাপ্রুভ লজিক (স্টক সঠিকভাবে কাটবে)
   window.approveSaleToDB = function(reqId, reqData) {
-    // ১. স্টক চেক
     for(let item of reqData.items) {
       let totalStock = window.db.batches.filter(x => x.productId === item.productId).reduce((a,b)=>a+Number(b.qty),0);
       if(totalStock < item.qty) return alert(`পণ্য "${item.productName}" এর স্টক নেই! বর্তমান স্টক: ${totalStock}`);
     }
 
-    // ২. স্টক কাটা (একাধিক ব্যাচ থাকলেও কাজ করবে)
     for(let item of reqData.items) {
       let remaining = item.qty;
       let bList = window.db.batches.filter(x => x.productId === item.productId && Number(x.qty) > 0);
@@ -264,7 +386,6 @@ td.right { text-align: right; }
       }
     }
 
-    // ৩. স্ট্যাটাস আপডেট
     database.ref('pendingSales/' + reqId).update({ status: 'approved' }).then(() => {
       database.ref('approvedSales/' + reqId).set({ ...reqData, status: 'approved' });
       database.ref('pendingSales/' + reqId).remove();
@@ -367,8 +488,6 @@ td.right { text-align: right; }
         <tbody>${db.srs.map(s => `<tr><td>${esc(s.name)}</td><td>${esc(s.phone)}</td></tr>`).join('')}</tbody></table></div>`;
     }
   };
-
-  listenToData();
 </script>
 </body>
 </html>
