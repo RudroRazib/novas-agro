@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#4EA8DE">
 <title>Novas Agro - SR</title>
 <style>
+/* ==== CSS (আগের মতোই) ==== */
 :root { --primary: #4EA8DE; --primary-dark: #1E6EB5; --primary-light: #eaf4fb; --bg: #F0F4F8; --card: #FFFFFF; --text: #1A1A1A; --text-muted: #7A7A7A; --red: #FF6B6B; --red-light: #FFE5E5; --green: #4ECB71; --green-light: #E6F7EF; --orange: #F4A261; --orange-light: #FFF4E6; --border: #EFEFEF; --shadow: 0 8px 24px rgba(78, 168, 222, 0.12); --glass: rgba(255, 255, 255, 0.85); }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
@@ -94,101 +95,129 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 .btn-cancel { background: var(--bg); color: var(--text-muted); }
 .btn-submit { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 0 6px 15px rgba(78,168,222,0.3); }
 .prod-img { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; background: #eee; margin-right: 15px; }
+
+/* ==== লগইন স্ক্রিন ==== */
+#loginScreen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-box { background: white; padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: popIn 0.3s ease; }
+@keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.login-box .icon { font-size: 45px; text-align: center; margin-bottom: 10px; }
+.login-box h2 { font-size: 22px; margin: 0; color: #333; text-align: center; }
+.login-box p { color: #777; font-size: 14px; text-align: center; margin-top: 5px; margin-bottom: 20px; }
+.login-input-group { margin-bottom: 15px; }
+.login-input-group label { font-size: 13px; color: #555; font-weight: 600; display: block; margin-bottom: 5px; }
+.login-input-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 15px; outline: none; background: #f9f9f9; }
+.login-input-group input:focus { border-color: var(--primary); background: white; }
+.login-btn { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+.login-btn:disabled { opacity: 0.7; }
+.login-error { color: var(--red); font-size: 13px; text-align: center; margin-top: 10px; display: none; }
 </style>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
-<header class="app-header">
-  <div class="header-left">
-    <button class="menu-btn" id="menuBtn">☰</button>
-    <div class="app-title">Novas Agro <span class="sr-badge">SR</span></div>
-  </div>
-  <div class="header-right"><span>🔔<div class="badge"></div></span></div>
-</header>
-
-<main class="content-area">
-  <section id="dashboard" class="view active">
-    <div class="balance-card">
-      <div class="balance-header"><span>আজকের কালেকশন ❯</span><span>👁</span></div>
-      <div class="balance-amount" id="cashBalance">৳ ০.০০</div>
-      <div class="balance-split">
-        <div class="split-item"><div class="split-icon in">↓</div><div class="split-info"><span>জমা হয়েছে</span><strong id="cashIn">৳ ০.০০</strong></div></div>
-        <div class="split-item" style="padding-left: 15px;"><div class="split-icon out">↑</div><div class="split-info"><span>বাকি আছে</span><strong id="cashOut">৳ ০.০০</strong></div></div>
-      </div>
-    </div>
+<!-- ================= লগইন স্ক্রিন ================= -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="icon">🧑‍💼</div>
+    <h2>Novas Agro SR</h2>
+    <p>আপনার মোবাইল নম্বর ও পিন দিয়ে প্রবেশ করুন</p>
     
-    <div class="dash-grid">
-      <div class="dash-card" onclick="switchView('applications')">
-        <div class="card-icon bg-red">⏳</div>
-        <div class="dash-card-title">পেন্ডিং আবেদন</div>
-        <div class="dash-card-value" id="pendingCount">০ টি <span>→</span></div>
+    <form id="loginForm">
+      <div class="login-input-group">
+        <label>মোবাইল নম্বর</label>
+        <input type="text" id="loginPhone" placeholder="017xxxxxxxx" required>
       </div>
-      <div class="dash-card" onclick="switchView('applications')">
-        <div class="card-icon bg-green">✅</div>
-        <div class="dash-card-title">অনুমোদিত</div>
-        <div class="dash-card-value" id="approvedCount">০ টি <span>→</span></div>
+      <div class="login-input-group">
+        <label>৬ ডিজিটের পিন</label>
+        <input type="password" id="loginPin" placeholder="••••••" maxlength="6" minlength="6" required>
       </div>
-    </div>
-
-    <div class="action-row" onclick="switchView('parties')">
-      <div class="action-left"><div class="action-icon bg-orange">🤝</div><div class="action-info"><h4>পার্টি ম্যানেজমেন্ট</h4><p>ক্রেতা দেখুন ও যোগ করুন</p></div></div>
-      <div style="color: var(--text-muted); font-size: 18px;">❯</div>
-    </div>
-
-    <div class="action-row" onclick="switchView('stock')">
-      <div class="action-left"><div class="action-icon bg-teal">📦</div><div class="action-info"><h4>স্টক চেক করুন</h4><p>বর্তমানে কি কি পণ্য আছে দেখুন</p></div></div>
-      <div style="color: var(--text-muted); font-size: 18px;">❯</div>
-    </div>
-  </section>
-
-  <section id="stock" class="view">
-    <div class="section-title">স্টক লিস্ট <span class="pill blue" id="totalStock">০ পিস</span></div>
-    <div id="stockList"></div>
-  </section>
-
-  <section id="applications" class="view">
-    <div class="section-title">আমার আবেদন সমূহ</div>
-    <div id="appList"></div>
-  </section>
-
-  <section id="parties" class="view">
-    <div class="section-title">পার্টি (ক্রেতা) <button class="btn-add" onclick="openPartyForm()">+ নতুন পার্টি</button></div>
-    <div id="partyList"></div>
-  </section>
-</main>
-
-<nav class="bottom-nav">
-  <button class="nav-btn" onclick="switchView('stock')">📦 স্টক</button>
-  <button class="fab" onclick="openSaleForm()">+</button>
-  <button class="nav-btn green" onclick="switchView('applications')">📋 আবেদন</button>
-</nav>
-
-<div class="overlay" id="overlay"></div>
-<aside class="sidebar" id="sidebar">
-  <div class="side-profile">
-    <div class="profile-pic">🧑‍💼</div>
-    <div class="side-name">কামরুল হাসান</div>
-    <div class="side-phone">01711-111111</div>
-  </div>
-  <div class="side-menu">
-    <div class="side-menu-item" onclick="switchView('dashboard')"><div class="side-menu-left"><span class="icon">📊</span> ড্যাশবোর্ড</div></div>
-    <div class="side-menu-item" onclick="switchView('stock')"><div class="side-menu-left"><span class="icon">📦</span> স্টক দেখুন</div></div>
-    <div class="side-menu-item" onclick="switchView('applications')"><div class="side-menu-left"><span class="icon">📋</span> আমার আবেদন</div></div>
-    <div class="side-menu-item divider"></div>
-    <div class="side-menu-item" onclick="switchView('parties')"><div class="side-menu-left"><span class="icon">🤝</span> পার্টি লিস্ট</div></div>
-    <div class="side-menu-item" onclick="openReturnForm()"><div class="side-menu-left"><span class="icon">↩️</span> বিক্রয় রিটার্ন</div></div>
-  </div>
-</aside>
-
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <div class="modal-head"><h3 id="modalTitle">ফর্ম</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
-    <form id="dataForm" autocomplete="off">
-      <div id="formFields" class="form-grid"></div>
-      <div class="form-actions"><button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button><button type="submit" class="btn-submit" id="submitBtn">পাঠান</button></div>
+      <button type="submit" class="login-btn" id="loginBtn">লগইন করুন</button>
+      <div class="login-error" id="loginError"></div>
     </form>
+  </div>
+</div>
+
+<!-- ================= মূল অ্যাপ ================= -->
+<div id="appContent" style="display: none;">
+  <header class="app-header">
+    <div class="header-left">
+      <button class="menu-btn" id="menuBtn">☰</button>
+      <div class="app-title">Novas Agro <span class="sr-badge">SR</span></div>
+    </div>
+    <div class="header-right"><span>🔔<div class="badge"></div></span></div>
+  </header>
+
+  <main class="content-area">
+    <section id="dashboard" class="view active">
+      <div class="balance-card">
+        <div class="balance-header"><span>আজকের কালেকশন ❯</span><span>👁</span></div>
+        <div class="balance-amount" id="cashBalance">৳ ০.০০</div>
+        <div class="balance-split">
+          <div class="split-item"><div class="split-icon in">↓</div><div class="split-info"><span>জমা হয়েছে</span><strong id="cashIn">৳ ০.০০</strong></div></div>
+          <div class="split-item" style="padding-left: 15px;"><div class="split-icon out">↑</div><div class="split-info"><span>বাকি আছে</span><strong id="cashOut">৳ ০.০০</strong></div></div>
+        </div>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-card" onclick="switchView('applications')">
+          <div class="card-icon bg-red">⏳</div>
+          <div class="dash-card-title">পেন্ডিং আবেদন</div>
+          <div class="dash-card-value" id="pendingCount">০ টি <span>→</span></div>
+        </div>
+        <div class="dash-card" onclick="switchView('applications')">
+          <div class="card-icon bg-green">✅</div>
+          <div class="dash-card-title">অনুমোদিত</div>
+          <div class="dash-card-value" id="approvedCount">০ টি <span>→</span></div>
+        </div>
+      </div>
+      <div class="action-row" onclick="switchView('stock')">
+        <div class="action-left"><div class="action-icon bg-teal">📦</div><div class="action-info"><h4>স্টক চেক করুন</h4><p>বর্তমানে কি কি পণ্য আছে দেখুন</p></div></div>
+        <div style="color: var(--text-muted); font-size: 18px;">❯</div>
+      </div>
+    </section>
+
+    <section id="stock" class="view">
+      <div class="section-title">স্টক লিস্ট <span class="pill blue" id="totalStock">০ পিস</span></div>
+      <div id="stockList"></div>
+    </section>
+
+    <section id="applications" class="view">
+      <div class="section-title">আমার আবেদন সমূহ</div>
+      <div id="appList"></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="switchView('stock')">📦 স্টক</button>
+    <button class="fab" onclick="openSaleForm()">+</button>
+    <button class="nav-btn green" onclick="switchView('applications')">📋 আবেদন</button>
+  </nav>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="side-profile">
+      <div class="profile-pic">🧑‍💼</div>
+      <div class="side-name" id="displaySrName">SR Name</div>
+      <div class="side-phone" id="displaySrPhone">017xxxxxxx</div>
+    </div>
+    <div class="side-menu">
+      <div class="side-menu-item" onclick="switchView('dashboard')"><div class="side-menu-left"><span class="icon">📊</span> ড্যাশবোর্ড</div></div>
+      <div class="side-menu-item" onclick="switchView('stock')"><div class="side-menu-left"><span class="icon">📦</span> স্টক দেখুন</div></div>
+      <div class="side-menu-item" onclick="switchView('applications')"><div class="side-menu-left"><span class="icon">📋</span> আমার আবেদন</div></div>
+      <div class="side-menu-item divider"></div>
+      <div class="side-menu-item" onclick="logoutUser()" style="color: var(--red);"><div class="side-menu-left"><span class="icon" style="color:var(--red);">🚪</span> লগআউট</div></div>
+    </div>
+  </aside>
+
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <div class="modal-head"><h3 id="modalTitle">ফর্ম</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+      <form id="dataForm" autocomplete="off">
+        <div id="formFields" class="form-grid"></div>
+        <div class="form-actions"><button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button><button type="submit" class="btn-submit" id="submitBtn">পাঠান</button></div>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -207,22 +236,100 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
   const database = firebase.database();
 
   window.db = { products: [], batches: [], parties: [], myApplications: [] };
-  const CURRENT_SR_ID = "sr_1";
-  const CURRENT_SR_NAME = "কামরুল হাসান";
+  let currentSR = null; // লগইন করা এসআর এর তথ্য
 
+  // ==== লগইন লজিক ====
+  const loginScreen = document.getElementById('loginScreen');
+  const appContent = document.getElementById('appContent');
+
+  // পেজ লোড হলে চেক করা লোকাল স্টোরেজে সেভ করা আছে কিনা
+  document.addEventListener("DOMContentLoaded", () => {
+    const savedSR = localStorage.getItem('novasAgroSR');
+    if(savedSR) {
+      currentSR = JSON.parse(savedSR);
+      showApp();
+    }
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const phone = document.getElementById('loginPhone').value.trim();
+    const pin = document.getElementById('loginPin').value.trim();
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+
+    if(pin.length !== 6) return alert('পিন অবশ্যই ৬ সংখ্যার হতে হবে!');
+
+    loginBtn.textContent = 'চেক করা হচ্ছে...'; loginBtn.disabled = true; loginError.style.display = 'none';
+
+    try {
+      const snapshot = await database.ref('srs').orderByChild('phone').equalTo(phone).once('value');
+      
+      if (!snapshot.exists()) {
+        loginError.style.display = 'block';
+        loginError.textContent = 'এই নম্বরে কোনো এসআর নেই। এডমিনের সাথে যোগাযোগ করুন।';
+        loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false;
+        return;
+      }
+
+      let userData = null;
+      let userId = null;
+      snapshot.forEach(child => { userData = child.val(); userId = child.key; });
+
+      if (userData.pin) {
+        // পিন আগে থেকে সেট করা আছে, চেক করতে হবে
+        if (userData.pin !== pin) {
+          loginError.style.display = 'block';
+          loginError.textContent = 'পিন ভুল হয়েছে। আবার চেষ্টা করুন।';
+          loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false;
+          return;
+        }
+      } else {
+        // প্রথমবার লগইন, পিন সেভ করে নিতে হবে
+        await database.ref('srs/' + userId).update({ pin: pin });
+        userData.pin = pin;
+      }
+
+      // লগইন সফল
+      currentSR = { id: userId, name: userData.name, phone: userData.phone };
+      localStorage.setItem('novasAgroSR', JSON.stringify(currentSR));
+      showApp();
+
+    } catch(err) {
+      loginError.style.display = 'block';
+      loginError.textContent = 'ইন্টারনেট বা সিস্টেম এরর: ' + err.message;
+      loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false;
+    }
+  });
+
+  function showApp() {
+    loginScreen.style.display = 'none';
+    appContent.style.display = 'block';
+    document.getElementById('displaySrName').textContent = currentSR.name;
+    document.getElementById('displaySrPhone').textContent = currentSR.phone;
+    listenToData();
+  }
+
+  window.logoutUser = function() {
+    if(confirm('লগআউট করবেন?')) {
+      localStorage.removeItem('novasAgroSR');
+      location.reload();
+    }
+  };
+
+  // ==== ডেটা লিসেনার ====
   function listenToData() {
     database.ref('products').on('value', (snap) => { window.db.products = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('batches').on('value', (snap) => { window.db.batches = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
-    database.ref('parties').on('value', (snap) => { window.db.parties = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     
     database.ref('pendingSales').on('value', (snap) => {
       const data = snap.val();
-      window.db.myApplications = data ? Object.values(data).filter(a => a.srId === CURRENT_SR_ID) : [];
+      window.db.myApplications = data ? Object.values(data).filter(a => a.srPhone === currentSR.phone) : [];
       renderAll();
     });
     database.ref('approvedSales').on('value', (snap) => {
       const data = snap.val();
-      const app = data ? Object.values(data).filter(a => a.srId === CURRENT_SR_ID) : [];
+      const app = data ? Object.values(data).filter(a => a.srPhone === currentSR.phone) : [];
       window.db.myApplications = [...window.db.myApplications, ...app];
       renderAll();
     });
@@ -231,30 +338,14 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
   window.submitOrderToDB = function(appData) {
     const id = Date.now().toString(36);
     appData.id = id;
-    appData.srId = CURRENT_SR_ID;
-    appData.srName = CURRENT_SR_NAME;
+    appData.srPhone = currentSR.phone;
+    appData.srName = currentSR.name;
     appData.status = 'pending';
     appData.date = new Date().toISOString().slice(0,10);
     database.ref('pendingSales/' + id).set(appData).then(() => alert('আবেদন পাঠানো হয়েছে!'));
   };
 
-  window.submitPartyRequest = function(partyData) {
-    const id = Date.now().toString(36);
-    partyData.id = id;
-    partyData.srId = CURRENT_SR_ID;
-    partyData.status = 'pending';
-    database.ref('partyRequests/' + id).set(partyData).then(() => alert('পার্টি যোগ করার রিকোয়েস্ট পাঠানো হয়েছে!'));
-  };
-
-  window.submitReturnRequest = function(returnData) {
-    const id = Date.now().toString(36);
-    returnData.id = id;
-    returnData.srId = CURRENT_SR_ID;
-    returnData.status = 'pending';
-    returnData.date = new Date().toISOString().slice(0,10);
-    database.ref('returnRequests/' + id).set(returnData).then(() => alert('রিটার্ন রিকোয়েস্ট পাঠানো হয়েছে!'));
-  };
-
+  // ==== UI লজিক ====
   const $ = id => document.getElementById(id);
   const money = n => '৳ ' + Number(n).toLocaleString('bn-BD', {minimumFractionDigits:2, maximumFractionDigits:2});
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -282,16 +373,14 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 
   window.openSaleForm = function() {
     if(window.db.products.length === 0) return alert('স্টক ডেটা লোড হচ্ছে, অপেক্ষা করুন...');
-    let partyOpts = window.db.parties.map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+    
     let prodOpts = window.db.products.map(p => {
       let stock = window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0);
       return `<option value="${p.id}" ${stock <= 0 ? 'disabled' : ''}>${esc(p.name)} (স্টক: ${stock})</option>`;
     }).join('');
 
     showModal('নতুন বিক্রির আবেদন', `
-      <div class="form-group"><label>ক্রেতা (পার্টি) *</label><select name="customerName" required>
-        <option value="">-- পার্টি সিলেক্ট করুন --</option>${partyOpts}
-      </select></div>
+      <div class="form-group"><label>ক্রেতার নাম *</label><input type="text" name="customerName" required></div>
       <div class="form-group"><label>পণ্য *</label><select name="productId" id="saleProd" required onchange="updatePrice()">
         <option value="">-- নির্বাচন --</option>${prodOpts}
       </select></div>
@@ -325,49 +414,11 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     const qty = Number(qtyInput.value);
     const p = window.db.products.find(x => x.id === pid);
     let stock = window.db.batches.filter(b=>b.productId===pid).reduce((a,b)=>a+Number(b.qty),0);
-
     if(qty > stock) {
       alert(`সতর্কতা: "${p.name}" এর স্টক মাত্র ${stock} টি!`);
       qtyInput.value = stock > 0 ? stock : 1;
     }
     $('saleTotal').value = money(Number(qtyInput.value) * Number($('saleRate').value));
-  };
-
-  window.openPartyForm = function() {
-    showModal('নতুন পার্টি রিকোয়েস্ট', `
-      <div class="form-group"><label>পার্টির নাম *</label><input type="text" name="name" required placeholder="যেমন: সোনালী ফার্ম"></div>
-      <div class="form-group"><label>ফোন নম্বর</label><input type="text" name="phone" placeholder="017xxxxxxxx"></div>
-      <div class="form-group"><label>ঠিকানা/এলাকা</label><input type="text" name="address" placeholder="গ্রাম/বাজার"></div>
-      <p style="font-size:12px; color:var(--text-muted); text-align:center;">রিকোয়েস্ট পাঠানোর পর এডমিন অ্যাপ্রুভ করলে পার্টি লিস্টে যুক্ত হবে।</p>
-    `, (e) => {
-      const d = Object.fromEntries(new FormData($('dataForm')).entries());
-      submitPartyRequest(d);
-      closeModal();
-    });
-  };
-
-  window.openReturnForm = function() {
-    if(window.db.products.length === 0) return alert('স্টক ডেটা লোড হচ্ছে...');
-    let partyOpts = window.db.parties.map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
-    let prodOpts = window.db.products.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
-
-    showModal('বিক্রয় রিটার্ন', `
-      <div class="form-group"><label>পার্টি *</label><select name="customerName" required>
-        <option value="">-- পার্টি সিলেক্ট করুন --</option>${partyOpts}
-      </select></div>
-      <div class="form-group"><label>পণ্য *</label><select name="productId" id="retProd" required>${prodOpts}</select></div>
-      <div class="form-group"><label>রিটার্ন পরিমাণ *</label><input type="number" name="qty" value="1" min="1" required></div>
-      <div class="form-group"><label>কারণ</label><input type="text" name="reason" placeholder="যেমন: মেয়াদোত্তীর্ণ/নষ্ট"></div>
-    `, (e) => {
-      const d = Object.fromEntries(new FormData($('dataForm')).entries());
-      const p = window.db.products.find(x => x.id === d.productId);
-      submitReturnRequest({
-        customerName: d.customerName,
-        items: [{ productId: p.id, productName: p.name, qty: Number(d.qty) }],
-        reason: d.reason
-      });
-      closeModal();
-    });
   };
 
   window.renderAll = function() {
@@ -382,7 +433,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     if($('approvedCount')) $('approvedCount').innerText = db.myApplications.filter(a=>a.status==='approved').length + ' টি';
     if($('totalStock')) $('totalStock').innerText = db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস';
 
-    // স্টক লিস্ট (ছবি সহ)
     if($('stockList')) {
       if(db.products.length === 0) $('stockList').innerHTML = '<div class="empty-state">স্টক ডেটা নেই</div>';
       else $('stockList').innerHTML = db.products.map(p => {
@@ -399,16 +449,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
       }).join('');
     }
 
-    if($('partyList')) {
-      if(db.parties.length === 0) $('partyList').innerHTML = '<div class="empty-state">কোনো পার্টি নেই। উপরে + বাটনে ক্লিক করুন।</div>';
-      else $('partyList').innerHTML = db.parties.map(p => `
-        <div class="list-item">
-          <div class="list-item-left"><h4>${esc(p.name)}</h4><p>${esc(p.phone||'ফোন নেই')} · ${esc(p.address||'ঠিকানা নেই')}</p></div>
-          <span class="pill blue">পার্টি</span>
-        </div>
-      `).join('');
-    }
-
     if($('appList')) {
       if(db.myApplications.length === 0) $('appList').innerHTML = '<div class="empty-state">কোনো আবেদন নেই</div>';
       else $('appList').innerHTML = db.myApplications.map(app => {
@@ -421,8 +461,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
       }).join('');
     }
   };
-
-  listenToData();
 </script>
 </body>
 </html>
