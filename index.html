@@ -6,91 +6,188 @@
 <meta name="theme-color" content="#4EA8DE">
 <title>Novas Agro - SR</title>
 <style>
-:root { --primary: #4EA8DE; --primary-light: #eaf4fb; --bg: #F8F9FA; --card: #FFFFFF; --text: #1A1A1A; --text-muted: #7A7A7A; --red: #FF6B6B; --green: #4ECB71; --orange: #F4A261; --border: #EFEFEF; --shadow: 0 4px 15px rgba(0,0,0,0.03); }
+:root {
+  --primary: #4EA8DE;
+  --primary-dark: #1E6EB5;
+  --primary-light: #eaf4fb;
+  --bg: #F0F4F8;
+  --card: #FFFFFF;
+  --text: #1A1A1A;
+  --text-muted: #7A7A7A;
+  --red: #FF6B6B;
+  --red-light: #FFE5E5;
+  --green: #4ECB71;
+  --green-light: #E6F7EF;
+  --orange: #F4A261;
+  --orange-light: #FFF4E6;
+  --border: #EFEFEF;
+  --shadow: 0 8px 24px rgba(78, 168, 222, 0.12);
+  --glass: rgba(255, 255, 255, 0.85);
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
 button, input, select, textarea { font-family: inherit; outline: none; border: none; }
-.app-header { background: var(--primary); color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+
+/* Glossy Header */
+.app-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white; padding: 18px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 40;
+  border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
+  box-shadow: 0 10px 20px rgba(30, 110, 181, 0.2);
+}
 .header-left { display: flex; align-items: center; gap: 15px; }
-.menu-btn { background: none; color: white; font-size: 24px; padding: 5px; }
-.app-title { font-size: 20px; font-weight: 600; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;}
-.sr-badge { background: #fff; color: var(--primary); font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; letter-spacing: 1px; }
+.menu-btn { background: rgba(255,255,255,0.2); color: white; font-size: 20px; padding: 8px 12px; border-radius: 12px; backdrop-filter: blur(10px); }
+.app-title { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;}
+.sr-badge { background: white; color: var(--primary); font-size: 10px; padding: 2px 6px; border-radius: 6px; font-weight: 800; letter-spacing: 1px; }
 .header-right { display: flex; gap: 15px; font-size: 20px; }
 .header-right span { position: relative; }
-.badge { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 1px solid var(--primary); }
-.content-area { padding: 15px 20px; }
-.balance-card { background: var(--primary); border-radius: 16px; padding: 20px; color: white; box-shadow: 0 8px 20px rgba(78, 168, 222, 0.2); margin-bottom: 20px; }
-.balance-header { display: flex; justify-content: space-between; align-items: center; font-size: 15px; opacity: 0.9; }
-.balance-amount { text-align: center; font-size: 32px; font-weight: bold; margin: 15px 0 20px; }
-.balance-split { background: rgba(255,255,255,0.1); border-radius: 12px; display: flex; padding: 15px; }
-.split-item { flex: 1; display: flex; align-items: center; gap: 10px; }
+.badge { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid var(--primary-dark); }
+
+/* Content Area */
+.content-area { padding: 20px; }
+
+/* Glossy Balance Card */
+.balance-card {
+  background: linear-gradient(135deg, #5BB8F5, #3A9BED);
+  border-radius: 24px; padding: 24px; color: white;
+  box-shadow: 0 15px 35px rgba(78, 168, 222, 0.3);
+  margin-bottom: 25px; position: relative; overflow: hidden;
+}
+.balance-card::before {
+  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+  transform: rotate(30deg);
+}
+.balance-header { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 500; opacity: 0.95; }
+.balance-amount { text-align: center; font-size: 38px; font-weight: 800; margin: 20px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.balance-split { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 16px; display: flex; padding: 15px; border: 1px solid rgba(255,255,255,0.2); }
+.split-item { flex: 1; display: flex; align-items: center; gap: 12px; }
 .split-item:first-child { border-right: 1px solid rgba(255,255,255,0.2); }
-.split-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-.split-icon.in { background: rgba(78, 203, 113, 0.2); color: var(--green); }
-.split-icon.out { background: rgba(255, 107, 107, 0.2); color: var(--red); }
+.split-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; }
+.split-icon.in { background: rgba(78, 203, 113, 0.4); }
+.split-icon.out { background: rgba(255, 107, 107, 0.4); }
 .split-info { display: flex; flex-direction: column; }
-.split-info span { font-size: 12px; opacity: 0.8; }
-.split-info strong { font-size: 16px; margin-top: 2px; }
-.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
-.dash-card { background: var(--card); border-radius: 16px; padding: 18px 15px; box-shadow: var(--shadow); position: relative; display: flex; flex-direction: column; justify-content: center; border: 1px solid transparent; }
-.dash-card.payable { border-color: #FFEDED; }
-.dash-card.receivable { border-color: #EAF3FF; }
-.card-icon { position: absolute; top: -15px; left: 15px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-.bg-red { background: #FF8A8A; } .bg-green { background: #4ECB71; } .bg-teal { background: #4DD0E1; } .bg-blue { background: #76B5F5; }
-.dash-card-title { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-top: 15px; margin-bottom: 8px; }
-.dash-card-value { font-size: 20px; font-weight: 600; color: var(--text); display: flex; align-items: center; justify-content: space-between; }
-.dash-card-value.blue-text { color: var(--primary); font-size: 16px; font-weight: 600; }
-.action-row { background: var(--card); border-radius: 16px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 15px; cursor: pointer;}
+.split-info span { font-size: 12px; opacity: 0.9; }
+.split-info strong { font-size: 16px; margin-top: 4px; font-weight: 700; }
+
+/* Dashboard Grids */
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+.dash-card {
+  background: var(--card); border-radius: 20px; padding: 20px 15px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+  position: relative; display: flex; flex-direction: column; justify-content: center;
+  border: 1px solid rgba(255,255,255,0.5); transition: transform 0.2s;
+}
+.dash-card:active { transform: scale(0.98); }
+.card-icon {
+  position: absolute; top: -15px; left: 15px;
+  width: 45px; height: 45px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: white; box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+.bg-red { background: linear-gradient(135deg, #FF8A8A, #FF5E5E); }
+.bg-green { background: linear-gradient(135deg, #6EE7B7, #4ECB71); }
+.bg-teal { background: linear-gradient(135deg, #5EEAD4, #14B8A6); }
+.bg-blue { background: linear-gradient(135deg, #76B5F5, #4EA8DE); }
+.bg-orange { background: linear-gradient(135deg, #FDBA74, #F4A261); }
+
+.dash-card-title { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-top: 20px; margin-bottom: 10px; }
+.dash-card-value { font-size: 22px; font-weight: 800; color: var(--text); display: flex; align-items: center; justify-content: space-between; }
+.dash-card-value.blue-text { color: var(--primary); font-size: 16px; font-weight: 700; }
+.dash-card-value span { font-size: 16px; color: var(--text-muted); }
+
+/* Action Row */
+.action-row {
+  background: var(--card); border-radius: 20px; padding: 15px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.04); margin-bottom: 15px; cursor: pointer;
+  border: 1px solid var(--border);
+}
 .action-left { display: flex; align-items: center; gap: 15px; }
-.action-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-.action-info h4 { font-size: 14px; color: var(--text-muted); font-weight: normal; margin-bottom: 4px; }
-.action-info p { font-size: 15px; color: var(--primary); font-weight: 600; }
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: white; border-top-left-radius: 20px; border-top-right-radius: 20px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 50; }
-.nav-btn { background: var(--primary); color: white; padding: 12px 20px; border-radius: 25px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(78, 168, 222, 0.3); }
-.nav-btn.green { background: var(--green); box-shadow: 0 4px 10px rgba(78, 203, 113, 0.3); }
-.fab { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 60px; height: 60px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); color: var(--primary); font-size: 28px; font-weight: 300; border: 2px solid var(--primary-light); }
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 60; }
+.action-icon { width: 45px; height: 45px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.action-info h4 { font-size: 15px; color: var(--text); font-weight: 700; margin-bottom: 4px; }
+.action-info p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+/* Bottom Navigation */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 75px;
+  background: var(--glass); backdrop-filter: blur(15px);
+  border-top: 1px solid rgba(255,255,255,0.5);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 20px; box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 50;
+  border-top-left-radius: 24px; border-top-right-radius: 24px;
+}
+.nav-btn {
+  background: var(--primary-light); color: var(--primary);
+  padding: 12px 20px; border-radius: 20px; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-btn.green { background: var(--green-light); color: var(--green); }
+.fab {
+  position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+  width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 10px 20px rgba(78, 168, 222, 0.4); color: white;
+  font-size: 30px; font-weight: 300; border: 4px solid var(--bg);
+}
+
+/* Sidebar */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 60; }
 .overlay.open { opacity: 1; visibility: visible; }
-.sidebar { position: fixed; top: 0; left: -300px; bottom: 0; width: 290px; background: white; z-index: 70; transition: 0.3s ease-in-out; display: flex; flex-direction: column; box-shadow: 5px 0 20px rgba(0,0,0,0.1); }
+.sidebar {
+  position: fixed; top: 0; left: -320px; bottom: 0; width: 300px;
+  background: white; z-index: 70; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; flex-direction: column; box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+}
 .sidebar.open { left: 0; }
-.side-profile { background: var(--primary); color: white; padding: 30px 20px 20px; display: flex; flex-direction: column; align-items: center; }
-.profile-pic { width: 70px; height: 70px; border-radius: 50%; background: #D8D6FF; display: flex; align-items: center; justify-content: center; font-size: 35px; color: var(--primary); margin-bottom: 10px; position: relative; border: 3px solid rgba(255,255,255,0.2); }
-.side-name { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
-.side-phone { font-size: 13px; opacity: 0.9; margin-bottom: 15px; }
-.side-menu { padding: 15px 10px; overflow-y: auto; flex: 1; }
-.side-menu-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; color: var(--text); font-weight: 500; font-size: 15px; border-radius: 10px; cursor: pointer; }
-.side-menu-item:active { background: var(--bg); }
-.side-menu-left { display: flex; align-items: center; gap: 15px; }
-.side-menu-left .icon { font-size: 18px; color: var(--primary); width: 24px; text-align: center; }
-.side-menu-item.divider { border-bottom: 1px dashed var(--border); padding-bottom: 15px; margin-bottom: 15px; border-radius: 0; }
-.view { display: none; animation: fadeIn 0.2s ease; }
+.side-profile { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 40px 20px 25px; display: flex; flex-direction: column; align-items: center; }
+.profile-pic { width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 40px; color: white; margin-bottom: 15px; border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.side-name { font-size: 20px; font-weight: 700; margin-bottom: 5px; }
+.side-phone { font-size: 14px; opacity: 0.9; }
+.side-menu { padding: 20px 15px; overflow-y: auto; flex: 1; }
+.side-menu-item { display: flex; align-items: center; gap: 15px; padding: 15px; color: var(--text); font-weight: 600; font-size: 15px; border-radius: 14px; cursor: pointer; margin-bottom: 5px; transition: background 0.2s; }
+.side-menu-item:active { background: var(--primary-light); color: var(--primary); }
+.side-menu-left .icon { font-size: 20px; color: var(--primary); width: 26px; text-align: center; }
+.side-menu-item.divider { border-bottom: 1px dashed var(--border); padding-bottom: 20px; margin-bottom: 15px; border-radius: 0; }
+
+/* Views */
+.view { display: none; animation: fadeIn 0.3s ease; }
 .view.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-.section-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-.list-item { background: white; border-radius: 12px; padding: 15px; margin-bottom: 10px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-.list-item-left h4 { font-size: 15px; margin-bottom: 4px; }
-.list-item-left p { font-size: 13px; color: var(--text-muted); }
-.pill { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-.pill.green { background: #E6F7EF; color: var(--green); }
-.pill.red { background: #FFEDED; color: var(--red); }
-.pill.amber { background: #FFF4E6; color: var(--orange); }
-.empty-state { text-align: center; padding: 30px; color: var(--text-muted); font-size: 14px; }
-.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; align-items: flex-end; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.section-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; color: var(--text); }
+.btn-add { background: var(--primary); color: white; padding: 10px 18px; border-radius: 12px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 10px rgba(78,168,222,0.3); }
+
+/* List Items */
+.list-item { background: white; border-radius: 16px; padding: 18px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.list-item-left h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.list-item-left p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+.pill { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+.pill.green { background: var(--green-light); color: var(--green); }
+.pill.red { background: var(--red-light); color: var(--red); }
+.pill.amber { background: var(--orange-light); color: var(--orange); }
+.pill.blue { background: var(--primary-light); color: var(--primary); }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 15px; font-weight: 500; }
+
+/* Modals */
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 90; align-items: flex-end; }
 .modal.open { display: flex; }
-.modal-box { background: white; width: 100%; max-height: 90vh; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 20px; overflow-y: auto; animation: slideUp 0.3s ease; }
+.modal-box { background: white; width: 100%; max-height: 92vh; border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 25px; overflow-y: auto; animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-head h3 { font-size: 18px; }
-.close-btn { background: var(--bg); color: var(--text); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-group label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
-.form-group input, .form-group select, .form-group textarea { padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--bg); }
-.form-group input:focus { border-color: var(--primary); background: white; }
-.form-actions { display: flex; gap: 10px; margin-top: 20px; }
-.form-actions button { flex: 1; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 15px; }
-.btn-cancel { background: var(--bg); color: var(--text); }
-.btn-submit { background: var(--primary); color: white; }
+.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.modal-head h3 { font-size: 20px; font-weight: 800; color: var(--text); }
+.close-btn { background: var(--bg); color: var(--text-muted); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; }
+.form-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-group label { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+.form-group input, .form-group select, .form-group textarea { padding: 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; background: #FAFAFA; font-weight: 500; color: var(--text); transition: border 0.2s; }
+.form-group input:focus, .form-group select:focus { border-color: var(--primary); background: white; }
+.form-actions { display: flex; gap: 12px; margin-top: 25px; }
+.form-actions button { flex: 1; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 16px; }
+.btn-cancel { background: var(--bg); color: var(--text-muted); }
+.btn-submit { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 0 6px 15px rgba(78,168,222,0.3); }
 </style>
 <!-- Firebase SDK v8 -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -107,6 +204,7 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 </header>
 
 <main class="content-area">
+  <!-- Dashboard -->
   <section id="dashboard" class="view active">
     <div class="balance-card">
       <div class="balance-header"><span>আজকের কালেকশন ❯</span><span>👁</span></div>
@@ -116,55 +214,82 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
         <div class="split-item" style="padding-left: 15px;"><div class="split-icon out">↑</div><div class="split-info"><span>বাকি আছে</span><strong id="cashOut">৳ ০.০০</strong></div></div>
       </div>
     </div>
+    
     <div class="dash-grid">
-      <div class="dash-card payable"><div class="card-icon bg-red">⏳</div><div class="dash-card-title">পেন্ডিং আবেদন</div><div class="dash-card-value" id="pendingCount">০ টি <span>→</span></div></div>
-      <div class="dash-card receivable"><div class="card-icon bg-green">✅</div><div class="dash-card-title">অনুমোদিত</div><div class="dash-card-value" id="approvedCount">০ টি <span>→</span></div></div>
-      <div class="dash-card products"><div class="card-icon bg-teal">📦</div><div class="dash-card-title">মোট পণ্য</div><div class="dash-card-value" id="totalStock">০ <span>→</span></div></div>
-      <div class="dash-card parties"><div class="card-icon bg-blue">📤</div><div class="dash-card-title">লাইভ আপডেট</div><div class="dash-card-value blue-text">অনলাইন <span>→</span></div></div>
+      <div class="dash-card" onclick="switchView('applications')">
+        <div class="card-icon bg-red">⏳</div>
+        <div class="dash-card-title">পেন্ডিং আবেদন</div>
+        <div class="dash-card-value" id="pendingCount">০ টি <span>→</span></div>
+      </div>
+      <div class="dash-card" onclick="switchView('applications')">
+        <div class="card-icon bg-green">✅</div>
+        <div class="dash-card-title">অনুমোদিত</div>
+        <div class="dash-card-value" id="approvedCount">০ টি <span>→</span></div>
+      </div>
     </div>
+
+    <div class="action-row" onclick="switchView('parties')">
+      <div class="action-left"><div class="action-icon bg-orange">🤝</div><div class="action-info"><h4>পার্টি ম্যানেজমেন্ট</h4><p>ক্রেতা দেখুন ও যোগ করুন</p></div></div>
+      <div style="color: var(--text-muted); font-size: 18px;">❯</div>
+    </div>
+
     <div class="action-row" onclick="switchView('stock')">
-      <div class="action-left"><div class="action-icon" style="background: #EAF3FF; color: var(--primary);">📦</div><div class="action-info"><h4>স্টক চেক করুন</h4><p>বর্তমানে কি কি পণ্য আছে দেখুন</p></div></div>
-      <div style="color: var(--text-muted);">❯</div>
+      <div class="action-left"><div class="action-icon bg-teal">📦</div><div class="action-info"><h4>স্টক চেক করুন</h4><p>বর্তমানে কি কি পণ্য আছে দেখুন</p></div></div>
+      <div style="color: var(--text-muted); font-size: 18px;">❯</div>
     </div>
   </section>
 
+  <!-- Stock -->
   <section id="stock" class="view">
-    <div class="section-title">স্টক লিস্ট</div>
+    <div class="section-title">স্টক লিস্ট <span class="pill blue" id="totalStock">০ পিস</span></div>
     <div id="stockList"></div>
   </section>
 
+  <!-- Applications -->
   <section id="applications" class="view">
     <div class="section-title">আমার আবেদন সমূহ</div>
     <div id="appList"></div>
   </section>
+
+  <!-- Parties -->
+  <section id="parties" class="view">
+    <div class="section-title">পার্টি (ক্রেতা) <button class="btn-add" onclick="openPartyForm()">+ নতুন পার্টি</button></div>
+    <div id="partyList"></div>
+  </section>
 </main>
 
+<!-- Bottom Nav -->
 <nav class="bottom-nav">
   <button class="nav-btn" onclick="switchView('stock')">📦 স্টক</button>
   <button class="fab" onclick="openSaleForm()">+</button>
   <button class="nav-btn green" onclick="switchView('applications')">📋 আবেদন</button>
 </nav>
 
+<!-- Sidebar -->
 <div class="overlay" id="overlay"></div>
 <aside class="sidebar" id="sidebar">
   <div class="side-profile">
     <div class="profile-pic">🧑‍💼</div>
-    <div class="side-name">SR Name</div>
-    <div class="side-phone">017xxxxxxx</div>
+    <div class="side-name">কামরুল হাসান</div>
+    <div class="side-phone">01711-111111</div>
   </div>
   <div class="side-menu">
     <div class="side-menu-item" onclick="switchView('dashboard')"><div class="side-menu-left"><span class="icon">📊</span> ড্যাশবোর্ড</div></div>
     <div class="side-menu-item" onclick="switchView('stock')"><div class="side-menu-left"><span class="icon">📦</span> স্টক দেখুন</div></div>
     <div class="side-menu-item" onclick="switchView('applications')"><div class="side-menu-left"><span class="icon">📋</span> আমার আবেদন</div></div>
+    <div class="side-menu-item divider"></div>
+    <div class="side-menu-item" onclick="switchView('parties')"><div class="side-menu-left"><span class="icon">🤝</span> পার্টি লিস্ট</div></div>
+    <div class="side-menu-item" onclick="openReturnForm()"><div class="side-menu-left"><span class="icon">↩️</span> বিক্রয় রিটার্ন</div></div>
   </div>
 </aside>
 
+<!-- Modal -->
 <div class="modal" id="modal">
   <div class="modal-box">
-    <div class="modal-head"><h3 id="modalTitle">বিক্রির আবেদন</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-head"><h3 id="modalTitle">ফর্ম</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
     <form id="dataForm" autocomplete="off">
       <div id="formFields" class="form-grid"></div>
-      <div class="form-actions"><button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button><button type="submit" class="btn-submit" id="submitBtn">আবেদন পাঠান</button></div>
+      <div class="form-actions"><button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button><button type="submit" class="btn-submit" id="submitBtn">পাঠান</button></div>
     </form>
   </div>
 </div>
@@ -183,15 +308,16 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
 
-  window.db = { products: [], batches: [], myApplications: [] };
-  
-  // ডেমো এসআর আইডি
+  window.db = { products: [], batches: [], parties: [], myApplications: [] };
   const CURRENT_SR_ID = "sr_1";
   const CURRENT_SR_NAME = "কামরুল হাসান";
 
   function listenToData() {
     database.ref('products').on('value', (snap) => { window.db.products = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('batches').on('value', (snap) => { window.db.batches = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
+    
+    // পার্টি লিসেন
+    database.ref('parties').on('value', (snap) => { window.db.parties = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     
     database.ref('pendingSales').on('value', (snap) => {
       const data = snap.val();
@@ -213,10 +339,24 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     appData.srName = CURRENT_SR_NAME;
     appData.status = 'pending';
     appData.date = new Date().toISOString().slice(0,10);
+    database.ref('pendingSales/' + id).set(appData).then(() => alert('আবেদন পাঠানো হয়েছে!'));
+  };
 
-    database.ref('pendingSales/' + id).set(appData).then(() => {
-      alert('আবেদন সফলভাবে অ্যাডমিনের কাছে পাঠানো হয়েছে!');
-    });
+  window.submitPartyRequest = function(partyData) {
+    const id = Date.now().toString(36);
+    partyData.id = id;
+    partyData.srId = CURRENT_SR_ID;
+    partyData.status = 'pending'; // এডমিন অ্যাপ্রুভ করবে
+    database.ref('partyRequests/' + id).set(partyData).then(() => alert('পার্টি যোগ করার রিকোয়েস্ট পাঠানো হয়েছে!'));
+  };
+
+  window.submitReturnRequest = function(returnData) {
+    const id = Date.now().toString(36);
+    returnData.id = id;
+    returnData.srId = CURRENT_SR_ID;
+    returnData.status = 'pending';
+    returnData.date = new Date().toISOString().slice(0,10);
+    database.ref('returnRequests/' + id).set(returnData).then(() => alert('রিটার্ন রিকোয়েস্ট পাঠানো হয়েছে!'));
   };
 
   const $ = id => document.getElementById(id);
@@ -244,36 +384,38 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
   window.closeModal = function(){ modal.classList.remove('open'); modalHandler = null; $('dataForm').reset(); };
   $('dataForm').addEventListener('submit', e => { e.preventDefault(); if(modalHandler) modalHandler(e); });
 
-  // ⭐ আপডেট করা স্টক লিমিট চেক
+  // ১. বিক্রির আবেদন ফর্ম
   window.openSaleForm = function() {
     if(window.db.products.length === 0) return alert('স্টক ডেটা লোড হচ্ছে, অপেক্ষা করুন...');
+    
+    // পার্টি অপশন তৈরি
+    let partyOpts = window.db.parties.map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
 
     let prodOpts = window.db.products.map(p => {
       let stock = window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0);
       return `<option value="${p.id}" ${stock <= 0 ? 'disabled' : ''}>${esc(p.name)} (স্টক: ${stock})</option>`;
     }).join('');
 
-    showModal('বিক্রির আবেদন', `
-      <div class="form-group"><label>ক্রেতার নাম *</label><input type="text" name="customerName" required></div>
+    showModal('নতুন বিক্রির আবেদন', `
+      <div class="form-group"><label>ক্রেতা (পার্টি) *</label><select name="customerName" required>
+        <option value="">-- পার্টি সিলেক্ট করুন --</option>${partyOpts}
+      </select></div>
       <div class="form-group"><label>পণ্য *</label><select name="productId" id="saleProd" required onchange="updatePrice()">
         <option value="">-- নির্বাচন --</option>${prodOpts}
       </select></div>
       <div class="form-group"><label>পরিমাণ *</label><input type="number" name="qty" id="saleQty" value="1" min="1" required oninput="calcTotal()"></div>
       <div class="form-group"><label>মূল্য *</label><input type="number" name="rate" id="saleRate" value="0" min="0" required oninput="calcTotal()"></div>
-      <div class="form-group"><label>মোট</label><input type="text" id="saleTotal" value="৳ ০.০০" disabled style="font-weight:bold; color:var(--primary)"></div>
+      <div class="form-group"><label>মোট</label><input type="text" id="saleTotal" value="৳ ০.০০" disabled style="font-weight:bold; color:var(--primary); font-size:18px;"></div>
       <div class="form-group"><label>নগদ জমা (যদি থাকে)</label><input type="number" name="paid" value="0" min="0"></div>
     `, (e) => {
       const d = Object.fromEntries(new FormData($('dataForm')).entries());
       const p = window.db.products.find(x => x.id === d.productId);
-      
-      const appData = {
+      submitOrderToDB({
         customerName: d.customerName,
         items: [{ productId: p.id, productName: p.name, qty: Number(d.qty), rate: Number(d.rate) }],
         total: Number(d.qty) * Number(d.rate),
         paid: Number(d.paid)
-      };
-      
-      submitOrderToDB(appData);
+      });
       closeModal();
     });
   };
@@ -291,16 +433,53 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     const qtyInput = $('saleQty');
     const qty = Number(qtyInput.value);
     const p = window.db.products.find(x => x.id === pid);
-    
-    // স্টক লিমিট চেক
     let stock = window.db.batches.filter(b=>b.productId===pid).reduce((a,b)=>a+Number(b.qty),0);
 
     if(qty > stock) {
       alert(`সতর্কতা: "${p.name}" এর স্টক মাত্র ${stock} টি!`);
       qtyInput.value = stock > 0 ? stock : 1;
     }
-
     $('saleTotal').value = money(Number(qtyInput.value) * Number($('saleRate').value));
+  };
+
+  // ২. পার্টি এড রিকোয়েস্ট ফর্ম
+  window.openPartyForm = function() {
+    showModal('নতুন পার্টি রিকোয়েস্ট', `
+      <div class="form-group"><label>পার্টির নাম *</label><input type="text" name="name" required placeholder="যেমন: সোনালী ফার্ম"></div>
+      <div class="form-group"><label>ফোন নম্বর</label><input type="text" name="phone" placeholder="017xxxxxxxx"></div>
+      <div class="form-group"><label>ঠিকানা/এলাকা</label><input type="text" name="address" placeholder="গ্রাম/বাজার"></div>
+      <p style="font-size:12px; color:var(--text-muted); text-align:center;">রিকোয়েস্ট পাঠানোর পর এডমিন অ্যাপ্রুভ করলে পার্টি লিস্টে যুক্ত হবে।</p>
+    `, (e) => {
+      const d = Object.fromEntries(new FormData($('dataForm')).entries());
+      submitPartyRequest(d);
+      closeModal();
+    });
+  };
+
+  // ৩. বিক্রয় রিটার্ন ফর্ম
+  window.openReturnForm = function() {
+    if(window.db.products.length === 0) return alert('স্টক ডেটা লোড হচ্ছে...');
+    
+    let partyOpts = window.db.parties.map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+    let prodOpts = window.db.products.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+
+    showModal('বিক্রয় রিটার্ন', `
+      <div class="form-group"><label>পার্টি *</label><select name="customerName" required>
+        <option value="">-- পার্টি সিলেক্ট করুন --</option>${partyOpts}
+      </select></div>
+      <div class="form-group"><label>পণ্য *</label><select name="productId" id="retProd" required>${prodOpts}</select></div>
+      <div class="form-group"><label>রিটার্ন পরিমাণ *</label><input type="number" name="qty" value="1" min="1" required></div>
+      <div class="form-group"><label>কারণ</label><input type="text" name="reason" placeholder="যেমন: মেয়াদোত্তীর্ণ/নষ্ট"></div>
+    `, (e) => {
+      const d = Object.fromEntries(new FormData($('dataForm')).entries());
+      const p = window.db.products.find(x => x.id === d.productId);
+      submitReturnRequest({
+        customerName: d.customerName,
+        items: [{ productId: p.id, productName: p.name, qty: Number(d.qty) }],
+        reason: d.reason
+      });
+      closeModal();
+    });
   };
 
   window.renderAll = function() {
@@ -315,6 +494,7 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     if($('approvedCount')) $('approvedCount').innerText = db.myApplications.filter(a=>a.status==='approved').length + ' টি';
     if($('totalStock')) $('totalStock').innerText = db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস';
 
+    // স্টক লিস্ট
     if($('stockList')) {
       if(db.products.length === 0) $('stockList').innerHTML = '<div class="empty-state">স্টক ডেটা নেই</div>';
       else $('stockList').innerHTML = db.products.map(p => {
@@ -326,14 +506,26 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
       }).join('');
     }
 
+    // পার্টি লিস্ট
+    if($('partyList')) {
+      if(db.parties.length === 0) $('partyList').innerHTML = '<div class="empty-state">কোনো পার্টি নেই। উপরে + বাটনে ক্লিক করুন।</div>';
+      else $('partyList').innerHTML = db.parties.map(p => `
+        <div class="list-item">
+          <div class="list-item-left"><h4>${esc(p.name)}</h4><p>${esc(p.phone||'ফোন নেই')} · ${esc(p.address||'ঠিকানা নেই')}</p></div>
+          <span class="pill blue">পার্টি</span>
+        </div>
+      `).join('');
+    }
+
+    // আবেদন লিস্ট
     if($('appList')) {
       if(db.myApplications.length === 0) $('appList').innerHTML = '<div class="empty-state">কোনো আবেদন নেই</div>';
       else $('appList').innerHTML = db.myApplications.map(app => {
         let pillClass = app.status === 'approved' ? 'green' : 'amber';
         let statusText = app.status === 'approved' ? 'অনুমোদিত' : 'পেন্ডিং';
         return `<div class="list-item">
-          <div class="list-item-left"><h4>${esc(app.customerName)}</h4><p>${app.items.map(i=>esc(i.productName)).join(', ')}</p></div>
-          <div style="text-align:right"><div style="font-weight:bold; margin-bottom:5px;">${money(app.total)}</div><span class="pill ${pillClass}">${statusText}</span></div>
+          <div class="list-item-left"><h4>${esc(app.customerName)}</h4><p>${app.items.map(i=>esc(i.productName) + ' ('+i.qty+')').join(', ')}</p><p style="font-size:12px; margin-top:5px;">${app.date}</p></div>
+          <div style="text-align:right"><div style="font-weight:800; margin-bottom:5px; color:var(--primary);">${money(app.total)}</div><span class="pill ${pillClass}">${statusText}</span></div>
         </div>`;
       }).join('');
     }
