@@ -6,7 +6,6 @@
 <meta name="theme-color" content="#635BFF">
 <title>Novas Agro - Admin</title>
 <style>
-/* ==== মূল CSS ==== */
 :root { --primary: #635BFF; --primary-light: #ecebff; --bg: #F8F9FA; --card: #FFFFFF; --text: #1A1A1A; --text-muted: #7A7A7A; --red: #FF6B6B; --green: #4ECB71; --blue: #4EA8DE; --orange: #F4A261; --border: #EFEFEF; --shadow: 0 4px 15px rgba(0,0,0,0.03); }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
@@ -39,7 +38,7 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 .dash-card.products { border-color: #E6F7EF; }
 .dash-card.parties { border-color: #FFF4E6; }
 .card-icon { position: absolute; top: -15px; left: 15px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-.bg-red { background: #FF8A8A; } .bg-blue { background: #76B5F5; } .bg-teal { background: #4DD0E1; } .bg-yellow { background: #FFD54F; }
+.bg-red { background: #FF8A8A; } .bg-blue { background: #76B5F5; } .bg-teal { background: #4DD0E1; } .bg-yellow { background: #FFD54F; } .bg-purple { background: #A78BFA; }
 .dash-card-title { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; margin-top: 15px; margin-bottom: 8px; }
 .dash-card-value { font-size: 20px; font-weight: 600; color: var(--text); display: flex; align-items: center; justify-content: space-between; }
 .dash-card-value.blue-text { color: var(--primary); font-size: 16px; font-weight: 600; }
@@ -81,6 +80,7 @@ td.right { text-align: right; }
 .pill.green { background: #E6F7EF; color: var(--green); }
 .pill.red { background: #FFEDED; color: var(--red); }
 .pill.amber { background: #FFF4E6; color: var(--orange); }
+.pill.purple { background: #F3E8FF; color: #7E22CE; }
 .actions { display: flex; gap: 8px; }
 .actions button { padding: 5px 10px; border-radius: 8px; font-size: 12px; background: var(--bg); color: var(--text-muted); font-weight: 600; }
 .actions button.danger { background: #FFEDED; color: var(--red); }
@@ -110,7 +110,7 @@ td.right { text-align: right; }
 .btn-reject { background: var(--red); color: white; }
 .prod-img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; background: #eee; }
 
-/* ==== Login Screen CSS ==== */
+/* Login Screen CSS */
 #loginScreen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, #635BFF, #3A2EC2); display: flex; align-items: center; justify-content: center; padding: 20px; }
 .login-box { background: white; padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: popIn 0.3s ease; }
 @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -162,11 +162,16 @@ td.right { text-align: right; }
   </header>
 
   <main class="content-area">
-    <!-- Previous sections remain untouched -->
     <section id="dashboard" class="view active">
-      <div id="lowStockAlert" style="display:none; background:var(--red); color:white; padding:12px; border-radius:10px; margin-bottom:15px; font-size:13px; font-weight:bold; text-align:center; box-shadow:0 4px 10px rgba(255,107,107,0.3);">
+      <!-- Low Stock Alert -->
+      <div id="lowStockAlert" style="display:none; background:var(--red); color:white; padding:12px; border-radius:10px; margin-bottom:15px; font-size:13px; font-weight:bold; text-align:center;">
         ⚠️ কিছু পণ্যের স্টক কমে গেছে! দ্রুত চেক করুন।
       </div>
+      <!-- নতুন পার্টি রিকোয়েস্ট অ্যালার্ট -->
+      <div id="partyAlert" style="display:none; background:#A78BFA; color:white; padding:12px; border-radius:10px; margin-bottom:15px; font-size:13px; font-weight:bold; text-align:center; cursor:pointer;" onclick="switchView('partyRequests')">
+        🔔 নতুন পার্টি রিকোয়েস্ট এসেছে! এখানে ক্লিক করুন।
+      </div>
+
       <div class="balance-card">
         <div class="balance-header"><span>মোট ক্যাশ ইন-হ্যান্ড ❯</span><span>👁</span></div>
         <div class="balance-amount" id="cashBalance">৳ ০.০০</div>
@@ -176,15 +181,27 @@ td.right { text-align: right; }
         </div>
       </div>
       <div class="dash-grid">
-        <div class="dash-card payable"><div class="card-icon bg-red">⏳</div><div class="dash-card-title">পেন্ডিং রিকোয়েস্ট</div><div class="dash-card-value" id="pendingCount" onclick="switchView('approvals')" style="cursor:pointer">০ টি <span>→</span></div></div>
-        <div class="dash-card receivable"><div class="card-icon bg-blue">🚚</div><div class="dash-card-title">পেন্ডিং ডেলিভারি</div><div class="dash-card-value" id="deliveryCount" onclick="switchView('delivery')" style="cursor:pointer">০ টি <span>→</span></div></div>
+        <div class="dash-card payable"><div class="card-icon bg-red">⏳</div><div class="dash-card-title">সেলস পেন্ডিং</div><div class="dash-card-value" id="pendingCount" onclick="switchView('approvals')" style="cursor:pointer">০ টি <span>→</span></div></div>
+        <div class="dash-card receivable"><div class="card-icon bg-blue">🚚</div><div class="dash-card-title">ডেলিভারি পেন্ডিং</div><div class="dash-card-value" id="deliveryCount" onclick="switchView('delivery')" style="cursor:pointer">০ টি <span>→</span></div></div>
         <div class="dash-card products"><div class="card-icon bg-teal">📦</div><div class="dash-card-title">মোট স্টক আইটেম</div><div class="dash-card-value" id="totalStock">০ <span>→</span></div></div>
-        <div class="dash-card parties"><div class="card-icon bg-yellow">👥</div><div class="dash-card-title">মোট এসআর (SR)</div><div class="dash-card-value" id="totalSR">০ জন <span>→</span></div></div>
+        <div class="dash-card parties"><div class="card-icon bg-purple">👥</div><div class="dash-card-title">পার্টি রিকোয়েস্ট</div><div class="dash-card-value" id="partyReqCount" onclick="switchView('partyRequests')" style="cursor:pointer">০ টি <span>→</span></div></div>
       </div>
       <div class="action-row" onclick="switchView('approvals')">
         <div class="action-left"><div class="action-icon" style="background: #FFF4E6; color: var(--orange);">📝</div><div class="action-info"><h4>বিক্রয়ের আবেদন সমূহ</h4><p>নতুন রিকোয়েস্ট চেক করুন</p></div></div>
         <div style="color: var(--text-muted);">❯</div>
       </div>
+    </section>
+
+    <!-- পার্টি রিকোয়েস্ট সেকশন -->
+    <section id="partyRequests" class="view">
+      <div class="section-title">নতুন পার্টি রিকোয়েস্ট (SR)</div>
+      <div id="partyRequestsList"></div>
+    </section>
+
+    <!-- পার্টি লিস্ট -->
+    <section id="parties" class="view">
+      <div class="section-title">পার্টি লিস্ট <button class="btn-add" onclick="openForm('party')">+ নতুন পার্টি</button></div>
+      <div id="partiesTable"></div>
     </section>
 
     <section id="approvals" class="view">
@@ -225,6 +242,8 @@ td.right { text-align: right; }
     <div class="side-menu">
       <div class="side-menu-item" onclick="switchView('dashboard')"><div class="side-menu-left"><span class="icon">📊</span> ড্যাশবোর্ড</div></div>
       <div class="side-menu-item" onclick="switchView('approvals')"><div class="side-menu-left"><span class="icon">📝</span> বিক্রয়ের আবেদন</div></div>
+      <div class="side-menu-item" onclick="switchView('partyRequests')"><div class="side-menu-left"><span class="icon">🔔</span> পার্টি রিকোয়েস্ট</div></div>
+      <div class="side-menu-item" onclick="switchView('parties')"><div class="side-menu-left"><span class="icon">🤝</span> পার্টি লিস্ট</div></div>
       <div class="side-menu-item" onclick="switchView('delivery')"><div class="side-menu-left"><span class="icon">🚚</span> ডেলিভারি কনফার্ম</div></div>
       <div class="side-menu-item" onclick="switchView('products')"><div class="side-menu-left"><span class="icon">📦</span> পণ্য ও স্টক</div></div>
       <div class="side-menu-item" onclick="switchView('users')"><div class="side-menu-left"><span class="icon">👥</span> ইউজার (SR)</div></div>
@@ -258,7 +277,7 @@ td.right { text-align: right; }
   const database = firebase.database();
   const auth = firebase.auth();
 
-  window.db = { products: [], batches: [], srs: [], pendingSales: [], approvedSales: [], deliveries: [] };
+  window.db = { products: [], batches: [], srs: [], parties: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [] };
 
   // লগইন লজিক
   const loginScreen = document.getElementById('loginScreen');
@@ -281,10 +300,34 @@ td.right { text-align: right; }
     database.ref('products').on('value', (snap) => { window.db.products = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('batches').on('value', (snap) => { window.db.batches = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('srs').on('value', (snap) => { window.db.srs = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
+    database.ref('parties').on('value', (snap) => { window.db.parties = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
+    
+    // পার্টি রিকোয়েস্ট লিসেন
+    database.ref('partyRequests').on('value', (snap) => { window.db.partyRequests = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
+    
     database.ref('pendingSales').on('value', (snap) => { window.db.pendingSales = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('approvedSales').on('value', (snap) => { window.db.approvedSales = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('deliveries').on('value', (snap) => { window.db.deliveries = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
   }
+
+  window.savePartyToDB = function(data) {
+    const id = Date.now().toString(36);
+    database.ref('parties/' + id).set({ id: id, name: data.name, phone: data.phone || '', address: data.address || '' });
+  };
+
+  // পার্টি অ্যাপ্রুভ লজিক
+  window.approvePartyRequest = function(reqId, reqData) {
+    // পার্টি ডেটাবেসে সেভ করা
+    database.ref('parties/' + reqId).set({ id: reqId, name: reqData.name, phone: reqData.phone, address: reqData.address }).then(() => {
+      // রিকোয়েস্ট ডিলিট করা
+      database.ref('partyRequests/' + reqId).remove();
+      alert('পার্টি সফলভাবে যোগ হয়েছে!');
+    });
+  };
+
+  window.rejectPartyRequest = function(reqId) {
+    if(confirm('রিকোয়েস্ট বাতিল করবেন?')) database.ref('partyRequests/' + reqId).remove();
+  };
 
   window.saveProductToDB = function(data, stock, imageLink) {
     const pId = Date.now().toString(36);
@@ -296,7 +339,6 @@ td.right { text-align: right; }
     });
   };
 
-  // ⭐ এখানে পিন বাদ দেওয়া হয়েছে
   window.saveSRToDB = function(data) {
     const id = Date.now().toString(36);
     database.ref('srs/' + id).set({ id: id, name: data.name, phone: data.phone });
@@ -320,7 +362,7 @@ td.right { text-align: right; }
     database.ref('pendingSales/' + reqId).update({ status: 'approved' }).then(() => {
       database.ref('approvedSales/' + reqId).set({ ...reqData, status: 'approved' });
       database.ref('pendingSales/' + reqId).remove();
-      alert('অনুমোদিত হয়েছে এবং স্টক আপডেট হয়েছে!');
+      alert('বিক্রয় অনুমোদিত হয়েছে এবং স্টক আপডেট হয়েছে!');
     });
   };
 
@@ -364,11 +406,17 @@ td.right { text-align: right; }
         saveProductToDB(d, d.stock, d.imageLink); closeModal();
       });
     } else if(type === 'sr') {
-      // পিন বাদ দেওয়া হয়েছে
       showModal('নতুন এসআর (SR)', `<div class="form-group"><label>নাম *</label><input type="text" name="name" required></div>
         <div class="form-group"><label>মোবাইল নম্বর *</label><input type="text" name="phone" required></div>`, (e) => {
         const d = Object.fromEntries(new FormData($('dataForm')).entries());
         saveSRToDB(d); closeModal();
+      });
+    } else if(type === 'party') {
+      showModal('নতুন পার্টি', `<div class="form-group"><label>পার্টির নাম *</label><input type="text" name="name" required></div>
+        <div class="form-group"><label>মোবাইল নম্বর</label><input type="text" name="phone"></div>
+        <div class="form-group"><label>ঠিকানা</label><input type="text" name="address"></div>`, (e) => {
+        const d = Object.fromEntries(new FormData($('dataForm')).entries());
+        savePartyToDB(d); closeModal();
       });
     }
   };
@@ -376,14 +424,44 @@ td.right { text-align: right; }
   window.renderAll = function() {
     const db = window.db;
     
+    // অ্যালার্ট চেক
+    let lowStockCount = 0;
+    db.products.forEach(p => {
+      let stock = db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0);
+      if(stock <= 10) lowStockCount++;
+    });
+    $('lowStockAlert').style.display = lowStockCount > 0 ? 'block' : 'none';
+    $('partyAlert').style.display = db.partyRequests.length > 0 ? 'block' : 'none';
+
     let pending = db.pendingSales.filter(s=>s.status === 'pending');
     let deliveries = db.deliveries.filter(d=>d.status !== 'delivered');
     
     if($('pendingCount')) $('pendingCount').innerText = pending.length + ' টি';
     if($('deliveryCount')) $('deliveryCount').innerText = deliveries.length + ' টি';
+    if($('partyReqCount')) $('partyReqCount').innerText = db.partyRequests.length + ' টি';
     if($('totalStock')) $('totalStock').innerText = db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস';
-    if($('totalSR')) $('totalSR').innerText = db.srs.length + ' জন';
     if($('cashBalance')) $('cashBalance').innerText = money(db.approvedSales.reduce((a,s)=>a+Number(s.paid||0),0));
+
+    // পার্টি রিকোয়েস্ট লিস্ট
+    if($('partyRequestsList')) {
+      if(db.partyRequests.length === 0) $('partyRequestsList').innerHTML = '<div class="empty-state">কোনো পার্টি রিকোয়েস্ট নেই</div>';
+      else $('partyRequestsList').innerHTML = db.partyRequests.map(req => `
+        <div class="req-card" style="border-left: 4px solid #A78BFA;">
+          <div class="req-header"><span>${esc(req.name)}</span><span class="pill purple">SR: ${esc(req.srName||'—')}</span></div>
+          <div class="req-body">ফোন: ${esc(req.phone||'—')}<br>ঠিকানা: ${esc(req.address||'—')}</div>
+          <div class="req-actions">
+            <button class="btn-reject" onclick="rejectPartyRequest('${req.id}')">বাতিল</button>
+            <button class="btn-approve" onclick='approvePartyRequest("${req.id}", ${JSON.stringify(req)})'>অনুমোদন</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // পার্টি লিস্ট
+    if($('partiesTable')) {
+      $('partiesTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>ফোন</th><th>ঠিকানা</th></tr></thead>
+        <tbody>${db.parties.map(p => `<tr><td>${esc(p.name)}</td><td>${esc(p.phone||'—')}</td><td>${esc(p.address||'—')}</td></tr>`).join('')}</tbody></table></div>`;
+    }
 
     if($('approvalsList')) {
       if(pending.length === 0) $('approvalsList').innerHTML = '<div class="empty-state">কোনো পেন্ডিং নেই</div>';
