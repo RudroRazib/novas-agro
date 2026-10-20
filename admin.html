@@ -198,7 +198,7 @@ td.right { text-align: right; }
 </div>
 
 <script>
-  // ১. Firebase Config (আপনার দেওয়া)
+  // ১. Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyD4-daxO-6RYTHN-1tTtOWsUzFmYWyGpSk",
     authDomain: "novas-agro.firebaseapp.com",
@@ -209,14 +209,11 @@ td.right { text-align: right; }
     appId: "1:71814265788:web:8e1054a70772a9ad30c9b9"
   };
 
-  // ২. Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
 
-  // ৩. গ্লোবাল ভ্যারিয়েবল
   window.db = { products: [], batches: [], srs: [], pendingSales: [], approvedSales: [], deliveries: [] };
 
-  // ৪. রিয়েল-টাইম ডেটা লিসেনার (v8 সিনট্যাক্স)
   function listenToData() {
     database.ref('products').on('value', (snap) => { window.db.products = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('batches').on('value', (snap) => { window.db.batches = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
@@ -226,7 +223,6 @@ td.right { text-align: right; }
     database.ref('deliveries').on('value', (snap) => { window.db.deliveries = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
   }
 
-  // ৫. ডেটা রাইট (Set/Update) ফাংশন
   window.saveProductToDB = function(data, stock) {
     const pId = Date.now().toString(36);
     database.ref('products/' + pId).set({ id: pId, name: data.name, saleRate: Number(data.saleRate) }).then(() => {
@@ -242,21 +238,37 @@ td.right { text-align: right; }
     database.ref('srs/' + id).set({ id: id, name: data.name, phone: data.phone, pin: data.pin });
   };
 
+  // ⭐ আপডেট করা অ্যাপ্রুভ লজিক (স্টক সঠিকভাবে কাটবে)
   window.approveSaleToDB = function(reqId, reqData) {
+    // ১. স্টক চেক
     for(let item of reqData.items) {
       let totalStock = window.db.batches.filter(x => x.productId === item.productId).reduce((a,b)=>a+Number(b.qty),0);
-      if(totalStock < item.qty) return alert(`পণ্য "${item.productName}" এর স্টক নেই! বর্তমান: ${totalStock}`);
+      if(totalStock < item.qty) return alert(`পণ্য "${item.productName}" এর স্টক নেই! বর্তমান স্টক: ${totalStock}`);
     }
 
+    // ২. স্টক কাটা (একাধিক ব্যাচ থাকলেও কাজ করবে)
     for(let item of reqData.items) {
-      let b = window.db.batches.find(x => x.productId === item.productId && Number(x.qty) > 0);
-      if(b) database.ref('batches/' + b.id).update({ qty: Number(b.qty) - item.qty });
+      let remaining = item.qty;
+      let bList = window.db.batches.filter(x => x.productId === item.productId && Number(x.qty) > 0);
+      
+      for(let b of bList) {
+        if(remaining <= 0) break;
+        let cQty = Number(b.qty);
+        if(cQty >= remaining) {
+          database.ref('batches/' + b.id).update({ qty: cQty - remaining });
+          remaining = 0;
+        } else {
+          database.ref('batches/' + b.id).update({ qty: 0 });
+          remaining -= cQty;
+        }
+      }
     }
 
+    // ৩. স্ট্যাটাস আপডেট
     database.ref('pendingSales/' + reqId).update({ status: 'approved' }).then(() => {
       database.ref('approvedSales/' + reqId).set({ ...reqData, status: 'approved' });
       database.ref('pendingSales/' + reqId).remove();
-      alert('অনুমোদিত হয়েছে!');
+      alert('অনুমোদিত হয়েছে এবং স্টক আপডেট হয়েছে!');
     });
   };
 
@@ -268,7 +280,6 @@ td.right { text-align: right; }
     database.ref('deliveries/' + id).update({ status: 'delivered' });
   };
 
-  // ====== UI লজিক ======
   const $ = id => document.getElementById(id);
   const money = n => '৳ ' + Number(n).toLocaleString('bn-BD', {minimumFractionDigits:2, maximumFractionDigits:2});
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
