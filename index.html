@@ -6,38 +6,11 @@
 <meta name="theme-color" content="#4EA8DE">
 <title>Novas Agro - SR</title>
 <style>
-:root {
-  --primary: #4EA8DE;
-  --primary-dark: #1E6EB5;
-  --primary-light: #eaf4fb;
-  --bg: #F0F4F8;
-  --card: #FFFFFF;
-  --text: #1A1A1A;
-  --text-muted: #7A7A7A;
-  --red: #FF6B6B;
-  --red-light: #FFE5E5;
-  --green: #4ECB71;
-  --green-light: #E6F7EF;
-  --orange: #F4A261;
-  --orange-light: #FFF4E6;
-  --border: #EFEFEF;
-  --shadow: 0 8px 24px rgba(78, 168, 222, 0.12);
-  --glass: rgba(255, 255, 255, 0.85);
-}
-
+:root { --primary: #4EA8DE; --primary-dark: #1E6EB5; --primary-light: #eaf4fb; --bg: #F0F4F8; --card: #FFFFFF; --text: #1A1A1A; --text-muted: #7A7A7A; --red: #FF6B6B; --red-light: #FFE5E5; --green: #4ECB71; --green-light: #E6F7EF; --orange: #F4A261; --orange-light: #FFF4E6; --border: #EFEFEF; --shadow: 0 8px 24px rgba(78, 168, 222, 0.12); --glass: rgba(255, 255, 255, 0.85); }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
 button, input, select, textarea { font-family: inherit; outline: none; border: none; }
-
-/* Glossy Header */
-.app-header {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  color: white; padding: 18px 20px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 40;
-  border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;
-  box-shadow: 0 10px 20px rgba(30, 110, 181, 0.2);
-}
+.app-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 10px 20px rgba(30, 110, 181, 0.2); }
 .header-left { display: flex; align-items: center; gap: 15px; }
 .menu-btn { background: rgba(255,255,255,0.2); color: white; font-size: 20px; padding: 8px 12px; border-radius: 12px; backdrop-filter: blur(10px); }
 .app-title { font-size: 20px; font-weight: 700; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;}
@@ -45,22 +18,9 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 .header-right { display: flex; gap: 15px; font-size: 20px; }
 .header-right span { position: relative; }
 .badge { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid var(--primary-dark); }
-
-/* Content Area */
 .content-area { padding: 20px; }
-
-/* Glossy Balance Card */
-.balance-card {
-  background: linear-gradient(135deg, #5BB8F5, #3A9BED);
-  border-radius: 24px; padding: 24px; color: white;
-  box-shadow: 0 15px 35px rgba(78, 168, 222, 0.3);
-  margin-bottom: 25px; position: relative; overflow: hidden;
-}
-.balance-card::before {
-  content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
-  transform: rotate(30deg);
-}
+.balance-card { background: linear-gradient(135deg, #5BB8F5, #3A9BED); border-radius: 24px; padding: 24px; color: white; box-shadow: 0 15px 35px rgba(78, 168, 222, 0.3); margin-bottom: 25px; position: relative; overflow: hidden; }
+.balance-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%); transform: rotate(30deg); }
 .balance-header { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 500; opacity: 0.95; }
 .balance-amount { text-align: center; font-size: 38px; font-weight: 800; margin: 20px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.1); }
 .balance-split { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 16px; display: flex; padding: 15px; border: 1px solid rgba(255,255,255,0.2); }
@@ -72,76 +32,27 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 .split-info { display: flex; flex-direction: column; }
 .split-info span { font-size: 12px; opacity: 0.9; }
 .split-info strong { font-size: 16px; margin-top: 4px; font-weight: 700; }
-
-/* Dashboard Grids */
 .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-.dash-card {
-  background: var(--card); border-radius: 20px; padding: 20px 15px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
-  position: relative; display: flex; flex-direction: column; justify-content: center;
-  border: 1px solid rgba(255,255,255,0.5); transition: transform 0.2s;
-}
+.dash-card { background: var(--card); border-radius: 20px; padding: 20px 15px; box-shadow: 0 6px 20px rgba(0,0,0,0.04); position: relative; display: flex; flex-direction: column; justify-content: center; border: 1px solid rgba(255,255,255,0.5); transition: transform 0.2s; }
 .dash-card:active { transform: scale(0.98); }
-.card-icon {
-  position: absolute; top: -15px; left: 15px;
-  width: 45px; height: 45px; border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; color: white; box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-}
-.bg-red { background: linear-gradient(135deg, #FF8A8A, #FF5E5E); }
-.bg-green { background: linear-gradient(135deg, #6EE7B7, #4ECB71); }
-.bg-teal { background: linear-gradient(135deg, #5EEAD4, #14B8A6); }
-.bg-blue { background: linear-gradient(135deg, #76B5F5, #4EA8DE); }
-.bg-orange { background: linear-gradient(135deg, #FDBA74, #F4A261); }
-
+.card-icon { position: absolute; top: -15px; left: 15px; width: 45px; height: 45px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+.bg-red { background: linear-gradient(135deg, #FF8A8A, #FF5E5E); } .bg-green { background: linear-gradient(135deg, #6EE7B7, #4ECB71); } .bg-teal { background: linear-gradient(135deg, #5EEAD4, #14B8A6); } .bg-blue { background: linear-gradient(135deg, #76B5F5, #4EA8DE); } .bg-orange { background: linear-gradient(135deg, #FDBA74, #F4A261); }
 .dash-card-title { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-top: 20px; margin-bottom: 10px; }
 .dash-card-value { font-size: 22px; font-weight: 800; color: var(--text); display: flex; align-items: center; justify-content: space-between; }
 .dash-card-value.blue-text { color: var(--primary); font-size: 16px; font-weight: 700; }
 .dash-card-value span { font-size: 16px; color: var(--text-muted); }
-
-/* Action Row */
-.action-row {
-  background: var(--card); border-radius: 20px; padding: 15px 20px;
-  display: flex; justify-content: space-between; align-items: center;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.04); margin-bottom: 15px; cursor: pointer;
-  border: 1px solid var(--border);
-}
+.action-row { background: var(--card); border-radius: 20px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 20px rgba(0,0,0,0.04); margin-bottom: 15px; cursor: pointer; border: 1px solid var(--border); }
 .action-left { display: flex; align-items: center; gap: 15px; }
 .action-icon { width: 45px; height: 45px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
 .action-info h4 { font-size: 15px; color: var(--text); font-weight: 700; margin-bottom: 4px; }
 .action-info p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
-
-/* Bottom Navigation */
-.bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0; height: 75px;
-  background: var(--glass); backdrop-filter: blur(15px);
-  border-top: 1px solid rgba(255,255,255,0.5);
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 0 20px; box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 50;
-  border-top-left-radius: 24px; border-top-right-radius: 24px;
-}
-.nav-btn {
-  background: var(--primary-light); color: var(--primary);
-  padding: 12px 20px; border-radius: 20px; font-size: 14px; font-weight: 700;
-  display: flex; align-items: center; gap: 8px;
-}
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: var(--glass); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.5); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; box-shadow: 0 -5px 25px rgba(0,0,0,0.05); z-index: 50; border-top-left-radius: 24px; border-top-right-radius: 24px; }
+.nav-btn { background: var(--primary-light); color: var(--primary); padding: 12px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
 .nav-btn.green { background: var(--green-light); color: var(--green); }
-.fab {
-  position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
-  width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 10px 20px rgba(78, 168, 222, 0.4); color: white;
-  font-size: 30px; font-weight: 300; border: 4px solid var(--bg);
-}
-
-/* Sidebar */
+.fab { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(78, 168, 222, 0.4); color: white; font-size: 30px; font-weight: 300; border: 4px solid var(--bg); }
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 60; }
 .overlay.open { opacity: 1; visibility: visible; }
-.sidebar {
-  position: fixed; top: 0; left: -320px; bottom: 0; width: 300px;
-  background: white; z-index: 70; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex; flex-direction: column; box-shadow: 10px 0 30px rgba(0,0,0,0.1);
-}
+.sidebar { position: fixed; top: 0; left: -320px; bottom: 0; width: 300px; background: white; z-index: 70; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
 .sidebar.open { left: 0; }
 .side-profile { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 40px 20px 25px; display: flex; flex-direction: column; align-items: center; }
 .profile-pic { width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 40px; color: white; margin-bottom: 15px; border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
@@ -152,15 +63,11 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 .side-menu-item:active { background: var(--primary-light); color: var(--primary); }
 .side-menu-left .icon { font-size: 20px; color: var(--primary); width: 26px; text-align: center; }
 .side-menu-item.divider { border-bottom: 1px dashed var(--border); padding-bottom: 20px; margin-bottom: 15px; border-radius: 0; }
-
-/* Views */
 .view { display: none; animation: fadeIn 0.3s ease; }
 .view.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .section-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; color: var(--text); }
 .btn-add { background: var(--primary); color: white; padding: 10px 18px; border-radius: 12px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 10px rgba(78,168,222,0.3); }
-
-/* List Items */
 .list-item { background: white; border-radius: 16px; padding: 18px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
 .list-item-left h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
 .list-item-left p { font-size: 13px; color: var(--text-muted); font-weight: 500; }
@@ -170,8 +77,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 .pill.amber { background: var(--orange-light); color: var(--orange); }
 .pill.blue { background: var(--primary-light); color: var(--primary); }
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 15px; font-weight: 500; }
-
-/* Modals */
 .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 90; align-items: flex-end; }
 .modal.open { display: flex; }
 .modal-box { background: white; width: 100%; max-height: 92vh; border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 25px; overflow-y: auto; animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -188,8 +93,8 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 .form-actions button { flex: 1; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 16px; }
 .btn-cancel { background: var(--bg); color: var(--text-muted); }
 .btn-submit { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 0 6px 15px rgba(78,168,222,0.3); }
+.prod-img { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; background: #eee; margin-right: 15px; }
 </style>
-<!-- Firebase SDK v8 -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -204,7 +109,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 </header>
 
 <main class="content-area">
-  <!-- Dashboard -->
   <section id="dashboard" class="view active">
     <div class="balance-card">
       <div class="balance-header"><span>আজকের কালেকশন ❯</span><span>👁</span></div>
@@ -239,33 +143,28 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     </div>
   </section>
 
-  <!-- Stock -->
   <section id="stock" class="view">
     <div class="section-title">স্টক লিস্ট <span class="pill blue" id="totalStock">০ পিস</span></div>
     <div id="stockList"></div>
   </section>
 
-  <!-- Applications -->
   <section id="applications" class="view">
     <div class="section-title">আমার আবেদন সমূহ</div>
     <div id="appList"></div>
   </section>
 
-  <!-- Parties -->
   <section id="parties" class="view">
     <div class="section-title">পার্টি (ক্রেতা) <button class="btn-add" onclick="openPartyForm()">+ নতুন পার্টি</button></div>
     <div id="partyList"></div>
   </section>
 </main>
 
-<!-- Bottom Nav -->
 <nav class="bottom-nav">
   <button class="nav-btn" onclick="switchView('stock')">📦 স্টক</button>
   <button class="fab" onclick="openSaleForm()">+</button>
   <button class="nav-btn green" onclick="switchView('applications')">📋 আবেদন</button>
 </nav>
 
-<!-- Sidebar -->
 <div class="overlay" id="overlay"></div>
 <aside class="sidebar" id="sidebar">
   <div class="side-profile">
@@ -283,7 +182,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
   </div>
 </aside>
 
-<!-- Modal -->
 <div class="modal" id="modal">
   <div class="modal-box">
     <div class="modal-head"><h3 id="modalTitle">ফর্ম</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
@@ -296,7 +194,7 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
 
 <script>
   const firebaseConfig = {
-    apiKey: "AIzaSyD4-daxO-6RYTHN-1tTtOWsUzFmYWyGpSk",
+    apiKey: "AIzaSyD4-daxO-6RYTHN-1tTt0WsUzFmYWyGpSk",
     authDomain: "novas-agro.firebaseapp.com",
     databaseURL: "https://novas-agro-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "novas-agro",
@@ -315,8 +213,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
   function listenToData() {
     database.ref('products').on('value', (snap) => { window.db.products = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('batches').on('value', (snap) => { window.db.batches = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
-    
-    // পার্টি লিসেন
     database.ref('parties').on('value', (snap) => { window.db.parties = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     
     database.ref('pendingSales').on('value', (snap) => {
@@ -346,7 +242,7 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     const id = Date.now().toString(36);
     partyData.id = id;
     partyData.srId = CURRENT_SR_ID;
-    partyData.status = 'pending'; // এডমিন অ্যাপ্রুভ করবে
+    partyData.status = 'pending';
     database.ref('partyRequests/' + id).set(partyData).then(() => alert('পার্টি যোগ করার রিকোয়েস্ট পাঠানো হয়েছে!'));
   };
 
@@ -384,13 +280,9 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
   window.closeModal = function(){ modal.classList.remove('open'); modalHandler = null; $('dataForm').reset(); };
   $('dataForm').addEventListener('submit', e => { e.preventDefault(); if(modalHandler) modalHandler(e); });
 
-  // ১. বিক্রির আবেদন ফর্ম
   window.openSaleForm = function() {
     if(window.db.products.length === 0) return alert('স্টক ডেটা লোড হচ্ছে, অপেক্ষা করুন...');
-    
-    // পার্টি অপশন তৈরি
     let partyOpts = window.db.parties.map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
-
     let prodOpts = window.db.products.map(p => {
       let stock = window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0);
       return `<option value="${p.id}" ${stock <= 0 ? 'disabled' : ''}>${esc(p.name)} (স্টক: ${stock})</option>`;
@@ -429,7 +321,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
   window.calcTotal = function() {
     const pid = $('saleProd').value;
     if(!pid) return;
-    
     const qtyInput = $('saleQty');
     const qty = Number(qtyInput.value);
     const p = window.db.products.find(x => x.id === pid);
@@ -442,7 +333,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     $('saleTotal').value = money(Number(qtyInput.value) * Number($('saleRate').value));
   };
 
-  // ২. পার্টি এড রিকোয়েস্ট ফর্ম
   window.openPartyForm = function() {
     showModal('নতুন পার্টি রিকোয়েস্ট', `
       <div class="form-group"><label>পার্টির নাম *</label><input type="text" name="name" required placeholder="যেমন: সোনালী ফার্ম"></div>
@@ -456,10 +346,8 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     });
   };
 
-  // ৩. বিক্রয় রিটার্ন ফর্ম
   window.openReturnForm = function() {
     if(window.db.products.length === 0) return alert('স্টক ডেটা লোড হচ্ছে...');
-    
     let partyOpts = window.db.parties.map(p => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
     let prodOpts = window.db.products.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
 
@@ -494,19 +382,23 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
     if($('approvedCount')) $('approvedCount').innerText = db.myApplications.filter(a=>a.status==='approved').length + ' টি';
     if($('totalStock')) $('totalStock').innerText = db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস';
 
-    // স্টক লিস্ট
+    // স্টক লিস্ট (ছবি সহ)
     if($('stockList')) {
       if(db.products.length === 0) $('stockList').innerHTML = '<div class="empty-state">স্টক ডেটা নেই</div>';
       else $('stockList').innerHTML = db.products.map(p => {
         let stock = db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0);
-        return `<div class="list-item">
-          <div class="list-item-left"><h4>${esc(p.name)}</h4><p>মূল্য: ${money(p.saleRate)}</p></div>
+        let imgHtml = p.imageUrl ? `<img src="${p.imageUrl}" class="prod-img" style="float:left;">` : `<div class="prod-img" style="float:left; display:flex; align-items:center; justify-content:center; font-size:20px;">📦</div>`;
+        return `<div class="list-item" style="overflow:hidden;">
+          ${imgHtml}
+          <div class="list-item-left" style="flex:1;">
+            <h4>${esc(p.name)}</h4>
+            <p>মূল্য: ${money(p.saleRate)}</p>
+          </div>
           <div class="pill ${stock > 0 ? 'green' : 'red'}">স্টক: ${stock}</div>
         </div>`;
       }).join('');
     }
 
-    // পার্টি লিস্ট
     if($('partyList')) {
       if(db.parties.length === 0) $('partyList').innerHTML = '<div class="empty-state">কোনো পার্টি নেই। উপরে + বাটনে ক্লিক করুন।</div>';
       else $('partyList').innerHTML = db.parties.map(p => `
@@ -517,7 +409,6 @@ button, input, select, textarea { font-family: inherit; outline: none; border: n
       `).join('');
     }
 
-    // আবেদন লিস্ট
     if($('appList')) {
       if(db.myApplications.length === 0) $('appList').innerHTML = '<div class="empty-state">কোনো আবেদন নেই</div>';
       else $('appList').innerHTML = db.myApplications.map(app => {
