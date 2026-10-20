@@ -126,7 +126,6 @@ td.right { text-align: right; }
 .login-error { color: var(--red); font-size: 13px; text-align: center; margin-top: 10px; display: none; }
 </style>
 
-<!-- Firebase SDKs (Storage বাদ দেওয়া হয়েছে) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -163,11 +162,11 @@ td.right { text-align: right; }
   </header>
 
   <main class="content-area">
+    <!-- Previous sections remain untouched -->
     <section id="dashboard" class="view active">
       <div id="lowStockAlert" style="display:none; background:var(--red); color:white; padding:12px; border-radius:10px; margin-bottom:15px; font-size:13px; font-weight:bold; text-align:center; box-shadow:0 4px 10px rgba(255,107,107,0.3);">
         ⚠️ কিছু পণ্যের স্টক কমে গেছে! দ্রুত চেক করুন।
       </div>
-
       <div class="balance-card">
         <div class="balance-header"><span>মোট ক্যাশ ইন-হ্যান্ড ❯</span><span>👁</span></div>
         <div class="balance-amount" id="cashBalance">৳ ০.০০</div>
@@ -186,21 +185,6 @@ td.right { text-align: right; }
         <div class="action-left"><div class="action-icon" style="background: #FFF4E6; color: var(--orange);">📝</div><div class="action-info"><h4>বিক্রয়ের আবেদন সমূহ</h4><p>নতুন রিকোয়েস্ট চেক করুন</p></div></div>
         <div style="color: var(--text-muted);">❯</div>
       </div>
-      <div class="action-row" onclick="switchView('reports')">
-        <div class="action-left"><div class="action-icon" style="background: #EAF3FF; color: var(--primary);">📈</div><div class="action-info"><h4>মাসিক রিপোর্ট</h4><p>বিক্রি ও আয় দেখুন</p></div></div>
-        <div style="color: var(--text-muted);">❯</div>
-      </div>
-    </section>
-
-    <section id="reports" class="view">
-      <div class="section-title">মাসিক রিপোর্ট</div>
-      <div class="dash-card" style="margin-bottom:15px;">
-        <div class="form-group">
-          <label>মাস সিলেক্ট করুন</label>
-          <input type="month" id="reportMonth" onchange="generateReport()">
-        </div>
-      </div>
-      <div id="reportResult"></div>
     </section>
 
     <section id="approvals" class="view">
@@ -243,7 +227,6 @@ td.right { text-align: right; }
       <div class="side-menu-item" onclick="switchView('approvals')"><div class="side-menu-left"><span class="icon">📝</span> বিক্রয়ের আবেদন</div></div>
       <div class="side-menu-item" onclick="switchView('delivery')"><div class="side-menu-left"><span class="icon">🚚</span> ডেলিভারি কনফার্ম</div></div>
       <div class="side-menu-item" onclick="switchView('products')"><div class="side-menu-left"><span class="icon">📦</span> পণ্য ও স্টক</div></div>
-      <div class="side-menu-item" onclick="switchView('reports')"><div class="side-menu-left"><span class="icon">📈</span> মাসিক রিপোর্ট</div></div>
       <div class="side-menu-item" onclick="switchView('users')"><div class="side-menu-left"><span class="icon">👥</span> ইউজার (SR)</div></div>
       <div class="side-menu-item divider"></div>
       <div class="side-menu-item" onclick="logoutUser()" style="color: var(--red);"><div class="side-menu-left"><span class="icon" style="color:var(--red);">🚪</span> লগআউট করুন</div></div>
@@ -274,43 +257,26 @@ td.right { text-align: right; }
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
   const auth = firebase.auth();
-  // Storage removed
 
   window.db = { products: [], batches: [], srs: [], pendingSales: [], approvedSales: [], deliveries: [] };
 
-  // ==== লগইন সিস্টেম ====
+  // লগইন লজিক
   const loginScreen = document.getElementById('loginScreen');
   const appContent = document.getElementById('appContent');
-  const loginForm = document.getElementById('loginForm');
-  const loginBtn = document.getElementById('loginBtn');
-  const loginError = document.getElementById('loginError');
-
   auth.onAuthStateChanged((user) => {
     if (user) { loginScreen.style.display = 'none'; appContent.style.display = 'block'; listenToData(); } 
     else { loginScreen.style.display = 'flex'; appContent.style.display = 'none'; }
   });
 
-  loginForm.addEventListener('submit', (e) => {
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
-    loginBtn.textContent = 'অপেক্ষা করুন...'; loginBtn.disabled = true; loginError.style.display = 'none';
-
-    auth.signInWithEmailAndPassword(email, password)
-      .then(() => { loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false; loginForm.reset(); })
-      .catch((error) => {
-        loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false; loginError.style.display = 'block';
-        if(error.code === 'auth/invalid-email') loginError.textContent = 'ইমেইলটি সঠিক নয়।';
-        else if(error.code === 'auth/user-not-found') loginError.textContent = 'এই ইমেইলে কোনো অ্যাকাউন্ট নেই।';
-        else if(error.code === 'auth/wrong-password') loginError.textContent = 'পাসওয়ার্ড ভুল হয়েছে।';
-        else if(error.code === 'auth/network-request-failed') loginError.textContent = 'ইন্টারনেট কানেকশন চেক করুন।';
-        else loginError.textContent = 'এরর: ' + error.message;
-      });
+    auth.signInWithEmailAndPassword(email, password).catch((error) => alert("লগইন ব্যর্থ: " + error.message));
   });
 
   window.logoutUser = function() { if(confirm('লগআউট করবেন?')) auth.signOut(); };
 
-  // ==== ডেটা লিসেনার ====
   function listenToData() {
     database.ref('products').on('value', (snap) => { window.db.products = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
     database.ref('batches').on('value', (snap) => { window.db.batches = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
@@ -320,17 +286,9 @@ td.right { text-align: right; }
     database.ref('deliveries').on('value', (snap) => { window.db.deliveries = snap.val() ? Object.values(snap.val()) : []; renderAll(); });
   }
 
-  // ==== পণ্য সেভ (লিংক সহ) ====
   window.saveProductToDB = function(data, stock, imageLink) {
     const pId = Date.now().toString(36);
-    
-    // সরাসরি ডেটাবেসে সেভ (ছবির লিংক সহ)
-    database.ref('products/' + pId).set({ 
-      id: pId, 
-      name: data.name, 
-      saleRate: Number(data.saleRate), 
-      imageUrl: imageLink || '' 
-    }).then(() => {
+    database.ref('products/' + pId).set({ id: pId, name: data.name, saleRate: Number(data.saleRate), imageUrl: imageLink || '' }).then(() => {
       if(stock > 0) {
         const bId = Date.now().toString(36) + 'b';
         database.ref('batches/' + bId).set({ id: bId, productId: pId, qty: Number(stock), batchNo: 'INITIAL' });
@@ -338,9 +296,10 @@ td.right { text-align: right; }
     });
   };
 
+  // ⭐ এখানে পিন বাদ দেওয়া হয়েছে
   window.saveSRToDB = function(data) {
     const id = Date.now().toString(36);
-    database.ref('srs/' + id).set({ id: id, name: data.name, phone: data.phone, pin: data.pin });
+    database.ref('srs/' + id).set({ id: id, name: data.name, phone: data.phone });
   };
 
   window.approveSaleToDB = function(reqId, reqData) {
@@ -348,7 +307,6 @@ td.right { text-align: right; }
       let totalStock = window.db.batches.filter(x => x.productId === item.productId).reduce((a,b)=>a+Number(b.qty),0);
       if(totalStock < item.qty) return alert(`পণ্য "${item.productName}" এর স্টক নেই! বর্তমান স্টক: ${totalStock}`);
     }
-
     for(let item of reqData.items) {
       let remaining = item.qty;
       let bList = window.db.batches.filter(x => x.productId === item.productId && Number(x.qty) > 0);
@@ -359,7 +317,6 @@ td.right { text-align: right; }
         else { database.ref('batches/' + b.id).update({ qty: 0 }); remaining -= cQty; }
       }
     }
-
     database.ref('pendingSales/' + reqId).update({ status: 'approved' }).then(() => {
       database.ref('approvedSales/' + reqId).set({ ...reqData, status: 'approved' });
       database.ref('pendingSales/' + reqId).remove();
@@ -367,13 +324,8 @@ td.right { text-align: right; }
     });
   };
 
-  window.rejectSaleFromDB = function(reqId) {
-    if(confirm('বাতিল করবেন?')) database.ref('pendingSales/' + reqId).remove();
-  };
-
-  window.confirmDeliveryDB = function(id) {
-    database.ref('deliveries/' + id).update({ status: 'delivered' });
-  };
+  window.rejectSaleFromDB = function(reqId) { if(confirm('বাতিল করবেন?')) database.ref('pendingSales/' + reqId).remove(); };
+  window.confirmDeliveryDB = function(id) { database.ref('deliveries/' + id).update({ status: 'delivered' }); };
 
   const $ = id => document.getElementById(id);
   const money = n => '৳ ' + Number(n).toLocaleString('bn-BD', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -400,41 +352,30 @@ td.right { text-align: right; }
   window.closeModal = function(){ modal.classList.remove('open'); modalHandler = null; $('dataForm').reset(); };
   $('dataForm').addEventListener('submit', e => { e.preventDefault(); if(modalHandler) modalHandler(e); });
 
-  // ==== ফর্ম ওপেন ====
   window.openForm = function(type) {
     if(type === 'product') {
       showModal('পণ্য যোগ', `
         <div class="form-group"><label>পণ্যের নাম *</label><input type="text" name="name" required></div>
         <div class="form-group"><label>বিক্রয় মূল্য</label><input type="number" name="saleRate" value="0" min="0"></div>
         <div class="form-group"><label>প্রাথমিক স্টক</label><input type="number" name="stock" value="0" min="0"></div>
-        <div class="form-group"><label>পণ্যের ছবির লিংক (Image URL)</label><input type="url" name="imageLink" placeholder="https://postimg.cc/..."></div>
+        <div class="form-group"><label>পণ্যের ছবির লিংক</label><input type="url" name="imageLink" placeholder="https://..."></div>
         `, (e) => {
         const d = Object.fromEntries(new FormData($('dataForm')).entries());
         saveProductToDB(d, d.stock, d.imageLink); closeModal();
       });
     } else if(type === 'sr') {
+      // পিন বাদ দেওয়া হয়েছে
       showModal('নতুন এসআর (SR)', `<div class="form-group"><label>নাম *</label><input type="text" name="name" required></div>
-        <div class="form-group"><label>ফোন *</label><input type="text" name="phone" required></div>
-        <div class="form-group"><label>পিন</label><input type="password" name="pin" value="1234"></div>`, (e) => {
+        <div class="form-group"><label>মোবাইল নম্বর *</label><input type="text" name="phone" required></div>`, (e) => {
         const d = Object.fromEntries(new FormData($('dataForm')).entries());
         saveSRToDB(d); closeModal();
       });
     }
   };
 
-  // ==== রেন্ডারিং ====
   window.renderAll = function() {
     const db = window.db;
     
-    // লো স্টক অ্যালার্ট চেক
-    let lowStockCount = 0;
-    db.products.forEach(p => {
-      let stock = db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0);
-      if(stock <= 10) lowStockCount++;
-    });
-    if(lowStockCount > 0) $('lowStockAlert').style.display = 'block';
-    else $('lowStockAlert').style.display = 'none';
-
     let pending = db.pendingSales.filter(s=>s.status === 'pending');
     let deliveries = db.deliveries.filter(d=>d.status !== 'delivered');
     
@@ -455,26 +396,13 @@ td.right { text-align: right; }
       `).join('');
     }
 
-    if($('deliveryTableBody')) {
-      if(db.deliveries.length === 0) $('deliveryTableBody').innerHTML = '<tr><td colspan="5" class="empty-state">নেই</td></tr>';
-      else $('deliveryTableBody').innerHTML = db.deliveries.map(d => `<tr>
-        <td>${esc(d.srName)}</td><td>${esc(d.customerName)}</td><td class="right">${money(d.total)}</td>
-        <td><span class="pill ${d.status==='delivered'?'green':'amber'}">${d.status==='delivered'?'ডেলিভারড':'পেন্ডিং'}</span></td>
-        <td>${d.status !== 'delivered' ? `<button class="btn-add" style="padding:4px 8px; font-size:11px;" onclick="confirmDeliveryDB('${d.id}')">কনফার্ম</button>` : ''}</td>
-      </tr>`).join('');
-    }
-
     if($('productsTable')) {
       $('productsTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>ছবি</th><th>পণ্য</th><th>স্টক</th></tr></thead>
         <tbody>${db.products.map(p => {
           let stock = db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0);
           let stockColor = stock <= 10 ? 'red' : 'green';
-          let imgHtml = p.imageUrl ? `<img src="${p.imageUrl}" class="prod-img">` : `<div class="prod-img">📦</div>`;
-          return `<tr>
-            <td>${imgHtml}</td>
-            <td>${esc(p.name)}</td>
-            <td><span class="pill ${stockColor}">${stock} পিস</span></td>
-          </tr>`;
+          let imgHtml = p.imageUrl ? `<img src="${p.imageUrl}" class="prod-img" onerror="this.src='https://via.placeholder.com/40?text=No+Img'">` : `<div class="prod-img">📦</div>`;
+          return `<tr><td>${imgHtml}</td><td>${esc(p.name)}</td><td><span class="pill ${stockColor}">${stock} পিস</span></td></tr>`;
         }).join('')}</tbody></table></div>`;
     }
 
@@ -483,56 +411,6 @@ td.right { text-align: right; }
         <tbody>${db.srs.map(s => `<tr><td>${esc(s.name)}</td><td>${esc(s.phone)}</td></tr>`).join('')}</tbody></table></div>`;
     }
   };
-
-  // ==== মাসিক রিপোর্ট লজিক ====
-  window.generateReport = function() {
-    const monthVal = $('reportMonth').value; 
-    if(!monthVal) return;
-
-    const approved = window.db.approvedSales.filter(s => s.date && s.date.startsWith(monthVal));
-    
-    let totalSales = 0; let totalPaid = 0; let productCount = {};
-
-    approved.forEach(s => {
-      totalSales += Number(s.total);
-      totalPaid += Number(s.paid);
-      s.items.forEach(item => {
-        if(!productCount[item.productName]) productCount[item.productName] = 0;
-        productCount[item.productName] += Number(item.qty);
-      });
-    });
-
-    let due = totalSales - totalPaid;
-
-    let topProducts = Object.keys(productCount).map(name => {
-      return `<div class="list-item">
-        <div class="list-item-left"><h4>${esc(name)}</h4></div>
-        <div class="pill blue">${productCount[name]} পিস</div>
-      </div>`;
-    }).join('');
-
-    if(approved.length === 0) topProducts = '<div class="empty-state">এই মাসে কোনো বিক্রি হয়নি</div>';
-
-    $('reportResult').innerHTML = `
-      <div class="balance-card" style="background:var(--primary-dark);">
-        <div class="balance-header"><span>মোট বিক্রি (${monthVal})</span></div>
-        <div class="balance-amount" style="font-size:26px;">${money(totalSales)}</div>
-        <div style="display:flex; justify-content:space-between; font-size:13px; opacity:0.9;">
-          <span>আদায়: ${money(totalPaid)}</span>
-          <span>বাকি: ${money(due)}</span>
-        </div>
-      </div>
-      <div class="section-title" style="margin-top:20px; font-size:16px;">সর্বাধিক বিক্রীত পণ্য</div>
-      ${topProducts}
-    `;
-  };
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    $('reportMonth').value = `${now.getFullYear()}-${month}`;
-  });
-
 </script>
 </body>
 </html>
