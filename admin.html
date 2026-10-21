@@ -55,16 +55,28 @@ button:active { transform: scale(0.96); }
 .view.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ================= Unified Balance Card ================= */
-.unified-balance-card { background: var(--card); border-radius: 16px; padding: 15px 18px; box-shadow: var(--shadow); margin-bottom: 15px; border: 1px solid var(--border); }
-.ub-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); }
+/* ================= Unified Balance Card (TINTED COLOR) ================= */
+.unified-balance-card { 
+  background: linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%); /* Light logo color tint */
+  border-radius: 16px; padding: 15px 18px; 
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08); 
+  margin-bottom: 15px; border: 1px solid #DBEAFE; 
+}
+[data-theme="dark"] .unified-balance-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.ub-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #BFDBFE; }
+[data-theme="dark"] .ub-top { border-bottom: 1px dashed var(--border); }
 .ub-item { display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .ub-item.right-align { text-align: right; align-items: flex-end; }
 .ub-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
 .ub-val { font-size: 20px; font-weight: 800; color: var(--primary); }
 .ub-val.red { color: var(--red); }
 .ub-val.orange { color: var(--orange); }
-.ub-divider { width: 1px; height: 35px; background: var(--border); margin: 0 15px; }
+.ub-divider { width: 1px; height: 35px; background: #BFDBFE; margin: 0 15px; }
+[data-theme="dark"] .ub-divider { background: var(--border); }
 .ub-bottom { display: flex; justify-content: space-between; }
 .ub-split-item { font-size: 12px; display: flex; align-items: center; gap: 4px; font-weight: 600; }
 .ub-split-item.green { color: var(--green); }
@@ -297,16 +309,28 @@ input:checked + .slider:before { transform: translateX(22px); }
 /* Ensure the table inside HTML2Canvas renders correctly */
 #invoicePrintArea table { min-width: 100%; }
 
-/* Invoice List Styling (Cleaner) */
-.invoice-list-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; box-shadow: var(--shadow);}
+/* ================= NEW INVOICE LIST STYLES ================= */
+.invoice-list-item { 
+  background: var(--card); 
+  border-radius: 12px; 
+  padding: 16px; 
+  margin-bottom: 12px; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
+  border: 1px solid var(--border); 
+  cursor: pointer; 
+  transition: 0.2s;
+}
 .invoice-list-item:active { background: var(--primary-light); border-color: var(--primary); }
-.inv-list-header { display: flex; justify-content: space-between; align-items: center; }
-.inv-list-inv { color: var(--primary); font-size: 16px; font-weight: 800; }
-.inv-list-cust { font-size: 14px; margin-top: 5px; color: var(--text); }
-.inv-list-date { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+.inv-list-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.inv-list-inv { color: #5A52FF; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.inv-list-cust { font-size: 14px; color: var(--text); margin-bottom: 4px; }
+.inv-list-date { font-size: 12px; color: var(--text-muted); }
 .inv-list-amounts { text-align: right; }
-.inv-list-total { font-size: 15px; font-weight: bold; color: var(--text); }
-.inv-list-due { font-size: 12px; margin-top: 4px; font-weight: 600; }
+.inv-list-total { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.inv-list-due { font-size: 12px; font-weight: 600; }
+
+#invoiceSearchInput, #invoiceViewSearchInput { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; background: var(--card); color: var(--text); margin-bottom: 15px; outline: none;}
 
 </style>
 
@@ -1066,7 +1090,6 @@ input:checked + .slider:before { transform: translateX(22px); }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
 
-  // Updated Invoice List Item to match the screenshot
   function getInvoiceListItemHTML(t) {
     const party = window.db.parties.find(p => p.id === t.partyId);
     const pName = party ? party.name : 'Unknown';
