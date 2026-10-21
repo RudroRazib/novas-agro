@@ -12,7 +12,7 @@
 <style>
 /* ================= Global & Theme ================= */
 :root { 
-  --primary: #2563EB; /* Logo inspired Blue */
+  --primary: #2563EB; 
   --primary-light: #EFF6FF; 
   --bg: #F8FAFC; 
   --bg-gradient: linear-gradient(135deg, #F0F9FF 0%, #F8FAFC 100%);
@@ -55,23 +55,21 @@ button:active { transform: scale(0.96); }
 .view.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ================= Unified Balance Card (TINTED COLOR) ================= */
+/* ================= Unified Balance Card ================= */
 .unified-balance-card { 
-  background: linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%); /* Light logo color tint */
+  background: linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%); 
   border-radius: 16px; padding: 15px 18px; 
   box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08); 
   margin-bottom: 15px; border: 1px solid #DBEAFE; 
 }
-[data-theme="dark"] .unified-balance-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-}
+[data-theme="dark"] .unified-balance-card { background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow); }
 .ub-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #BFDBFE; }
 [data-theme="dark"] .ub-top { border-bottom: 1px dashed var(--border); }
-.ub-item { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.ub-item { display: flex; flex-direction: column; gap: 4px; flex: 1; padding: 5px; border-radius: 8px; transition: background 0.2s; cursor: pointer;}
+.ub-item:hover { background: rgba(255,255,255,0.5); }
+[data-theme="dark"] .ub-item:hover { background: rgba(255,255,255,0.05); }
 .ub-item.right-align { text-align: right; align-items: flex-end; }
-.ub-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+.ub-label { font-size: 12px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 5px;}
 .ub-val { font-size: 20px; font-weight: 800; color: var(--primary); }
 .ub-val.red { color: var(--red); }
 .ub-val.orange { color: var(--orange); }
@@ -106,6 +104,7 @@ th { background: var(--bg); color: var(--text-muted); font-weight: 600; font-siz
 .product-card .info h4 { font-size: 14px; margin-bottom: 2px; font-weight: 700; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;}
 .product-card .info p { font-size: 12px; color: var(--text-muted); }
 .btn-edit-icon { width: 34px; height: 34px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
+.btn-add-stock { background: var(--green); color: white; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 3px;}
 
 /* ================= Settings & Activity Log ================= */
 .settings-list { background: var(--card); border-radius: 16px; padding: 15px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 15px; }
@@ -309,7 +308,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 /* Ensure the table inside HTML2Canvas renders correctly */
 #invoicePrintArea table { min-width: 100%; }
 
-/* ================= NEW INVOICE LIST STYLES ================= */
+/* ================= NEW INVOICE LIST & TRANSACTIONS STYLES ================= */
 .invoice-list-item { 
   background: var(--card); 
   border-radius: 12px; 
@@ -330,7 +329,17 @@ input:checked + .slider:before { transform: translateX(22px); }
 .inv-list-total { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .inv-list-due { font-size: 12px; font-weight: 600; }
 
-#invoiceSearchInput, #invoiceViewSearchInput { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; background: var(--card); color: var(--text); margin-bottom: 15px; outline: none;}
+#invoiceSearchInput, #invoiceViewSearchInput, #txnSearchInput { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; background: var(--card); color: var(--text); margin-bottom: 15px; outline: none;}
+
+/* Styles for Quick Form calculator box */
+.q-calc-box { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px; margin-top: 10px; background: var(--primary-light); padding: 12px; border-radius: 8px; border: 1px solid #BFDBFE; }
+[data-theme="dark"] .q-calc-box { background: var(--bg); border-color: var(--border); }
+
+/* Breakdown List Item */
+.breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border); }
+.breakdown-item:last-child { border-bottom: none; }
+.breakdown-name { font-weight: 600; font-size: 14px; }
+.breakdown-amount { font-weight: 700; font-size: 15px; }
 
 </style>
 
@@ -381,19 +390,19 @@ input:checked + .slider:before { transform: translateX(22px); }
 
       <div class="unified-balance-card">
         <div class="ub-top">
-          <div class="ub-item">
+          <div class="ub-item" onclick="showReceivableDetails()">
             <span class="ub-label">মোট ক্যাশ ইন-হ্যান্ড</span>
             <strong class="ub-val" id="cashBalance">৳ ০.০০</strong>
           </div>
           <div class="ub-divider"></div>
-          <div class="ub-item right-align">
-            <span class="ub-label red">সর্বমোট বাকী (পাবো)</span>
+          <div class="ub-item right-align" onclick="showReceivableDetails()">
+            <span class="ub-label red">সর্বমোট বাকী (পাবো) ⓘ</span>
             <strong class="ub-val red" id="totalDueDashboard">৳ ০.০০</strong>
           </div>
         </div>
         <div class="ub-bottom">
-          <div class="ub-item" style="flex:1;">
-            <span class="ub-label" style="color:var(--orange)">সর্বমোট দেনা (দিবো)</span>
+          <div class="ub-item" style="flex:1;" onclick="showPayableDetails()">
+            <span class="ub-label" style="color:var(--orange)">সর্বমোট দেনা (দিবো) ⓘ</span>
             <strong class="ub-val orange" id="totalPayableDashboard" style="font-size:16px;">৳ ০.০০</strong>
           </div>
           <div class="ub-item right-align" style="justify-content:flex-end;">
@@ -496,6 +505,13 @@ input:checked + .slider:before { transform: translateX(22px); }
       <div id="invoiceViewContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
     </section>
 
+    <!-- Transactions Full View (For Editing) -->
+    <section id="transactions" class="view">
+      <div class="section-title">লেনদেন এডিট</div>
+      <input type="text" id="txnSearchInput" placeholder="🔍 পণ্য বা পার্টির নাম সার্চ করুন..." oninput="renderTransactionsList(this.value)">
+      <div id="transactionsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    </section>
+
     <!-- Other Views -->
     <section id="partyRequests" class="view">
       <div class="section-title">পার্টি রিকোয়েস্ট</div>
@@ -544,6 +560,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     <div class="side-menu">
       <div class="side-menu-item" onclick="switchView('dashboard')"><div class="side-menu-left"><span class="icon">📊</span> ড্যাশবোর্ড</div></div>
       <div class="side-menu-item" onclick="switchView('invoices')"><div class="side-menu-left"><span class="icon">🧾</span> ইনভয়েস লিস্ট</div></div>
+      <div class="side-menu-item" onclick="switchView('transactions')"><div class="side-menu-left"><span class="icon">📝</span> লেনদেন এডিট</div></div>
       <div class="side-menu-item" onclick="switchView('parties')"><div class="side-menu-left"><span class="icon">🤝</span> পার্টি লিস্ট</div></div>
       <div class="side-menu-item" onclick="switchView('suppliers')"><div class="side-menu-left"><span class="icon">🏭</span> সাপ্লায়ার লিস্ট</div></div>
       <div class="side-menu-item" onclick="switchView('products')"><div class="side-menu-left"><span class="icon">📦</span> পণ্য ও স্টক</div></div>
@@ -559,8 +576,58 @@ input:checked + .slider:before { transform: translateX(22px); }
       <div class="modal-head"><h3 id="modalTitle">তথ্য দিন</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
       <form id="dataForm" autocomplete="off">
         <div id="formFields"></div>
-        <div class="form-actions"><button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button><button type="submit" class="btn-submit" id="submitBtn">সংরক্ষণ</button></div>
+        <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button>
+            <button type="submit" class="btn-submit" id="submitBtn">সংরক্ষণ</button>
+        </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Add Stock Modal -->
+  <div class="modal" id="addStockModal">
+    <div class="modal-box">
+      <div class="modal-head"><h3 style="color:var(--green)">নতুন স্টক যোগ করুন</h3><button class="close-btn" onclick="closeAddStockModal()">✕</button></div>
+      <p style="font-size:14px; margin-bottom:15px; font-weight:bold;" id="addStockProdName">পণ্যের নাম</p>
+      <input type="hidden" id="addStockProdId">
+      
+      <div class="form-group">
+          <label>সাপ্লায়ার (কার থেকে কিনেছেন?)</label>
+          <select id="addStockSupplier">
+              <option value="">সিলেক্ট করুন</option>
+          </select>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <div class="form-group" style="flex:1;">
+            <label>পরিমাণ (পিস)</label>
+            <input type="number" id="newStockQty" min="1" placeholder="0">
+        </div>
+        <div class="form-group" style="flex:1;">
+            <label>নতুন ক্রয় মূল্য (ঐচ্ছিক)</label>
+            <input type="number" id="newStockRate" min="0" placeholder="0.00">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="closeAddStockModal()">বাতিল</button>
+        <button type="button" class="btn-submit" style="background:var(--green);" onclick="saveAddStock()">স্টক যোগ করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Breakdown Modals (Payable & Receivable) -->
+  <div class="modal" id="payableDetailsModal">
+    <div class="modal-box">
+      <div class="modal-head"><h3 style="color:var(--orange)">দেনা বিবরণ (দিবো)</h3><button class="close-btn" onclick="closePayableDetailsModal()">✕</button></div>
+      <div id="payableDetailsList" style="max-height: 60vh; overflow-y: auto;"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="receivableDetailsModal">
+    <div class="modal-box">
+      <div class="modal-head"><h3 style="color:var(--red)">বাকী বিবরণ (পাবো)</h3><button class="close-btn" onclick="closeReceivableDetailsModal()">✕</button></div>
+      <div id="receivableDetailsList" style="max-height: 60vh; overflow-y: auto;"></div>
     </div>
   </div>
 
@@ -894,6 +961,67 @@ input:checked + .slider:before { transform: translateX(22px); }
     logActivity('এসআর', `নতুন এসআর যোগ করা হয়েছে: ${data.name}`);
   };
 
+  // ================= ADD STOCK LOGIC =================
+  window.openAddStockModal = function(id, name) {
+    document.getElementById('addStockProdId').value = id;
+    document.getElementById('addStockProdName').innerText = "পণ্য: " + name;
+    document.getElementById('newStockQty').value = '';
+    document.getElementById('newStockRate').value = '';
+    
+    // Populate Suppliers
+    const supSelect = document.getElementById('addStockSupplier');
+    supSelect.innerHTML = `<option value="">সিলেক্ট করুন</option>` + window.db.suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    
+    document.getElementById('addStockModal').classList.add('open');
+  };
+
+  window.closeAddStockModal = function() {
+    document.getElementById('addStockModal').classList.remove('open');
+  };
+
+  window.saveAddStock = function() {
+    const pId = document.getElementById('addStockProdId').value;
+    const supplierId = document.getElementById('addStockSupplier').value;
+    const qty = Number(document.getElementById('newStockQty').value);
+    const rate = Number(document.getElementById('newStockRate').value) || 0;
+    
+    if(!supplierId) return alert('সাপ্লায়ার সিলেক্ট করুন!');
+    if(!qty || qty <= 0) return alert('সঠিক পরিমাণ দিন!');
+
+    // 1. Add Stock Batch
+    let bId = Date.now().toString(36) + 's';
+    database.ref('batches/' + bId).set({ id: bId, productId: pId, qty: qty, batchNo: 'MANUAL_ADD' });
+
+    // 2. Update Product Purchase Rate if provided
+    if(rate > 0) {
+      database.ref('products/' + pId).update({ purchaseRate: rate });
+    }
+
+    // 3. Create a Purchase Transaction to track Supplier Due
+    const txnId = 'TXN-' + Date.now().toString(36).toUpperCase();
+    const total = qty * rate;
+    const txnData = {
+        id: txnId,
+        date: new Date().toISOString(),
+        type: 'purchase',
+        productId: pId,
+        qty: qty,
+        rate: rate,
+        total: total,
+        paid: 0,
+        due: total,
+        supplierId: supplierId
+    };
+    database.ref('transactions/' + txnId).set(txnData);
+
+    const pName = window.db.products.find(p => p.id === pId)?.name || 'Unknown';
+    const supName = window.db.suppliers.find(s => s.id === supplierId)?.name || 'Unknown';
+    logActivity('স্টক যোগ', `${supName} থেকে ${pName} - এ নতুন ${qty} পিস স্টক যোগ করা হয়েছে।`);
+
+    alert('সফলভাবে স্টক যোগ হয়েছে এবং সাপ্লায়ারের দেনায় যুক্ত হয়েছে!');
+    closeAddStockModal();
+  };
+
   // Backup & Reset Logic
   window.downloadBackup = function() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.db, null, 2));
@@ -943,7 +1071,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     let due = Number(party.previousDue || 0);
     
     // Old approved sales
-    window.db.approvedSales.filter(s => s.customerName === party.name).forEach(s => {
+    window.db.approvedSales.filter(s => s.customerName === party.name || s.partyId === party.id).forEach(s => {
       due += (Number(s.total || 0) - Number(s.paid || 0));
     });
     
@@ -965,6 +1093,16 @@ input:checked + .slider:before { transform: translateX(22px); }
       }
     });
     
+    return due;
+  }
+
+  function calculateSupplierDue(supplierId) {
+    let due = 0;
+    window.db.transactions.filter(t => t.supplierId === supplierId).forEach(t => {
+      if(t.type === 'purchase') due += (Number(t.total) - Number(t.paid));
+      if(t.type === 'due_pay' || t.type === 'cash_out') due -= Number(t.amount);
+      if(t.type === 'purchase_return') due -= (Number(t.total) - Number(t.paid));
+    });
     return due;
   }
 
@@ -1069,6 +1207,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 
   window.renderInvoiceView = function(searchTerm = '') {
     const container = document.getElementById('invoiceViewContainer');
+    if(!container) return;
     let sales = window.db.transactions.filter(t => t.type === 'sales');
     sales.sort((a,b) => new Date(b.date) - new Date(a.date));
 
@@ -1162,6 +1301,107 @@ input:checked + .slider:before { transform: translateX(22px); }
     // Show Modal
     document.getElementById('newSaleModal').classList.add('open');
   };
+
+  // ================= BREAKDOWN MODALS LOGIC =================
+  window.showPayableDetails = function() {
+    let html = '';
+    let count = 0;
+    window.db.suppliers.forEach(s => {
+        let sDue = calculateSupplierDue(s.id);
+        if (sDue > 0) { 
+            count++;
+            html += `
+                <div class="breakdown-item">
+                    <span class="breakdown-name">${esc(s.name)}</span>
+                    <strong class="breakdown-amount" style="color:var(--orange);">
+                        ৳ ${sDue.toFixed(2)}
+                    </strong>
+                </div>
+            `;
+        }
+    });
+    if (count === 0) html = '<div style="text-align:center; padding:20px; color:#999;">কোনো দেনা নেই</div>';
+    document.getElementById('payableDetailsList').innerHTML = html;
+    document.getElementById('payableDetailsModal').classList.add('open');
+  };
+  window.closePayableDetailsModal = function() { document.getElementById('payableDetailsModal').classList.remove('open'); };
+
+  window.showReceivableDetails = function() {
+    let html = '';
+    let count = 0;
+    window.db.parties.forEach(p => {
+        let pDue = calculatePartyDue(p);
+        if (pDue > 0) { 
+            count++;
+            html += `
+                <div class="breakdown-item">
+                    <span class="breakdown-name">${esc(p.name)}</span>
+                    <strong class="breakdown-amount" style="color:var(--red);">
+                        ৳ ${pDue.toFixed(2)}
+                    </strong>
+                </div>
+            `;
+        }
+    });
+    if (count === 0) html = '<div style="text-align:center; padding:20px; color:#999;">কোনো বাকী নেই</div>';
+    document.getElementById('receivableDetailsList').innerHTML = html;
+    document.getElementById('receivableDetailsModal').classList.add('open');
+  };
+  window.closeReceivableDetailsModal = function() { document.getElementById('receivableDetailsModal').classList.remove('open'); };
+
+
+  // ================= TRANSACTIONS EDIT LOGIC (New) =================
+  window.renderTransactionsList = function(searchTerm = '') {
+    const container = document.getElementById('transactionsList');
+    if(!container) return;
+    
+    let txns = window.db.transactions.filter(t => ['purchase', 'sales_return', 'purchase_return'].includes(t.type));
+    txns.sort((a,b) => new Date(b.date) - new Date(a.date));
+    
+    if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase();
+      txns = txns.filter(t => {
+        const pName = window.db.products.find(p => p.id === t.productId)?.name?.toLowerCase() || '';
+        const entityName = (window.db.parties.find(p => p.id === t.partyId)?.name || window.db.suppliers.find(s => s.id === t.supplierId)?.name || '').toLowerCase();
+        return pName.includes(lowerSearch) || entityName.includes(lowerSearch);
+      });
+    }
+
+    if (txns.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো লেনদেন পাওয়া যায়নি</div>';
+      return;
+    }
+
+    container.innerHTML = txns.map(t => {
+        const pName = window.db.products.find(p => p.id === t.productId)?.name || 'Unknown';
+        let typeStr = '';
+        let entityStr = '';
+        let color = '';
+        if(t.type === 'purchase') { typeStr = 'ক্রয়'; entityStr = window.db.suppliers.find(s => s.id === t.supplierId)?.name || 'Unknown'; color = 'var(--blue)'; }
+        if(t.type === 'sales_return') { typeStr = 'বিক্রয় রিটার্ন'; entityStr = window.db.parties.find(p => p.id === t.partyId)?.name || 'Unknown'; color = 'var(--orange)'; }
+        if(t.type === 'purchase_return') { typeStr = 'ক্রয় রিটার্ন'; entityStr = window.db.suppliers.find(s => s.id === t.supplierId)?.name || 'Unknown'; color = 'var(--red)'; }
+        
+        return `<div class="invoice-list-item" onclick="editTransaction('${t.id}')">
+            <div class="inv-list-header">
+                <div>
+                    <div class="inv-list-inv" style="color:${color};">${typeStr}</div>
+                    <div class="inv-list-cust">${esc(entityStr)}</div>
+                    <div class="inv-list-date">${esc(pName)} (${t.qty} পিস) - ${new Date(t.date).toLocaleDateString('bn-BD')}</div>
+                </div>
+                <div class="inv-list-amounts">
+                    <div class="inv-list-total">৳ ${Number(t.total).toFixed(2)}</div>
+                    <div class="inv-list-due" style="color:${t.due > 0 ? 'var(--red)' : 'var(--green)'};">বাকি: ৳ ${Number(t.due).toFixed(2)}</div>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+  }
+
+  window.editTransaction = function(txnId) {
+    const txn = window.db.transactions.find(t => t.id === txnId);
+    if(!txn) return;
+    openQuickForm(txn.type, txnId);
+  }
 
   // ================= SALE ITEMS LOGIC =================
 
@@ -1320,31 +1560,27 @@ input:checked + .slider:before { transform: translateX(22px); }
   };
 
   // Helper to deduct stock
-  function deductStock(items) {
-      for(let item of items) {
-          let remaining = Number(item.qty);
-          let bList = window.db.batches.filter(x => x.productId === item.productId && Number(x.qty) > 0);
-          for(let b of bList) {
-              if(remaining <= 0) break;
-              let cQty = Number(b.qty);
-              let targetKey = b.key || b.id;
-              if(cQty >= remaining) { 
-                  database.ref('batches/' + targetKey).update({ qty: cQty - remaining }); 
-                  remaining = 0; 
-              } else { 
-                  database.ref('batches/' + targetKey).update({ qty: 0 }); 
-                  remaining -= cQty; 
-              }
+  function deductStock(productId, qty) {
+      let remaining = qty;
+      let bList = window.db.batches.filter(x => x.productId === productId && Number(x.qty) > 0);
+      for(let b of bList) {
+          if(remaining <= 0) break;
+          let cQty = Number(b.qty);
+          let targetKey = b.key || b.id;
+          if(cQty >= remaining) { 
+              database.ref('batches/' + targetKey).update({ qty: cQty - remaining }); 
+              remaining = 0; 
+          } else { 
+              database.ref('batches/' + targetKey).update({ qty: 0 }); 
+              remaining -= cQty; 
           }
       }
   }
 
-  // Helper to restore stock (for editing)
-  function restoreStock(items) {
-      for(let item of items) {
-          let bId = Date.now().toString(36) + Math.random().toString(36).substring(2, 5);
-          database.ref('batches/' + bId).set({ id: bId, productId: item.productId, qty: Number(item.qty), batchNo: 'EDIT_RESTORE' });
-      }
+  // Helper to add stock
+  function addStock(productId, qty, prefix='RETURN') {
+      let bId = Date.now().toString(36) + Math.random().toString(36).substring(2, 5);
+      database.ref('batches/' + bId).set({ id: bId, productId: productId, qty: Number(qty), batchNo: prefix });
   }
 
   window.saveNewSale = function() {
@@ -1382,10 +1618,10 @@ input:checked + .slider:before { transform: translateX(22px); }
     if (isEdit) {
         const oldTxn = window.db.transactions.find(t => t.id === txnId);
         if (oldTxn && oldTxn.items) {
-            restoreStock(oldTxn.items); // Return old stock
+            for(let item of oldTxn.items) addStock(item.productId, item.qty, 'EDIT_RESTORE'); 
         }
     }
-    deductStock(saleItemsCopy); // Deduct new stock
+    for(let item of saleItemsCopy) deductStock(item.productId, item.qty);
 
     let txnData = { 
       id: txnId, invoiceNo: invNo, date: date, type: 'sales', partyId: partyId, items: saleItemsCopy, 
@@ -1396,7 +1632,6 @@ input:checked + .slider:before { transform: translateX(22px); }
       let itemsStr = saleItemsCopy.map(i => `${i.name} (${i.qty} পিস)`).join(', ');
       logActivity(isEdit ? 'বিক্রয় এডিট' : 'বিক্রয়', `${partyObj.name} - এর কাছে বিক্রয় ${isEdit ? 'আপডেট' : ''}: ${itemsStr}। মোট: ${money(grandTotal)}, জমা: ${money(paid)}, বাকি: ${money(due)}`);
       
-      // Show Printable Invoice
       showInvoicePreview(invNo, partyObj, saleItemsCopy, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod);
       
       window.editingSaleId = null;
@@ -1405,17 +1640,15 @@ input:checked + .slider:before { transform: translateX(22px); }
     });
   };
 
-  // ================= UPDATED INVOICE PREVIEW (Xin Style without Item Discount) =================
+  // ================= UPDATED INVOICE PREVIEW =================
   window.showInvoicePreview = function(invNo, party, items, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod) {
-    const dateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-'); // DD-MM-YYYY
+    const dateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-'); 
     
-    // Calculate discount percentage for display if flat is provided instead of percent
     let displayPercent = discPercent;
     if (displayPercent === 0 && subTotal > 0 && discFlat > 0) {
         displayPercent = ((discFlat / subTotal) * 100).toFixed(2);
     }
 
-    // Build item rows with product codes (Discount column removed)
     const itemRows = items.map((item, index) => {
         const prodCode = window.db.products.find(p => p.id === item.productId)?.code || 'N/A';
         return `
@@ -1504,7 +1737,6 @@ input:checked + .slider:before { transform: translateX(22px); }
         </div>
         <div class="xin-footer-right">
           <div class="xin-sum-row"><span>Sub Total:</span> <span>৳ ${Number(subTotal).toFixed(2)}</span></div>
-          <!-- Discount % shown in text -->
           <div class="xin-sum-row"><span>Discount ${displayPercent > 0 ? `(${displayPercent}%)` : ''}:</span> <span>৳ ${Number(discFlat).toFixed(2)}</span></div>
           <div class="xin-sum-row"><span>Add. Discount:</span> <span>৳ 0.00</span></div>
           <div class="xin-sum-row"><span>Shipping:</span> <span>৳ ${Number(delivery).toFixed(2)}</span></div>
@@ -1530,7 +1762,6 @@ input:checked + .slider:before { transform: translateX(22px); }
     document.getElementById('invoiceModal').classList.add('open');
   };
 
-  // Simple Number to Words converter for Invoice
   function numberToWords(num) {
       if(num === 0) return 'Zero';
       const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
@@ -1555,7 +1786,6 @@ input:checked + .slider:before { transform: translateX(22px); }
     switchView('dashboard');
   };
 
-  // ================= DOWNLOAD IMAGE FUNCTION FIXED =================
   window.downloadInvoiceImage = function() {
     const element = document.getElementById('invoicePrintArea');
     const btn = document.getElementById('btnDownloadInvoice');
@@ -1564,9 +1794,8 @@ input:checked + .slider:before { transform: translateX(22px); }
     btn.innerHTML = '⏳ ডাউনলোড হচ্ছে...';
     btn.disabled = true;
 
-    // Temporarily enforce styles for better capture
     const originalWidth = element.style.width;
-    element.style.width = '800px'; // Fixed width to prevent responsive squishing
+    element.style.width = '800px'; 
 
     setTimeout(() => {
         html2canvas(element, {
@@ -1577,14 +1806,12 @@ input:checked + .slider:before { transform: translateX(22px); }
             scrollX: -window.scrollX,
             logging: false
         }).then(canvas => {
-            // Use Blob instead of base64 to prevent crashes on mobile
             canvas.toBlob(function(blob) {
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 const invNo = document.getElementById('nsInvoiceNo').innerText || 'Export';
                 link.download = `Invoice_${invNo}.jpg`;
                 link.href = url;
-                // Target _blank helps bypass WebView download blockers
                 link.target = '_blank'; 
                 document.body.appendChild(link);
                 link.click();
@@ -1596,7 +1823,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                element.style.width = originalWidth; // Restore
+                element.style.width = originalWidth; 
             }, 'image/jpeg', 1.0);
         }).catch(err => {
             console.error("Image download failed:", err);
@@ -1605,12 +1832,40 @@ input:checked + .slider:before { transform: translateX(22px); }
             btn.disabled = false;
             element.style.width = originalWidth;
         });
-    }, 200); // slight delay to ensure layout updates
+    }, 200); 
   };
 
-  // ================= END NEW SALE LOGIC =================
+  // ================= CALCULATE QUICK FORM TOTALS =================
+  window.calcQuickFormTotals = function(source = null) {
+    const qty = Number(document.getElementById('q_qty').value) || 0;
+    const rate = Number(document.getElementById('q_rate').value) || 0;
+    const subTotal = qty * rate;
+    
+    const discPInput = document.getElementById('q_discPercent');
+    const discFInput = document.getElementById('q_discFlat');
+    let discount = 0;
+    
+    if (source === 'percent') {
+        discount = (subTotal * (Number(discPInput.value) || 0)) / 100;
+        if(discFInput) discFInput.value = discount.toFixed(2);
+    } else if (source === 'flat') {
+        discount = Number(discFInput.value) || 0;
+        if(discPInput) discPInput.value = subTotal > 0 ? ((discount / subTotal) * 100).toFixed(2) : 0;
+    } else {
+        if (discFInput && discFInput.value) discount = Number(discFInput.value);
+        else if (discPInput && discPInput.value) discount = (subTotal * Number(discPInput.value)) / 100;
+    }
+    
+    const delivery = Number(document.getElementById('q_delivery')?.value) || 0;
+    const grandTotal = Math.max(0, subTotal - discount + delivery);
+    const paid = Number(document.getElementById('q_paid')?.value) || 0;
+    const due = grandTotal - paid;
+    
+    if(document.getElementById('q_total_display')) document.getElementById('q_total_display').innerText = money(grandTotal);
+    if(document.getElementById('q_due_display')) document.getElementById('q_due_display').innerText = money(due > 0 ? due : 0);
+  }
 
-  window.openQuickForm = function(type) {
+  window.openQuickForm = function(type, editId = null) {
     if(type === 'sales') return openNewSale();
 
     closeActionMenu();
@@ -1618,62 +1873,94 @@ input:checked + .slider:before { transform: translateX(22px); }
     const title = document.getElementById('quickFormTitle');
     const formFields = document.getElementById('quickFormFields');
     const form = document.getElementById('quickForm');
+    const submitBtn = form.querySelector('.btn-submit');
     
-    let html = '';
+    let existingTxn = editId ? window.db.transactions.find(t => t.id === editId) : null;
+    let qtyVal = existingTxn ? existingTxn.qty : 1;
+    let rateVal = existingTxn ? existingTxn.rate : '';
+    let paidVal = existingTxn ? existingTxn.paid : 0;
+    let discFlatVal = existingTxn ? (existingTxn.discount || 0) : 0;
+    let deliveryVal = existingTxn ? (existingTxn.delivery || 0) : 0;
+    
     const partyOptions = window.db.parties.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
     const supplierOptions = window.db.suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
     let productOptions = window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}" data-prate="${p.purchaseRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('');
     productOptions += `<option value="ADD_NEW" style="font-weight:bold; color:var(--primary);">➕ নতুন পণ্য যোগ করুন</option>`;
 
     if (type === 'purchase') {
-      title.innerText = 'নতুন ক্রয়';
-      html = `
-        <div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId" required><option value="">সিলেক্ট করুন</option>${supplierOptions}</select></div>
+      title.innerText = existingTxn ? 'ক্রয় এডিট' : 'নতুন ক্রয়';
+      submitBtn.innerText = existingTxn ? 'আপডেট করুন' : 'সেভ করুন';
+      formFields.innerHTML = `
+        <div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId" id="q_supplier" required><option value="">সিলেক্ট করুন</option>${supplierOptions}</select></div>
         <div class="form-group"><label>পণ্য</label><select name="productId" id="q_product" required><option value="">সিলেক্ট করুন</option>${productOptions}</select></div>
         <div style="display:flex; gap:10px; align-items:flex-end;">
-          <div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="1" min="1" required></div>
-          <div class="form-group" style="flex:1.4; margin-bottom:0;"><label>ক্রয় মূল্য</label><input type="number" name="rate" id="q_rate" required></div>
+          <div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="${qtyVal}" min="1" required oninput="calcQuickFormTotals()"></div>
+          <div class="form-group" style="flex:1.4; margin-bottom:0;"><label>ক্রয় মূল্য</label><input type="number" name="rate" id="q_rate" value="${rateVal}" required oninput="calcQuickFormTotals()"></div>
         </div>
-        <div class="form-group" style="margin-top:12px;"><label>পরিশোধ</label><input type="number" name="paid" value="0" min="0"></div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (%)</label><input type="number" name="discPercent" id="q_discPercent" value="0" oninput="calcQuickFormTotals('percent')"></div>
+            <div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (৳)</label><input type="number" name="discFlat" id="q_discFlat" value="${discFlatVal}" oninput="calcQuickFormTotals('flat')"></div>
+        </div>
+        <div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${deliveryVal}" min="0" oninput="calcQuickFormTotals()"></div>
+        <div class="form-group" style="margin-top:12px;"><label>পরিশোধ</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div>
+        <div class="q-calc-box">
+            <span>সর্বমোট: <span id="q_total_display" style="color:var(--primary);">৳ ${existingTxn ? existingTxn.total.toFixed(2) : '0.00'}</span></span>
+            <span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${existingTxn ? existingTxn.due.toFixed(2) : '0.00'}</span></span>
+        </div>
       `;
     } else if (type === 'due_collect') {
       title.innerText = 'বাকি আদায়';
-      html = `
+      submitBtn.innerText = 'সেভ করুন';
+      formFields.innerHTML = `
         <div class="form-group"><label>পার্টি</label><select name="partyId" required><option value="">সিলেক্ট করুন</option>${partyOptions}</select></div>
         <div class="form-group"><label>আদায়ের পরিমাণ</label><input type="number" name="amount" required min="1"></div>
         <div class="form-group"><label>নোট (ঐচ্ছিক)</label><input type="text" name="note"></div>
       `;
     } else if (type === 'due_pay') {
       title.innerText = 'বাকি পরিশোধ';
-      html = `
+      submitBtn.innerText = 'সেভ করুন';
+      formFields.innerHTML = `
         <div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId" required><option value="">সিলেক্ট করুন</option>${supplierOptions}</select></div>
         <div class="form-group"><label>পরিশোধের পরিমাণ</label><input type="number" name="amount" required min="1"></div>
         <div class="form-group"><label>নোট (ঐচ্ছিক)</label><input type="text" name="note"></div>
       `;
     } else if (type === 'expense') {
       title.innerText = 'নতুন খরচ';
-      html = `
+      submitBtn.innerText = 'সেভ করুন';
+      formFields.innerHTML = `
         <div class="form-group"><label>খরচের বিবরণ</label><input type="text" name="note" required placeholder="যেমন: বিদ্যুৎ বিল"></div>
         <div class="form-group"><label>পরিমাণ</label><input type="number" name="amount" required min="1"></div>
       `;
     } else if (type === 'sales_return' || type === 'purchase_return') {
-      title.innerText = type === 'sales_return' ? 'বিক্রি রিটার্ন' : 'ক্রয় রিটার্ন';
+      title.innerText = existingTxn ? (type === 'sales_return' ? 'বিক্রয় রিটার্ন এডিট' : 'ক্রয় রিটার্ন এডিট') : (type === 'sales_return' ? 'বিক্রি রিটার্ন' : 'ক্রয় রিটার্ন');
+      submitBtn.innerText = existingTxn ? 'আপডেট করুন' : 'সেভ করুন';
+      
       let selectEntity = type === 'sales_return' ? partyOptions : supplierOptions;
       let labelEntity = type === 'sales_return' ? 'ক্রেতা (পার্টি)' : 'সাপ্লায়ার';
       let nameAttr = type === 'sales_return' ? 'partyId' : 'supplierId';
 
-      html = `
-        <div class="form-group"><label>${labelEntity}</label><select name="${nameAttr}" required><option value="">সিলেক্ট করুন</option>${selectEntity}</select></div>
+      formFields.innerHTML = `
+        <div class="form-group"><label>${labelEntity}</label><select name="${nameAttr}" ${nameAttr === 'supplierId' ? 'id="q_supplier"' : ''} required><option value="">সিলেক্ট করুন</option>${selectEntity}</select></div>
         <div class="form-group"><label>পণ্য</label><select name="productId" id="q_product" required><option value="">সিলেক্ট করুন</option>${productOptions}</select></div>
         <div style="display:flex; gap:10px; align-items:flex-end;">
-          <div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="1" min="1" required></div>
-          <div class="form-group" style="flex:1.4; margin-bottom:0;"><label>মূল্য</label><input type="number" name="rate" id="q_rate" required></div>
+          <div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="${qtyVal}" min="1" required oninput="calcQuickFormTotals()"></div>
+          <div class="form-group" style="flex:1.4; margin-bottom:0;"><label>মূল্য</label><input type="number" name="rate" id="q_rate" value="${rateVal}" required oninput="calcQuickFormTotals()"></div>
         </div>
-        <div class="form-group" style="margin-top:12px;"><label>টাকা ফেরত দেওয়া/নেওয়া</label><input type="number" name="paid" value="0" min="0"></div>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (%)</label><input type="number" name="discPercent" id="q_discPercent" value="0" oninput="calcQuickFormTotals('percent')"></div>
+            <div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (৳)</label><input type="number" name="discFlat" id="q_discFlat" value="${discFlatVal}" oninput="calcQuickFormTotals('flat')"></div>
+        </div>
+        <div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${deliveryVal}" min="0" oninput="calcQuickFormTotals()"></div>
+        <div class="form-group" style="margin-top:12px;"><label>টাকা ফেরত দেওয়া/নেওয়া</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div>
+        <div class="q-calc-box">
+            <span>সর্বমোট: <span id="q_total_display" style="color:var(--primary);">৳ ${existingTxn ? existingTxn.total.toFixed(2) : '0.00'}</span></span>
+            <span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${existingTxn ? existingTxn.due.toFixed(2) : '0.00'}</span></span>
+        </div>
       `;
     } else if (type === 'cash_match') {
       title.innerText = 'ক্যাশ মিলাই';
-      html = `
+      submitBtn.innerText = 'সেভ করুন';
+      formFields.innerHTML = `
         <div class="form-group"><label>আপনার কাছে থাকা বর্তমান ক্যাশ</label><input type="number" name="physicalCash" required></div>
         <p style="font-size:12px; color:var(--text-muted); margin-top:10px;">সিস্টেম ক্যাশ: <strong id="sysCash" style="color:var(--primary)"></strong></p>
       `;
@@ -1683,9 +1970,42 @@ input:checked + .slider:before { transform: translateX(22px); }
       }, 50);
     }
 
-    formFields.innerHTML = html;
     modal.classList.add('open');
     
+    setTimeout(() => {
+        if(existingTxn) {
+            const entitySelect = form.querySelector('select[name="supplierId"]') || form.querySelector('select[name="partyId"]');
+            if(entitySelect) {
+                if(type === 'purchase' || type === 'purchase_return') {
+                    entitySelect.value = existingTxn.supplierId;
+                    // Manually filter products before setting product ID
+                    const supplierId = existingTxn.supplierId;
+                    const prodSelect = document.getElementById('q_product');
+                    if(prodSelect) {
+                        let filteredProducts = window.db.products;
+                        if(supplierId) {
+                            filteredProducts = filteredProducts.filter(p => p.supplierId === supplierId);
+                        }
+                        let newOptions = `<option value="">সিলেক্ট করুন</option>`;
+                        filteredProducts.forEach(p => {
+                            newOptions += `<option value="${p.id}" data-rate="${p.saleRate}" data-prate="${p.purchaseRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`;
+                        });
+                        newOptions += `<option value="ADD_NEW" style="font-weight:bold; color:var(--primary);">➕ নতুন পণ্য যোগ করুন</option>`;
+                        prodSelect.innerHTML = newOptions;
+                    }
+                } else if(type === 'sales_return') {
+                    entitySelect.value = existingTxn.partyId;
+                }
+            }
+            const prodSelect = document.getElementById('q_product');
+            if(prodSelect) {
+                prodSelect.value = existingTxn.productId;
+                updateQuickFormRate(existingTxn.productId, type);
+            }
+            calcQuickFormTotals();
+        }
+    }, 50);
+
     const prodSelect = document.getElementById('q_product');
     const rateInput = document.getElementById('q_rate');
     if(prodSelect && rateInput) {
@@ -1705,41 +2025,106 @@ input:checked + .slider:before { transform: translateX(22px); }
           return;
         }
         if(!this.value) return;
-        const opt = this.options[this.selectedIndex];
-        const isPurchaseType = (type === 'purchase' || type === 'purchase_return');
-        rateInput.value = isPurchaseType ? (opt.getAttribute('data-prate') || 0) : (opt.getAttribute('data-rate') || 0);
+        updateQuickFormRate(this.value, type);
       });
     }
 
-    form.onsubmit = (e) => { e.preventDefault(); processQuickForm(type, new FormData(form)); };
+    // Supplier Filter Logic
+    const supplierSelect = document.getElementById('q_supplier');
+    if(supplierSelect) {
+        supplierSelect.addEventListener('change', function() {
+            const supplierId = this.value;
+            let filteredProducts = window.db.products;
+            if(supplierId) {
+                filteredProducts = filteredProducts.filter(p => p.supplierId === supplierId);
+            }
+            const prodSelect = document.getElementById('q_product');
+            let newOptions = `<option value="">সিলেক্ট করুন</option>`;
+            filteredProducts.forEach(p => {
+                newOptions += `<option value="${p.id}" data-rate="${p.saleRate}" data-prate="${p.purchaseRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`;
+            });
+            newOptions += `<option value="ADD_NEW" style="font-weight:bold; color:var(--primary);">➕ নতুন পণ্য যোগ করুন</option>`;
+            prodSelect.innerHTML = newOptions;
+            prodSelect.value = '';
+            document.getElementById('q_rate').value = '';
+            calcQuickFormTotals();
+        });
+    }
+
+    form.onsubmit = (e) => { e.preventDefault(); processQuickForm(type, new FormData(form), editId); };
   };
+  
+  window.updateQuickFormRate = function(prodId, type) {
+      const prod = window.db.products.find(p => p.id === prodId);
+      if(!prod) return;
+      const rateInput = document.getElementById('q_rate');
+      if(rateInput) {
+          const isPurchaseType = (type === 'purchase' || type === 'purchase_return');
+          // Use purchaseRate for purchase/purchase_return, otherwise saleRate
+          rateInput.value = isPurchaseType ? (prod.purchaseRate || 0) : (prod.saleRate || 0);
+          calcQuickFormTotals();
+      }
+  }
 
   window.closeQuickForm = function() { document.getElementById('quickFormModal').classList.remove('open'); document.getElementById('quickForm').reset(); };
   window.closeActionMenu = function() { document.getElementById('actionMenuModal').classList.remove('open'); };
 
   // Process Quick Form Data (For Non-Sales)
-  function processQuickForm(type, formData) {
+  function processQuickForm(type, formData, editId = null) {
     const d = Object.fromEntries(formData.entries());
-    const txnId = 'TXN-' + Date.now().toString(36).toUpperCase();
-    const date = new Date().toISOString();
+    const isEdit = editId !== null;
+    const txnId = isEdit ? editId : 'TXN-' + Date.now().toString(36).toUpperCase();
+    const date = isEdit ? window.db.transactions.find(t => t.id === txnId).date : new Date().toISOString();
 
-    if (type === 'purchase') {
-      const qty = Number(d.qty), rate = Number(d.rate), paid = Number(d.paid);
-      const total = qty * rate;
-      
-      let bId = Date.now().toString(36) + 'p';
-      database.ref('batches/' + bId).set({ id: bId, productId: d.productId, qty: qty, batchNo: 'PURCHASE' });
+    if (type === 'purchase' || type === 'sales_return' || type === 'purchase_return') {
+      const qty = Number(d.qty), rate = Number(d.rate);
+      const discFlat = Number(d.discFlat) || 0;
+      const delivery = Number(d.delivery) || 0;
+      const total = Math.max(0, (qty * rate) - discFlat + delivery);
+      const paid = Number(d.paid) || 0;
+      const due = total - paid;
 
-      let txnData = { id: txnId, date: date, type: type, productId: d.productId, qty: qty, rate: rate, total: total, paid: paid, supplierId: d.supplierId, due: total - paid };
+      if (type === 'purchase') {
+          if (isEdit) {
+              const oldTxn = window.db.transactions.find(t => t.id === txnId);
+              if (oldTxn && oldTxn.productId) deductStock(oldTxn.productId, oldTxn.qty); 
+          }
+          addStock(d.productId, qty, 'PURCHASE'); 
+      } 
+      else if (type === 'sales_return') {
+          if (isEdit) {
+              const oldTxn = window.db.transactions.find(t => t.id === txnId);
+              if (oldTxn && oldTxn.productId) deductStock(oldTxn.productId, oldTxn.qty); 
+          }
+          addStock(d.productId, qty, 'RETURN');
+      } 
+      else if (type === 'purchase_return') {
+          if (isEdit) {
+              const oldTxn = window.db.transactions.find(t => t.id === txnId);
+              if (oldTxn && oldTxn.productId) addStock(oldTxn.productId, oldTxn.qty, 'EDIT_RESTORE'); 
+          }
+          let totalStock = window.db.batches.filter(x => x.productId === d.productId).reduce((a,b)=>a+Number(b.qty),0);
+          if(totalStock < qty) return alert('স্টক নেই!');
+          deductStock(d.productId, qty);
+      }
+
+      let txnData = { 
+          id: txnId, date: date, type: type, productId: d.productId, qty: qty, rate: rate, 
+          discount: discFlat, delivery: delivery, total: total, paid: paid, due: due
+      };
+      if(type === 'purchase' || type === 'purchase_return') txnData.supplierId = d.supplierId;
+      else txnData.partyId = d.partyId;
 
       database.ref('transactions/' + txnId).set(txnData).then(() => {
-        let entityName = window.db.suppliers.find(s=>s.id === d.supplierId)?.name || 'Unknown';
+        let entityName = type === 'sales_return' ? window.db.parties.find(p=>p.id === d.partyId)?.name : window.db.suppliers.find(s=>s.id === d.supplierId)?.name;
         let pName = window.db.products.find(p=>p.id === d.productId)?.name || 'Unknown';
-        logActivity('ক্রয়', `${entityName} থেকে ${pName} (${qty} পিস) ক্রয়। মোট: ${money(total)}, জমা: ${money(paid)}`);
+        let logType = type === 'purchase' ? 'ক্রয়' : (type === 'sales_return' ? 'বিক্রয় রিটার্ন' : 'ক্রয় রিটার্ন');
+        logActivity(isEdit ? logType+' এডিট' : logType, `${entityName} - এর সাথে ${pName} (${qty} পিস) ${isEdit ? 'আপডেট' : logType}। মোট: ${money(total)}, জমা: ${money(paid)}`);
         alert('সফলভাবে সেভ হয়েছে!');
         closeQuickForm();
       });
-    } else if (type === 'due_collect') {
+    } 
+    else if (type === 'due_collect') {
       database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_in', note: 'বাকি আদায় - ' + d.note, amount: Number(d.amount), partyId: d.partyId }).then(() => { 
         let pName = window.db.parties.find(p=>p.id === d.partyId)?.name || 'Unknown';
         logActivity('বাকি আদায়', `${pName} থেকে ${money(d.amount)} আদায় করা হয়েছে।`); 
@@ -1756,40 +2141,6 @@ input:checked + .slider:before { transform: translateX(22px); }
     } else if (type === 'expense') {
       database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_out', note: 'খরচ: ' + d.note, amount: Number(d.amount) }).then(() => { 
         logActivity('খরচ', `খরচ যুক্ত হয়েছে: ${d.note} - ${money(d.amount)}`); 
-        alert('সফল!'); 
-        closeQuickForm(); 
-      });
-    } else if (type === 'sales_return' || type === 'purchase_return') {
-      const qty = Number(d.qty), rate = Number(d.rate), paid = Number(d.paid);
-      const total = qty * rate;
-
-      if(type === 'sales_return') {
-        let bId = Date.now().toString(36) + 'r';
-        database.ref('batches/' + bId).set({ id: bId, productId: d.productId, qty: qty, batchNo: 'RETURN' });
-      } else if (type === 'purchase_return') {
-        let remaining = qty;
-        let bList = window.db.batches.filter(x => x.productId === d.productId && Number(x.qty) > 0);
-        if(bList.reduce((a,b)=>a+Number(b.qty),0) < qty) return alert('স্টক নেই!');
-        for(let b of bList) {
-          if(remaining <= 0) break;
-          let cQty = Number(b.qty);
-          let targetKey = b.key || b.id;
-          if(cQty >= remaining) { database.ref('batches/' + targetKey).update({ qty: cQty - remaining }); remaining = 0; }
-          else { database.ref('batches/' + targetKey).update({ qty: 0 }); remaining -= cQty; }
-        }
-      }
-
-      let txnData = { id: txnId, date: date, type: type, productId: d.productId, qty: qty, rate: rate, total: total, paid: paid };
-      if(type === 'sales_return') txnData.partyId = d.partyId;
-      else txnData.supplierId = d.supplierId;
-
-      database.ref('transactions/' + txnId).set(txnData).then(() => { 
-        let entityName = '';
-        if(type === 'sales_return') entityName = window.db.parties.find(p=>p.id === d.partyId)?.name || 'Unknown';
-        else entityName = window.db.suppliers.find(s=>s.id === d.supplierId)?.name || 'Unknown';
-        
-        let pName = window.db.products.find(p=>p.id === d.productId)?.name || 'Unknown';
-        logActivity('রিটার্ন', `${entityName} - এর সাথে ${pName} (${qty} পিস) ${type === 'sales_return' ? 'বিক্রি' : 'ক্রয়'} রিটার্ন।`); 
         alert('সফল!'); 
         closeQuickForm(); 
       });
@@ -1822,33 +2173,16 @@ input:checked + .slider:before { transform: translateX(22px); }
     let totalReceivable = 0; 
     let totalPayable = 0;    
 
-    window.db.parties.forEach(p => { 
-        totalReceivable += Number(p.previousDue || 0); 
-    });
-    
-    window.db.approvedSales.forEach(s => { 
-        totalReceivable += (Number(s.total || 0) - Number(s.paid || 0)); 
+    // Sum all party dues accurately
+    window.db.parties.forEach(p => {
+        let due = calculatePartyDue(p);
+        if(due > 0) totalReceivable += due;
     });
 
-    window.db.transactions.forEach(t => {
-        let tTotal = Number(t.total || 0);
-        let tPaid = Number(t.paid || 0);
-        let tAmount = Number(t.amount || 0);
-        let tDue = (t.due !== undefined && t.due !== null) ? Number(t.due) : (tTotal - tPaid);
-
-        if(t.type === 'sales') {
-            totalReceivable += tDue;
-        } else if(t.type === 'due_collect' || t.type === 'cash_in') {
-            totalReceivable -= tAmount;
-        } else if(t.type === 'sales_return') {
-            totalReceivable -= (tTotal - tPaid);
-        } else if(t.type === 'purchase') {
-            totalPayable += tDue;
-        } else if(t.type === 'due_pay' || t.type === 'cash_out') {
-            totalPayable -= tAmount;
-        } else if(t.type === 'purchase_return') {
-            totalPayable -= (tTotal - tPaid);
-        }
+    // Sum all supplier dues accurately
+    window.db.suppliers.forEach(s => {
+        let due = calculateSupplierDue(s.id);
+        if(due > 0) totalPayable += due;
     });
 
     return { receivable: totalReceivable, payable: totalPayable };
@@ -1884,6 +2218,9 @@ input:checked + .slider:before { transform: translateX(22px); }
 
     if(viewId === 'invoices') {
         renderInvoiceView('');
+    }
+    if(viewId === 'transactions') {
+        renderTransactionsList('');
     }
   };
 
@@ -2030,7 +2367,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     $('pfPartyDue').textContent = money(due);
     
     let history = [];
-    window.db.approvedSales.filter(s => s.customerName === party.name).forEach(s => {
+    window.db.approvedSales.filter(s => s.customerName === party.name || s.partyId === party.id).forEach(s => {
       history.push({ date: new Date(Number(s.id.substring(0,8), 36)).toISOString(), type: 'বিক্রয় (পুরনো)', amount: s.total });
     });
     window.db.transactions.filter(t => t.partyId === id).forEach(t => {
@@ -2073,7 +2410,10 @@ input:checked + .slider:before { transform: translateX(22px); }
           <p style="font-size:11px; margin-bottom:2px;"><span style="color:var(--primary); font-weight:bold;">সাপ্লায়ার: ${esc(supName)}</span></p>
           <p>বিক্রয়: ৳${p.saleRate} | স্টক: ${stock}</p>
         </div>
-        <button class="btn-edit-icon" onclick="openForm('product', '${p.id}')">✏️</button>
+        <div style="display: flex; gap: 5px; align-items: center;">
+            <button class="btn-add-stock" onclick="openAddStockModal('${p.id}', '${esc(p.name)}')">+ স্টক</button>
+            <button class="btn-edit-icon" onclick="openForm('product', '${p.id}')">✏️</button>
+        </div>
       </div>`;
     }).join('') || '<div class="empty-state">পণ্য নেই</div>';
 
@@ -2088,12 +2428,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     // Suppliers
     $('suppliersTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>দেনা (দিবো)</th><th>অ্যাকশন</th></tr></thead><tbody>
       ${window.db.suppliers.map(s => {
-        let sDue = 0;
-        window.db.transactions.filter(t => t.supplierId === s.id).forEach(t => {
-          if(t.type === 'purchase') sDue += (Number(t.total) - Number(t.paid));
-          if(t.type === 'due_pay' || t.type === 'cash_out') sDue -= Number(t.amount);
-          if(t.type === 'purchase_return') sDue -= (Number(t.total) - Number(t.paid));
-        });
+        let sDue = calculateSupplierDue(s.id);
         return `<tr><td style="font-weight:600;">${esc(s.name)}</td><td style="color:var(--orange); font-weight:bold;">${money(sDue)}</td><td><button onclick="openForm('supplier', '${s.id}')">✏️</button></td></tr>`;
       }).join('')}
     </tbody></table></div>`;
@@ -2106,7 +2441,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     let sortedLogs = [...window.db.activityLogs].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
     $('activityLogList').innerHTML = sortedLogs.map(log => `
       <div class="log-item">
-        <div class="log-icon">${log.type.includes('বিক্রয়')?'💻':log.type.includes('ক্রয়')?'🛒':log.type.includes('বাকি')?'💵':log.type.includes('খরচ')?'🧾':log.type.includes('পণ্য')?'📦':log.type.includes('সাপ্লায়ার')?'🏭':'📝'}</div>
+        <div class="log-icon">${log.type.includes('বিক্রয়')?'💻':log.type.includes('ক্রয়')?'🛒':log.type.includes('বাকি')?'💵':log.type.includes('খরচ')?'🧾':log.type.includes('পণ্য')?'📦':log.type.includes('স্টক')?'📦':log.type.includes('সাপ্লায়ার')?'🏭':'📝'}</div>
         <div class="log-content">
           <div class="log-title">${log.type}</div>
           <div class="log-desc">${log.details}</div>
@@ -2121,6 +2456,9 @@ input:checked + .slider:before { transform: translateX(22px); }
     
     // Update Invoices View
     renderInvoiceView(document.getElementById('invoiceViewSearchInput') ? document.getElementById('invoiceViewSearchInput').value : '');
+    
+    // Update Transactions View
+    renderTransactionsList(document.getElementById('txnSearchInput') ? document.getElementById('txnSearchInput').value : '');
   };
 
   // ================= Close Modal on Backdrop Click Logic =================
@@ -2136,6 +2474,9 @@ input:checked + .slider:before { transform: translateX(22px); }
         else if (this.id === 'newSaleModal') window.closeNewSale();
         else if (this.id === 'invoiceModal') window.closeInvoiceModal();
         else if (this.id === 'invoiceListModal') window.closeInvoiceList();
+        else if (this.id === 'payableDetailsModal') window.closePayableDetailsModal();
+        else if (this.id === 'receivableDetailsModal') window.closeReceivableDetailsModal();
+        else if (this.id === 'addStockModal') window.closeAddStockModal();
         else this.classList.remove('open'); 
       }
     });
