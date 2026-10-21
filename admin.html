@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#5A52FF">
+<meta name="theme-color" content="#2563EB">
 <title>Novas Agro - Admin</title>
 
 <!-- HTML to Image Converter Library -->
@@ -12,18 +12,19 @@
 <style>
 /* ================= Global & Theme ================= */
 :root { 
-  --primary: #5A52FF; --primary-light: #EEEDFF; 
-  --bg: #F4F7FE; 
-  --bg-gradient: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
-  --card: #FFFFFF; --text: #2D3748; --text-muted: #718096; 
-  --red: #FF5A5F; --green: #38B2AC; --blue: #4299E1; --orange: #ED8936;
+  --primary: #2563EB; /* Logo inspired Blue */
+  --primary-light: #EFF6FF; 
+  --bg: #F8FAFC; 
+  --bg-gradient: linear-gradient(135deg, #F0F9FF 0%, #F8FAFC 100%);
+  --card: #FFFFFF; --text: #1E293B; --text-muted: #64748B; 
+  --red: #EF4444; --green: #10B981; --blue: #3B82F6; --orange: #F59E0B;
   --border: #E2E8F0; --shadow: 0 4px 15px rgba(0,0,0,0.03); 
 }
 [data-theme="dark"] {
-  --bg: #0F1710; 
-  --bg-gradient: linear-gradient(135deg, #0F1710 0%, #1A2B1C 100%);
-  --card: #1E1E1E; --text: #F7FAFC; --text-muted: #A0AEC0; 
-  --border: #2D3748; --primary-light: #2D2A5A; --shadow: 0 4px 15px rgba(0,0,0,0.3); 
+  --bg: #0F172A; 
+  --bg-gradient: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  --card: #1E293B; --text: #F8FAFC; --text-muted: #94A3B8; 
+  --border: #334155; --primary-light: #1E3A8A; --shadow: 0 4px 15px rgba(0,0,0,0.3); 
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; transition: background-color 0.3s, color 0.3s; }
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-gradient); background-attachment: fixed; color: var(--text); padding-bottom: 80px; }
@@ -73,7 +74,7 @@ button:active { transform: scale(0.96); }
 .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
 .dash-card { background: var(--card); border-radius: 14px; padding: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; flex-direction: column; position: relative; cursor: pointer;}
 .card-icon-sm { position: absolute; top: -8px; left: 10px; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-.bg-red { background: var(--red); } .bg-blue { background: var(--blue); } .bg-teal { background: var(--green); } .bg-purple { background: #805AD5; }
+.bg-red { background: var(--red); } .bg-blue { background: var(--blue); } .bg-teal { background: var(--green); } .bg-purple { background: #8B5CF6; }
 .dash-card-title { font-size: 11px; color: var(--text-muted); margin-top: 12px; margin-bottom: 4px; font-weight: 600; }
 .dash-card-value { font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; color: var(--text); }
 
@@ -103,11 +104,11 @@ th { background: var(--bg); color: var(--text-muted); font-weight: 600; font-siz
 .settings-item-desc { font-size: 12px; color: var(--text-muted); }
 .btn-action { padding: 8px 15px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; }
 .btn-action.primary { background: var(--primary-light); color: var(--primary); }
-.btn-action.danger { background: rgba(255, 90, 95, 0.1); color: var(--red); }
+.btn-action.danger { background: rgba(239, 68, 68, 0.1); color: var(--red); }
 .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
 .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
 .switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
 .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
 input:checked + .slider { background-color: var(--primary); }
 input:checked + .slider:before { transform: translateX(22px); }
@@ -117,17 +118,17 @@ input:checked + .slider:before { transform: translateX(22px); }
 .log-content { flex: 1; }
 .log-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
 .log-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-.log-time { font-size: 10px; color: #999; }
+.log-time { font-size: 10px; color: #94a3b8; }
 
 /* ================= Bottom Nav ================= */
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); z-index: 50; }
 .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; width: 80px; }
 .nav-item.active { color: var(--primary); }
 .nav-item span.icon { font-size: 20px; margin-bottom: 2px; }
-.fab-btn { width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 12px rgba(90, 82, 255, 0.4); cursor: pointer; transform: translateY(-15px); border: 4px solid var(--card); z-index: 51;}
+.fab-btn { width: 55px; height: 55px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); cursor: pointer; transform: translateY(-15px); border: 4px solid var(--card); z-index: 51;}
 
 /* ================= Modals & Forms ================= */
-.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 90; align-items: flex-end; }
+.modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 90; align-items: flex-end; }
 .modal.open { display: flex; }
 .modal-box { background: var(--card); width: 100%; max-height: 90vh; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 20px; overflow-y: auto; animation: slideUp 0.3s ease; color: var(--text); }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -166,7 +167,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .img-preview img { width: 100%; height: 100%; object-fit: cover; }
 
 /* Sidebar */
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 60; }
+.overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 60; }
 .overlay.open { opacity: 1; visibility: visible; }
 .sidebar { position: fixed; top: 0; left: -300px; bottom: 0; width: 280px; background: var(--card); z-index: 70; transition: 0.3s ease-in-out; display: flex; flex-direction: column; box-shadow: 5px 0 20px rgba(0,0,0,0.1); }
 .sidebar.open { left: 0; }
@@ -181,7 +182,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .side-menu-left { display: flex; align-items: center; gap: 15px; }
 
 /* Login */
-#loginScreen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, #5A52FF, #3A2EC2); display: flex; align-items: center; justify-content: center; padding: 20px; }
+#loginScreen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, #1E3A8A, #2563EB); display: flex; align-items: center; justify-content: center; padding: 20px; }
 .login-box { background: var(--card); padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; }
 .login-logo { width: 80px; height: 80px; object-fit: contain; margin: 0 auto 10px; display: block; }
 .login-box h2 { text-align: center; margin-bottom: 20px; color: var(--text); }
@@ -191,85 +192,121 @@ input:checked + .slider:before { transform: translateX(22px); }
 .login-btn { width: 100%; padding: 14px; background: var(--primary); color: white; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
 
 /* ================= NEW SALE MODAL STYLES ================= */
-#newSaleModal { background: #f8f9fc; padding: 0; display: none; flex-direction: column; z-index: 95; align-items: stretch; }
+#newSaleModal { background: #F8FAFC; padding: 0; display: none; flex-direction: column; z-index: 95; align-items: stretch; }
 #newSaleModal.open { display: flex; }
-.ns-header { background: #6b5cff; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+.ns-header { background: var(--primary); color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
 .ns-header-left { display: flex; align-items: center; gap: 15px; font-size: 18px; font-weight: 700; }
 .ns-back { font-size: 24px; cursor: pointer; font-weight: bold;}
 .ns-toggle { display: flex; background: rgba(255,255,255,0.2); border-radius: 20px; overflow: hidden; }
 .ns-toggle button { padding: 6px 16px; font-size: 14px; font-weight: bold; color: white; background: none; cursor:pointer;}
-.ns-toggle button.active { background: white; color: #6b5cff; }
+.ns-toggle button.active { background: white; color: var(--primary); }
 
 .ns-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
-.ns-invoice-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #555; margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
-.btn-inv-list { background: #e0dfff; color: #6b5cff; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;}
+.ns-invoice-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #475569; margin-bottom: 15px; border-bottom: 1px dashed #CBD5E1; padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+.btn-inv-list { background: var(--primary-light); color: var(--primary); padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;}
 
-.ns-customer-box { background: white; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-.ns-customer-box select { border: none; font-size: 15px; width: 100%; outline: none; background: transparent; color: #333; }
-.ns-add-item-btn { background: #e0dfff; color: #6b5cff; padding: 12px; border-radius: 8px; text-align: center; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; }
+.ns-customer-box { background: white; padding: 15px; border-radius: 8px; border: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.ns-customer-box select { border: none; font-size: 15px; width: 100%; outline: none; background: transparent; color: #1E293B; }
+.ns-add-item-btn { background: var(--primary-light); color: var(--primary); padding: 12px; border-radius: 8px; text-align: center; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; }
 
-.ns-items-list { background: white; border-radius: 8px; border: 1px solid #e0e0e0; margin-bottom: 15px; overflow: hidden; }
-.ns-item-row { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid #eee; font-size: 14px; }
+.ns-items-list { background: white; border-radius: 8px; border: 1px solid #E2E8F0; margin-bottom: 15px; overflow: hidden; }
+.ns-item-row { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid #E2E8F0; font-size: 14px; }
 .ns-item-row:last-child { border-bottom: none; }
 .ns-item-info { display: flex; flex-direction: column; }
-.ns-item-name { font-weight: bold; color: #333; }
-.ns-item-details { font-size: 12px; color: #777; }
-.ns-item-total { font-weight: bold; color: #6b5cff; }
+.ns-item-name { font-weight: bold; color: #1E293B; }
+.ns-item-details { font-size: 12px; color: #64748B; }
+.ns-item-total { font-weight: bold; color: var(--primary); }
 .ns-remove-item { color: var(--red); cursor: pointer; margin-left: 10px; font-size: 16px;}
 
-.ns-form-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 15px; color: #444; }
+.ns-form-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 15px; color: #475569; }
 .ns-label { width: 40%; font-weight: 500;}
 .ns-input-group { width: 60%; display: flex; gap: 5px; align-items: center; justify-content: flex-end; }
-.ns-input-group input { width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; text-align: right; outline: none; background: white; color:#333;}
-.ns-input-group input:focus { border-color: #6b5cff; }
-.ns-input-group input[readonly] { background: #f0f0f0; }
-.ns-symbol { font-weight: bold; width: 20px; text-align: center; color: #555;}
+.ns-input-group input { width: 100%; padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 15px; text-align: right; outline: none; background: white; color:#1E293B;}
+.ns-input-group input:focus { border-color: var(--primary); }
+.ns-input-group input[readonly] { background: #F1F5F9; }
+.ns-symbol { font-weight: bold; width: 20px; text-align: center; color: #64748B;}
 
 .ns-discount-row { display: flex; gap: 10px; width: 60%; justify-content: flex-end;}
 .ns-discount-row input { width: 45%; }
-.ns-discount-row .symbol-box { display: flex; align-items: center; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; background: white; width: 45%;}
+.ns-discount-row .symbol-box { display: flex; align-items: center; border: 1px solid #CBD5E1; border-radius: 6px; overflow: hidden; background: white; width: 45%;}
 .ns-discount-row .symbol-box input { border: none; width: 100%; border-radius: 0; }
-.ns-discount-row .symbol-box span { background: #f0f0f0; padding: 0 8px; display: flex; align-items: center; justify-content: center; border-left: 1px solid #ccc; font-size: 14px; color: #555;}
+.ns-discount-row .symbol-box span { background: #F1F5F9; padding: 0 8px; display: flex; align-items: center; justify-content: center; border-left: 1px solid #CBD5E1; font-size: 14px; color: #64748B;}
 
-.ns-payment-section { background: white; padding: 15px; border-radius: 8px; border: 1px solid #e0e0e0; margin-top: 20px; }
-.ns-payment-section label { font-size: 14px; font-weight: 600; margin-bottom: 10px; display: block; color: #333;}
-.ns-payment-select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; background: white; color:#333;}
+.ns-payment-section { background: white; padding: 15px; border-radius: 8px; border: 1px solid #E2E8F0; margin-top: 20px; }
+.ns-payment-section label { font-size: 14px; font-weight: 600; margin-bottom: 10px; display: block; color: #1E293B;}
+.ns-payment-select { width: 100%; padding: 10px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 15px; background: white; color:#1E293B;}
 
 .ns-footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 100; }
-.ns-save-btn { width: 100%; background: #6b5cff; color: white; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; border: none; }
+.ns-save-btn { width: 100%; background: var(--primary); color: white; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; border: none; }
 
 /* Item Add Modal */
 #addItemModal { align-items: center; justify-content: center; z-index: 110; }
 #addItemModal .modal-box { border-radius: 16px; width: 90%; max-width: 400px; max-height: 80vh; animation: popIn 0.3s ease; padding:20px;}
 @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* ================= INVOICE STYLES ================= */
+/* ================= INVOICE STYLES (Xin Style) ================= */
 #invoiceModal { z-index: 120; align-items: center; justify-content: center; padding: 10px; }
-#invoiceModal .modal-box { border-radius: 10px; width: 100%; max-width: 800px; max-height: 95vh; padding: 0; background: white; }
+#invoiceModal .modal-box { border-radius: 10px; width: 100%; max-width: 900px; max-height: 95vh; padding: 0; background: white; }
 .inv-header-action { background: var(--bg); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
 .inv-header-action h3 { margin: 0; color: var(--primary); font-size: 18px; }
-.btn-print { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 15px;}
-.btn-close-inv { background: var(--red); color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;}
+.btn-print { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 15px; border:none;}
+.btn-close-inv { background: var(--red); color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; border:none;}
 
-#invoicePrintArea { padding: 30px; background: white; color: black; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-.inv-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
-.inv-header h2 { margin: 0 0 5px 0; font-size: 28px; color: #000; }
-.inv-header p { margin: 2px 0; font-size: 14px; color: #333; }
-.inv-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
-.inv-table th, .inv-table td { border: 1px solid #333; padding: 8px; text-align: left; color: #000; }
-.inv-table th { background: #f0f0f0; font-weight: bold; text-align: center; }
-.inv-table td.text-right { text-align: right; }
-.inv-table td.text-center { text-align: center; }
-.inv-summary-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #aaa; }
-.inv-summary-row.bold { font-weight: bold; border-bottom: 2px solid #333; font-size: 16px; padding-top: 10px; }
+/* The actual Xin Style Invoice Box */
+#invoicePrintArea { padding: 20px; background: white; color: black; font-family: Arial, Helvetica, sans-serif; font-size: 12px; min-width: 700px; /* Force desktop layout for download */ }
+.xin-inv-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.xin-inv-left { display: flex; gap: 15px; align-items: center; }
+.xin-logo-box { width: 70px; height: 70px; background: #000; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; font-style: italic; }
+.xin-company-info { font-size: 11px; line-height: 1.4; }
+.xin-company-info h3 { font-size: 16px; margin-bottom: 5px; font-weight: bold; }
+.xin-inv-right { text-align: right; font-size: 11px; line-height: 1.6; }
+.xin-inv-right strong { display: inline-block; width: 90px; }
 
-/* Invoice List / View */
-#invoiceListModal { z-index: 105; align-items: center; justify-content: center; padding: 10px; }
-#invoiceListModal .modal-box { border-radius: 12px; width: 100%; max-width: 500px; max-height: 85vh; padding: 20px; animation: popIn 0.3s ease;}
-.invoice-list-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; box-shadow: var(--shadow);}
+.xin-title-row { display: flex; align-items: center; justify-content: space-between; margin: 15px 0; }
+.xin-title-row::before, .xin-title-row::after { content: ""; flex: 1; border-bottom: 2px solid black; }
+.xin-title-row h2 { margin: 0 15px; font-size: 24px; font-weight: bold; }
+
+.xin-bill-to { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 11px; line-height: 1.5; }
+.xin-bill-box { flex: 1; }
+.xin-bill-box h4 { font-size: 12px; margin-bottom: 5px; font-weight: normal; }
+.xin-bill-box strong { font-size: 13px; font-weight: bold; }
+
+.xin-meta-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; }
+.xin-meta-table th, .xin-meta-table td { border: 1px solid #000; padding: 6px; text-align: left; }
+.xin-meta-table th { background: #d9d9d9; font-weight: bold; width: 15%; }
+
+/* Updated Items Table without Discount Column */
+.xin-items-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; }
+.xin-items-table th, .xin-items-table td { border: 1px solid #000; padding: 8px; text-align: left; }
+.xin-items-table th { background: #e6e6e6; font-weight: bold; text-align: center; }
+.xin-items-table td.text-right { text-align: right; }
+.xin-items-table td.text-center { text-align: center; }
+.xin-items-table tr { height: 150px; } /* Force tall items row like the image */
+
+.xin-footer-section { display: flex; justify-content: space-between; margin-bottom: 20px; }
+.xin-footer-left { flex: 1; font-size: 11px; line-height: 1.5; }
+.xin-footer-right { width: 300px; font-size: 11px; }
+.xin-sum-row { display: flex; justify-content: space-between; padding: 4px 0; }
+.xin-sum-row.bold { font-weight: bold; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px 0; margin-top: 5px;}
+.xin-sum-row.total-due { font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 6px;}
+
+.xin-sign-area { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; font-size: 11px;}
+.xin-sign-line { width: 200px; border-top: 1px solid #000; text-align: center; padding-top: 5px; margin-top: 30px;}
+.xin-page-no { text-align: right; font-size: 11px; margin-top: 10px; }
+
+/* Ensure the table inside HTML2Canvas renders correctly */
+#invoicePrintArea table { min-width: 100%; }
+
+/* Invoice List Styling (Cleaner) */
+.invoice-list-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; box-shadow: var(--shadow);}
 .invoice-list-item:active { background: var(--primary-light); border-color: var(--primary); }
-
-#invoiceSearchInput, #invoiceViewSearchInput { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 14px; background: var(--card); color: var(--text); margin-bottom: 15px; outline: none;}
+.inv-list-header { display: flex; justify-content: space-between; align-items: center; }
+.inv-list-inv { color: var(--primary); font-size: 16px; font-weight: 800; }
+.inv-list-cust { font-size: 14px; margin-top: 5px; color: var(--text); }
+.inv-list-date { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.inv-list-amounts { text-align: right; }
+.inv-list-total { font-size: 15px; font-weight: bold; color: var(--text); }
+.inv-list-due { font-size: 12px; margin-top: 4px; font-weight: 600; }
 
 </style>
 
@@ -701,13 +738,13 @@ input:checked + .slider:before { transform: translateX(22px); }
     <div class="inv-header-action">
       <h3>ইনভয়েস প্রিভিউ</h3>
       <div style="display: flex; gap: 10px;">
-        <button class="btn-print" id="btnDownloadInvoice" onclick="downloadInvoiceImage()">📥 ছবি ডাউনলোড করুন</button>
+        <button class="btn-print" id="btnDownloadInvoice" onclick="downloadInvoiceImage()">📥 ছবি ডাউনলোড</button>
         <button class="btn-close-inv" onclick="closeInvoiceModal()">✕ বন্ধ করুন</button>
       </div>
     </div>
     
     <!-- Background area for HTML2Canvas to capture with proper padding -->
-    <div style="background: white; padding: 10px;">
+    <div style="background: white; padding: 10px; overflow-x: auto;">
         <div id="invoicePrintArea">
           <!-- Invoice HTML will be injected here -->
         </div>
@@ -1029,21 +1066,23 @@ input:checked + .slider:before { transform: translateX(22px); }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
 
+  // Updated Invoice List Item to match the screenshot
   function getInvoiceListItemHTML(t) {
     const party = window.db.parties.find(p => p.id === t.partyId);
     const pName = party ? party.name : 'Unknown';
     const date = new Date(t.date).toLocaleDateString('bn-BD');
     const due = t.due !== undefined ? Number(t.due) : (Number(t.total) - Number(t.paid || 0));
+    
     return `<div class="invoice-list-item" onclick="editExistingInvoice('${t.id}')">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="inv-list-header">
             <div>
-                <strong style="color:var(--primary); font-size:15px;">${t.invoiceNo || 'N/A'}</strong>
-                <div style="font-size:13px; margin-top:3px;">কাস্টমার: <strong>${esc(pName)}</strong></div>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${date}</div>
+                <div class="inv-list-inv">${t.invoiceNo || 'N/A'}</div>
+                <div class="inv-list-cust">কাস্টমার: <strong>${esc(pName)}</strong></div>
+                <div class="inv-list-date">${date}</div>
             </div>
-            <div style="text-align:right;">
-                <div style="font-weight:bold; font-size:14px; color:var(--text);">৳ ${Number(t.total).toFixed(2)}</div>
-                <div style="font-size:11px; color:${due > 0 ? 'var(--red)' : 'var(--green)'};">বাকি: ৳ ${due.toFixed(2)}</div>
+            <div class="inv-list-amounts">
+                <div class="inv-list-total">৳ ${Number(t.total).toFixed(2)}</div>
+                <div class="inv-list-due" style="color:${due > 0 ? 'var(--red)' : 'var(--green)'};">বাকি: ৳ ${due.toFixed(2)}</div>
             </div>
         </div>
     </div>`;
@@ -1343,89 +1382,148 @@ input:checked + .slider:before { transform: translateX(22px); }
     });
   };
 
+  // ================= UPDATED INVOICE PREVIEW (Xin Style without Item Discount) =================
   window.showInvoicePreview = function(invNo, party, items, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod) {
-    const dateStr = new Date().toLocaleDateString('bn-BD');
+    const dateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-'); // DD-MM-YYYY
     
-    let discountText = money(discFlat);
-    if(discPercent > 0) {
-        discountText += ` (${discPercent}%)`;
+    // Calculate discount percentage for display if flat is provided instead of percent
+    let displayPercent = discPercent;
+    if (displayPercent === 0 && subTotal > 0 && discFlat > 0) {
+        displayPercent = ((discFlat / subTotal) * 100).toFixed(2);
     }
 
+    // Build item rows with product codes (Discount column removed)
+    const itemRows = items.map((item, index) => {
+        const prodCode = window.db.products.find(p => p.id === item.productId)?.code || 'N/A';
+        return `
+            <tr>
+              <td class="text-center">${index + 1}</td>
+              <td>${esc(prodCode)}</td>
+              <td>${esc(item.name)}</td>
+              <td class="text-right">৳ ${Number(item.rate).toFixed(2)}</td>
+              <td class="text-center">${item.qty}</td>
+              <td class="text-right">৳ ${(item.qty * item.rate).toFixed(2)}</td>
+            </tr>
+        `;
+    }).join('');
+
     const invoiceHTML = `
-      <div class="inv-header">
-        <h2 style="margin-bottom: 5px; font-size: 28px;">Novas Agro</h2>
-        <p style="margin: 2px 0; font-size: 15px; font-weight: bold;">এগ্রো ভেটেরিনারি ও ফার্ম সাপ্লাই</p>
-        <p style="margin: 2px 0; font-size: 14px;">১২৩, কৃষি মার্কেট, ঢাকা, বাংলাদেশ</p>
-        <p style="margin: 2px 0; font-size: 14px;">মোবাইল: ০১৭XX-XXXXXX | ইমেইল: info@novasagro.com</p>
-      </div>
-      
-      <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 14px;">
-        <div style="flex: 1; line-height: 1.6;">
-          <strong style="font-size: 15px; text-decoration: underline; display: block; margin-bottom: 5px;">কাস্টমারের তথ্য:</strong>
-          নাম: <strong>${esc(party.name)}</strong><br>
-          মোবাইল: ${esc(party.phone || 'N/A')}<br>
-          ঠিকানা: ${esc(party.address || 'N/A')}
+      <div class="xin-inv-header">
+        <div class="xin-inv-left">
+          <div class="xin-logo-box" style="background: var(--primary); color: white;">Novas</div>
+          <div class="xin-company-info">
+            <h3>Novas Agro</h3>
+            <p>123, Krishi Market, Dhaka<br>Bangladesh</p>
+            <p>Phone: 017XX-XXXXXX | Email: info@novasagro.com<br>Website: www.novasagro.com</p>
+          </div>
         </div>
-        <div style="flex: 1; text-align: right; line-height: 1.6;">
-          <strong style="font-size: 15px; text-decoration: underline; display: block; margin-bottom: 5px;">ইনভয়েস বিবরণ:</strong>
-          ইনভয়েস নং: <strong>${invNo}</strong><br>
-          তারিখ: ${dateStr}<br>
-          পেমেন্ট মাধ্যম: ${paymentMethod}
+        <div class="xin-inv-right">
+          <div><strong>Reg No:</strong> N/A</div>
+          <div><strong>Code:</strong> ${invNo}</div>
+          <div><strong>Currency Code:</strong> BDT</div>
         </div>
       </div>
 
-      <table class="inv-table">
+      <div class="xin-title-row">
+        <h2>Invoice</h2>
+      </div>
+
+      <div class="xin-bill-to">
+        <div class="xin-bill-box">
+          <h4>Bill To:</h4>
+          <strong>${esc(party.name)}</strong><br>
+          ${esc(party.address || 'N/A')}<br>
+          Phone: ${esc(party.phone || 'N/A')}
+        </div>
+        <div class="xin-bill-box">
+          <h4>Ship To:</h4>
+          <strong>${esc(party.name)}</strong><br>
+          ${esc(party.address || 'N/A')}<br>
+          Phone: ${esc(party.phone || 'N/A')}
+        </div>
+      </div>
+
+      <table class="xin-meta-table">
+        <tr>
+          <th>Date</th><td>${dateStr}</td>
+          <th>Order No.</th><td>${invNo}</td>
+          <th>Payment Terms</th><td>${paymentMethod}</td>
+        </tr>
+        <tr>
+          <th>Shipping Date</th><td>${dateStr}</td>
+          <th>Shipping Terms</th><td>N/A</td>
+          <th>Sales Person</th><td>Admin</td>
+        </tr>
+      </table>
+
+      <table class="xin-items-table">
         <thead>
           <tr>
-            <th width="8%">ক্রম</th>
-            <th width="42%">পণ্যের নাম</th>
-            <th width="15%">পরিমাণ</th>
-            <th width="15%">একক মূল্য</th>
-            <th width="20%">মোট</th>
+            <th width="5%">No.</th>
+            <th width="15%">Item Code</th>
+            <th width="40%">Description</th>
+            <th width="15%">Unit Price</th>
+            <th width="10%">Quantity</th>
+            <th width="15%">Amount</th>
           </tr>
         </thead>
         <tbody>
-          ${items.map((item, index) => `
-            <tr>
-              <td class="text-center">${index + 1}</td>
-              <td>${esc(item.name)}</td>
-              <td class="text-center">${item.qty}</td>
-              <td class="text-right">৳ ${Number(item.rate).toFixed(2)}</td>
-              <td class="text-right">৳ ${(item.qty * item.rate).toFixed(2)}</td>
-            </tr>
-          `).join('')}
+          ${itemRows}
         </tbody>
       </table>
 
-      <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
-        <div style="width: 50%; font-size: 14px;">
-          <div class="inv-summary-row"><span>সাব-টোটাল:</span> <span>৳ ${Number(subTotal).toFixed(2)}</span></div>
-          <div class="inv-summary-row"><span>ডিসকাউন্ট:</span> <span>৳ ${discountText}</span></div>
-          <div class="inv-summary-row"><span>ডেলিভারি চার্জ:</span> <span>৳ ${Number(delivery).toFixed(2)}</span></div>
-          <div class="inv-summary-row bold"><span>সর্বমোট:</span> <span>৳ ${Number(grandTotal).toFixed(2)}</span></div>
-          <div class="inv-summary-row"><span>পরিশোধ:</span> <span>৳ ${Number(paid).toFixed(2)}</span></div>
-          <div class="inv-summary-row" style="color: red; font-weight: bold;"><span>বাকি:</span> <span>৳ ${Number(due).toFixed(2)}</span></div>
+      <div class="xin-footer-section">
+        <div class="xin-footer-left">
+          <p>Amount in words: <strong>Taka ${numberToWords(grandTotal)} Only</strong></p>
+          <br>
+          <h4>Note:</h4>
+          <p>Thanks for your business!<br>This invoice is generated using Novas Agro Admin.</p>
+        </div>
+        <div class="xin-footer-right">
+          <div class="xin-sum-row"><span>Sub Total:</span> <span>৳ ${Number(subTotal).toFixed(2)}</span></div>
+          <!-- Discount % shown in text -->
+          <div class="xin-sum-row"><span>Discount ${displayPercent > 0 ? `(${displayPercent}%)` : ''}:</span> <span>৳ ${Number(discFlat).toFixed(2)}</span></div>
+          <div class="xin-sum-row"><span>Add. Discount:</span> <span>৳ 0.00</span></div>
+          <div class="xin-sum-row"><span>Shipping:</span> <span>৳ ${Number(delivery).toFixed(2)}</span></div>
+          <div class="xin-sum-row"><span>Tax:</span> <span>৳ 0.00</span></div>
+          <div class="xin-sum-row bold"><span>Total:</span> <span>৳ ${Number(grandTotal).toFixed(2)}</span></div>
+          <div class="xin-sum-row"><span>Total Paid:</span> <span>৳ ${Number(paid).toFixed(2)}</span></div>
+          <div class="xin-sum-row total-due"><span>Amt Due:</span> <span>৳ ${Number(due).toFixed(2)}</span></div>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; margin-top: 60px; padding-top: 10px; clear: both;">
-        <div style="width: 200px; text-align: center; border-top: 1px solid #000; padding-top: 5px; font-size: 14px;">
-          ম্যানেজারের স্বাক্ষর
-        </div>
-        <div style="width: 200px; text-align: center; border-top: 1px solid #000; padding-top: 5px; font-size: 14px;">
-          ডেলিভারি ম্যানের স্বাক্ষর
+      <div class="xin-sign-area">
+        <div>
+          Authorized Signature,
+          <div class="xin-sign-line" style="font-family: 'Brush Script MT', cursive; font-size: 24px; border-top: none;">Novas</div>
+          <div class="xin-sign-line"></div>
         </div>
       </div>
       
-      <div class="inv-footer" style="margin-top: 40px; text-align: center; font-size: 13px; color: #555; border-top: 1px dashed #aaa; padding-top: 15px;">
-        <p>ধন্যবাদ! আমাদের সাথে থাকার জন্য।</p>
-        <p>পণ্য বিক্রয়ের পর কোনো অভিযোগ থাকলে ৭ দিনের মধ্যে জানাতে হবে।</p>
-      </div>
+      <div class="xin-page-no">Page : 1 / 1</div>
     `;
     
     document.getElementById('invoicePrintArea').innerHTML = invoiceHTML;
     document.getElementById('invoiceModal').classList.add('open');
   };
+
+  // Simple Number to Words converter for Invoice
+  function numberToWords(num) {
+      if(num === 0) return 'Zero';
+      const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
+      const b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
+      let nStr = num.toString().split('.')[0];
+      if(nStr.length > 9) return 'Amount too large';
+      let n = ('000000000' + nStr).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+      if (!n) return ''; 
+      let str = '';
+      str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : '';
+      str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : '';
+      str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : '';
+      str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : '';
+      str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+      return str.trim() || 'Zero';
+  }
 
   window.closeInvoiceModal = function() {
     document.getElementById('invoiceModal').classList.remove('open');
@@ -1434,7 +1532,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     switchView('dashboard');
   };
 
-  // ================= NEW IMAGE DOWNLOAD FUNCTION =================
+  // ================= DOWNLOAD IMAGE FUNCTION FIXED =================
   window.downloadInvoiceImage = function() {
     const element = document.getElementById('invoicePrintArea');
     const btn = document.getElementById('btnDownloadInvoice');
@@ -1443,42 +1541,48 @@ input:checked + .slider:before { transform: translateX(22px); }
     btn.innerHTML = '⏳ ডাউনলোড হচ্ছে...';
     btn.disabled = true;
 
-    // Give a small delay to ensure UI updates and prevent black screen
+    // Temporarily enforce styles for better capture
+    const originalWidth = element.style.width;
+    element.style.width = '800px'; // Fixed width to prevent responsive squishing
+
     setTimeout(() => {
         html2canvas(element, {
             scale: 2, 
             useCORS: true,
             backgroundColor: '#ffffff',
-            scrollY: -window.scrollY, // Fixes scrolling black screen issue
+            scrollY: -window.scrollY,
             scrollX: -window.scrollX,
-            onclone: (clonedDoc) => {
-                // Ensure the modal backdrop doesn't cause issues in the clone
-                const clonedModal = clonedDoc.getElementById('invoiceModal');
-                if(clonedModal) {
-                    clonedModal.style.backdropFilter = 'none';
-                    clonedModal.style.background = 'transparent';
-                }
-            }
+            logging: false
         }).then(canvas => {
-            const imgData = canvas.toDataURL('image/jpeg', 1.0);
-            
-            const link = document.createElement('a');
-            const invNo = document.getElementById('nsInvoiceNo').innerText || 'Export';
-            link.download = `Invoice_${invNo}.jpg`;
-            link.href = imgData;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Use Blob instead of base64 to prevent crashes on mobile
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                const invNo = document.getElementById('nsInvoiceNo').innerText || 'Export';
+                link.download = `Invoice_${invNo}.jpg`;
+                link.href = url;
+                // Target _blank helps bypass WebView download blockers
+                link.target = '_blank'; 
+                document.body.appendChild(link);
+                link.click();
+                
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }, 1000);
 
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                element.style.width = originalWidth; // Restore
+            }, 'image/jpeg', 1.0);
         }).catch(err => {
             console.error("Image download failed:", err);
             alert('ইনভয়েস ডাউনলোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
             btn.innerHTML = originalText;
             btn.disabled = false;
+            element.style.width = originalWidth;
         });
-    }, 150);
+    }, 200); // slight delay to ensure layout updates
   };
 
   // ================= END NEW SALE LOGIC =================
