@@ -257,52 +257,59 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 /* ================= INVOICE STYLES (Xin Style) ================= */
 #invoiceModal { z-index: 120; align-items: center; justify-content: center; padding: 10px; }
-#invoiceModal .modal-box { border-radius: 10px; width: 100%; max-width: 900px; max-height: 95vh; padding: 0; background: white; }
+#invoiceModal .modal-box { border-radius: 10px; width: 100%; max-width: 800px; max-height: 95vh; padding: 0; background: white; }
 .inv-header-action { background: var(--bg); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
 .inv-header-action h3 { margin: 0; color: var(--primary); font-size: 18px; }
 .btn-print { background: var(--primary); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 15px; border:none;}
 .btn-close-inv { background: var(--red); color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; border:none;}
 
-/* The actual Xin Style Invoice Box */
-#invoicePrintArea { padding: 20px; background: white; color: black; font-family: Arial, Helvetica, sans-serif; font-size: 12px; min-width: 700px; /* Force desktop layout for download */ }
-.xin-inv-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-.xin-inv-left { display: flex; gap: 15px; align-items: center; }
-.xin-logo-box { width: 70px; height: 70px; background: #000; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; font-style: italic; }
+/* The actual Xin Style Invoice Box (Now fully responsive) */
+#invoicePrintArea { 
+    padding: 15px; 
+    background: white; 
+    color: black; 
+    font-family: Arial, Helvetica, sans-serif; 
+    font-size: 11px; 
+    width: 100%; 
+    box-sizing: border-box;
+}
+.xin-inv-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; border-bottom: 2px solid black; padding-bottom: 10px; }
+.xin-inv-left { display: flex; flex-direction: row; gap: 10px; align-items: center; }
+.xin-logo-box { width: 60px; height: 60px; background: #000; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; font-style: italic; flex-shrink: 0;}
 .xin-company-info { font-size: 11px; line-height: 1.4; }
-.xin-company-info h3 { font-size: 16px; margin-bottom: 5px; font-weight: bold; }
-.xin-inv-right { text-align: right; font-size: 11px; line-height: 1.6; }
+.xin-company-info h3 { font-size: 15px; margin-bottom: 3px; font-weight: bold; }
+.xin-inv-right { text-align: left; font-size: 11px; line-height: 1.6; }
 .xin-inv-right strong { display: inline-block; width: 90px; }
 
 .xin-title-row { display: flex; align-items: center; justify-content: space-between; margin: 15px 0; }
 .xin-title-row::before, .xin-title-row::after { content: ""; flex: 1; border-bottom: 2px solid black; }
-.xin-title-row h2 { margin: 0 15px; font-size: 24px; font-weight: bold; }
+.xin-title-row h2 { margin: 0 15px; font-size: 20px; font-weight: bold; }
 
-.xin-bill-to { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 11px; line-height: 1.5; }
-.xin-bill-box { flex: 1; }
-.xin-bill-box h4 { font-size: 12px; margin-bottom: 5px; font-weight: normal; }
-.xin-bill-box strong { font-size: 13px; font-weight: bold; }
+.xin-bill-to { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; font-size: 11px; line-height: 1.5; border-bottom: 1px dashed #ccc; padding-bottom: 10px;}
+.xin-bill-box { width: 100%; }
+.xin-bill-box h4 { font-size: 12px; margin-bottom: 3px; font-weight: bold; }
+.xin-bill-box strong { font-size: 12px; font-weight: bold; }
 
-.xin-meta-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; }
-.xin-meta-table th, .xin-meta-table td { border: 1px solid #000; padding: 6px; text-align: left; }
-.xin-meta-table th { background: #d9d9d9; font-weight: bold; width: 15%; }
+.xin-meta-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
+.xin-meta-table th, .xin-meta-table td { border: 1px solid #000; padding: 5px; text-align: left; }
+.xin-meta-table th { background: #d9d9d9; font-weight: bold; width: 20%; }
 
-/* Updated Items Table without Discount Column */
-.xin-items-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 11px; }
-.xin-items-table th, .xin-items-table td { border: 1px solid #000; padding: 8px; text-align: left; }
+/* Updated Items Table without forced height */
+.xin-items-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
+.xin-items-table th, .xin-items-table td { border: 1px solid #000; padding: 6px; text-align: left; word-break: break-word; }
 .xin-items-table th { background: #e6e6e6; font-weight: bold; text-align: center; }
 .xin-items-table td.text-right { text-align: right; }
 .xin-items-table td.text-center { text-align: center; }
-.xin-items-table tr { height: 150px; } /* Force tall items row like the image */
 
-.xin-footer-section { display: flex; justify-content: space-between; margin-bottom: 20px; }
-.xin-footer-left { flex: 1; font-size: 11px; line-height: 1.5; }
-.xin-footer-right { width: 300px; font-size: 11px; }
+.xin-footer-section { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+.xin-footer-left { width: 100%; font-size: 11px; line-height: 1.5; }
+.xin-footer-right { width: 100%; font-size: 11px; border-top: 1px dashed #ccc; padding-top: 10px; }
 .xin-sum-row { display: flex; justify-content: space-between; padding: 4px 0; }
 .xin-sum-row.bold { font-weight: bold; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px 0; margin-top: 5px;}
 .xin-sum-row.total-due { font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 6px;}
 
-.xin-sign-area { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; font-size: 11px;}
-.xin-sign-line { width: 200px; border-top: 1px solid #000; text-align: center; padding-top: 5px; margin-top: 30px;}
+.xin-sign-area { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; font-size: 11px;}
+.xin-sign-line { width: 150px; border-top: 1px solid #000; text-align: center; padding-top: 5px; margin-top: 30px;}
 .xin-page-no { text-align: right; font-size: 11px; margin-top: 10px; }
 
 /* Ensure the table inside HTML2Canvas renders correctly */
@@ -826,18 +833,28 @@ input:checked + .slider:before { transform: translateX(22px); }
 <!-- ================= INVOICE PREVIEW/DOWNLOAD MODAL ================= -->
 <div class="modal" id="invoiceModal">
   <div class="modal-box">
-    <div class="inv-header-action">
+    <div class="inv-header-action" id="invoiceActionHeader">
       <h3>ইনভয়েস প্রিভিউ</h3>
       <div style="display: flex; gap: 10px;">
-        <button class="btn-print" id="btnDownloadInvoice" onclick="downloadInvoiceImage()">📥 ছবি ডাউনলোড</button>
+        <button class="btn-print" id="btnDownloadInvoice" onclick="downloadInvoiceImage()">📥 ছবি তৈরি করুন</button>
         <button class="btn-close-inv" onclick="closeInvoiceModal()">✕ বন্ধ করুন</button>
       </div>
     </div>
     
     <!-- Background area for HTML2Canvas to capture with proper padding -->
-    <div style="background: white; padding: 10px; overflow-x: auto;">
+    <div style="background: white; padding: 10px; overflow-x: hidden;">
         <div id="invoicePrintArea">
           <!-- Invoice HTML will be injected here -->
+        </div>
+        
+        <!-- Container to show generated image for saving -->
+        <div id="invoiceImageContainer" style="display:none; text-align:center; padding: 10px;">
+            <p style="font-weight: bold; color: var(--primary); margin-bottom: 10px; font-size: 15px;">
+                👇 ছবিটি সেভ করতে ছবির উপর চাপ দিয়ে ধরে রাখুন (Long Press)
+            </p>
+            <img id="generatedInvoiceImg" style="width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            <br><br>
+            <button class="btn-print" style="width: 100%; justify-content: center; background: var(--bg); color: var(--text);" onclick="hideGeneratedImage()">← ইনভয়েসে ফিরে যান</button>
         </div>
     </div>
   </div>
@@ -1642,6 +1659,9 @@ input:checked + .slider:before { transform: translateX(22px); }
 
   // ================= UPDATED INVOICE PREVIEW =================
   window.showInvoicePreview = function(invNo, party, items, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod) {
+    // Reset view if previously showing image
+    hideGeneratedImage();
+
     const dateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-'); 
     
     let displayPercent = discPercent;
@@ -1716,10 +1736,10 @@ input:checked + .slider:before { transform: translateX(22px); }
         <thead>
           <tr>
             <th width="5%">No.</th>
-            <th width="15%">Item Code</th>
-            <th width="40%">Description</th>
+            <th width="20%">Item Code</th>
+            <th width="35%">Description</th>
             <th width="15%">Unit Price</th>
-            <th width="10%">Quantity</th>
+            <th width="10%">Qty</th>
             <th width="15%">Amount</th>
           </tr>
         </thead>
@@ -1781,9 +1801,17 @@ input:checked + .slider:before { transform: translateX(22px); }
 
   window.closeInvoiceModal = function() {
     document.getElementById('invoiceModal').classList.remove('open');
+    hideGeneratedImage();
     closeNewSale();
     window.currentSaleItems = [];
     switchView('dashboard');
+  };
+
+  window.hideGeneratedImage = function() {
+    document.getElementById('generatedInvoiceImg').src = '';
+    document.getElementById('invoiceImageContainer').style.display = 'none';
+    document.getElementById('invoicePrintArea').style.display = 'block';
+    document.getElementById('invoiceActionHeader').style.display = 'flex';
   };
 
   window.downloadInvoiceImage = function() {
@@ -1791,46 +1819,42 @@ input:checked + .slider:before { transform: translateX(22px); }
     const btn = document.getElementById('btnDownloadInvoice');
     const originalText = btn.innerHTML;
     
-    btn.innerHTML = '⏳ ডাউনলোড হচ্ছে...';
+    btn.innerHTML = '⏳ তৈরি হচ্ছে...';
     btn.disabled = true;
 
-    const originalWidth = element.style.width;
-    element.style.width = '800px'; 
+    // Temporarily widen for better quality capture (hidden from view)
+    const originalStyle = element.getAttribute('style') || '';
+    element.style.width = '800px';
+    element.style.maxWidth = '800px';
 
     setTimeout(() => {
         html2canvas(element, {
             scale: 2, 
             useCORS: true,
             backgroundColor: '#ffffff',
-            scrollY: -window.scrollY,
-            scrollX: -window.scrollX,
             logging: false
         }).then(canvas => {
-            canvas.toBlob(function(blob) {
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                const invNo = document.getElementById('nsInvoiceNo').innerText || 'Export';
-                link.download = `Invoice_${invNo}.jpg`;
-                link.href = url;
-                link.target = '_blank'; 
-                document.body.appendChild(link);
-                link.click();
-                
-                setTimeout(() => {
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                }, 1000);
+            const imgData = canvas.toDataURL('image/jpeg', 0.9);
+            
+            // Revert element style immediately
+            element.setAttribute('style', originalStyle);
 
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                element.style.width = originalWidth; 
-            }, 'image/jpeg', 1.0);
-        }).catch(err => {
-            console.error("Image download failed:", err);
-            alert('ইনভয়েস ডাউনলোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+            // Show in image container for long press save
+            document.getElementById('generatedInvoiceImg').src = imgData;
+            document.getElementById('invoicePrintArea').style.display = 'none';
+            document.getElementById('invoiceImageContainer').style.display = 'block';
+            
+            // Hide the top action header buttons to avoid confusion
+            document.getElementById('invoiceActionHeader').style.display = 'none';
+            
             btn.innerHTML = originalText;
             btn.disabled = false;
-            element.style.width = originalWidth;
+        }).catch(err => {
+            console.error("Image generation failed:", err);
+            alert('ইনভয়েস তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+            element.setAttribute('style', originalStyle);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         });
     }, 200); 
   };
