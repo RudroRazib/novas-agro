@@ -348,6 +348,41 @@ input:checked + .slider:before { transform: translateX(22px); }
 .breakdown-name { font-weight: 600; font-size: 14px; }
 .breakdown-amount { font-weight: 700; font-size: 15px; }
 
+/* ================= A4 Print Styles ================= */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #invoiceModal, #invoiceModal .modal-box, #invoicePrintArea, #invoicePrintArea * {
+    visibility: visible;
+  }
+  #invoiceModal {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+  #invoiceModal .modal-box {
+    box-shadow: none;
+    border: none;
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+  }
+  .inv-header-action, #invoiceImageContainer {
+    display: none !important;
+  }
+  #invoicePrintArea {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 15mm;
+    box-sizing: border-box;
+    margin: 0 auto;
+  }
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -477,9 +512,18 @@ input:checked + .slider:before { transform: translateX(22px); }
             <span class="settings-item-desc">সব ডাটা JSON ফাইলে সেভ করে রাখুন</span>
           </div>
           <button class="btn-action primary" onclick="downloadBackup()" style="width: 100%;">📥 ব্যাকআপ ডাউনলোড করুন</button>
+          <button class="btn-action" onclick="showBackupDataModal()" style="width: 100%; background: var(--bg); color: var(--text-muted); font-size: 12px;">👁️ ব্যাকআপ ডাটা দেখুন / কপি করুন</button>
         </div>
 
-        <div class="settings-item" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+        <div class="settings-item" style="flex-direction: column; align-items: flex-start; gap: 10px; border-top: 1px solid var(--border); padding-top: 15px;">
+          <div class="settings-item-left">
+            <span class="settings-item-title" style="color: var(--green);">ডাটা রিস্টোর</span>
+            <span class="settings-item-desc">কপি করা ব্যাকআপ ডাটা ফিরিয়ে আনুন</span>
+          </div>
+          <button class="btn-action primary" style="width: 100%; background: #dcfce7; color: var(--green);" onclick="openRestoreDataModal()">📤 ডাটা রিস্টোর করুন</button>
+        </div>
+
+        <div class="settings-item" style="flex-direction: column; align-items: flex-start; gap: 10px; border-top: 1px solid var(--border); padding-top: 15px;">
           <div class="settings-item-left">
             <span class="settings-item-title" style="color: var(--red);">ডাটা রিসেট</span>
             <span class="settings-item-desc">অ্যাপের সব ডাটা মুছে ফেলুন (ব্যাকআপ ছাড়া সম্ভব নয়)</span>
@@ -588,6 +632,32 @@ input:checked + .slider:before { transform: translateX(22px); }
             <button type="submit" class="btn-submit" id="submitBtn">সংরক্ষণ</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Backup Data Modal -->
+  <div class="modal" id="backupDataModal">
+    <div class="modal-box">
+      <div class="modal-head"><h3>ব্যাকআপ ডাটা</h3><button class="close-btn" onclick="closeBackupDataModal()">✕</button></div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">ফাইল ডাউনলোড না হলে, নিচের ডাটা কপি করে একটি টেক্সট ফাইলে সেভ করুন।</p>
+      <textarea id="backupDataTextArea" style="width: 100%; height: 200px; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 12px; font-family: monospace; resize: none;"></textarea>
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="closeBackupDataModal()">বন্ধ করুন</button>
+        <button type="button" class="btn-submit" onclick="copyBackupData()">📋 ডাটা কপি করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Restore Data Modal -->
+  <div class="modal" id="restoreDataModal">
+    <div class="modal-box">
+      <div class="modal-head"><h3 style="color:var(--green)">ডাটা রিস্টোর</h3><button class="close-btn" onclick="closeRestoreDataModal()">✕</button></div>
+      <p style="font-size:12px; color:var(--red); margin-bottom:10px;">সতর্কতা! ডাটা রিস্টোর করলে বর্তমান সব ডাটা মুছে যাবে এবং কপি করা ডাটা ফিরে আসবে।</p>
+      <textarea id="restoreDataTextArea" placeholder="এখানে আপনার কপি করা ব্যাকআপ ডাটা (JSON) পেস্ট করুন..." style="width: 100%; height: 200px; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 12px; font-family: monospace; resize: none;"></textarea>
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="closeRestoreDataModal()">বাতিল</button>
+        <button type="button" class="btn-submit" style="background:var(--green);" onclick="executeRestoreData()">✅ রিস্টোর করুন</button>
+      </div>
     </div>
   </div>
 
@@ -835,7 +905,8 @@ input:checked + .slider:before { transform: translateX(22px); }
   <div class="modal-box">
     <div class="inv-header-action" id="invoiceActionHeader">
       <h3>ইনভয়েস প্রিভিউ</h3>
-      <div style="display: flex; gap: 10px;">
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+        <button class="btn-print" style="background: var(--green);" onclick="printInvoice()">🖨️ প্রিন্ট (A4)</button>
         <button class="btn-print" id="btnDownloadInvoice" onclick="downloadInvoiceImage()">📸 ছবি তৈরি করুন</button>
         <button class="btn-close-inv" onclick="closeInvoiceModal()">✕ বন্ধ করুন</button>
       </div>
@@ -893,6 +964,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   window.editingSaleId = null; 
   window.editingItemIndex = null;
   window.currentGeneratedDataUrl = '';
+  window.currentGeneratedBlob = null;
 
   // Theme Logic
   if(localStorage.getItem('theme') === 'dark') { 
@@ -1049,19 +1121,110 @@ input:checked + .slider:before { transform: translateX(22px); }
     closeAddStockModal();
   };
 
-  // Backup & Reset Logic
+  // ================= Backup & Reset Logic =================
   window.downloadBackup = function() {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.db, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "novas_agro_backup_" + new Date().toISOString().slice(0,10) + ".json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-    
+    try {
+        const dataStr = JSON.stringify(window.db, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", url);
+        downloadAnchorNode.setAttribute("download", "novas_agro_backup_" + new Date().toISOString().slice(0,10) + ".json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        
+        // Revoke after a delay to ensure download starts
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        window.backupTaken = true;
+        document.getElementById('btnResetApp').disabled = false;
+        alert('ব্যাকআপ ফাইল ডাউনলোড শুরু হয়েছে। যদি ফাইলটি না নামে, তবে "ব্যাকআপ ডাটা দেখুন / কপি করুন" বাটনে ক্লিক করুন।');
+    } catch (e) {
+        console.error(e);
+        showBackupDataModal();
+    }
+  };
+
+  window.showBackupDataModal = function() {
+    const dataStr = JSON.stringify(window.db, null, 2);
+    document.getElementById('backupDataTextArea').value = dataStr;
+    document.getElementById('backupDataModal').classList.add('open');
     window.backupTaken = true;
     document.getElementById('btnResetApp').disabled = false;
-    alert('ব্যাকআপ সফলভাবে ডাউনলোড হয়েছে। এখন আপনি রিসেট করতে পারবেন।');
+  };
+
+  window.copyBackupData = function() {
+    const textArea = document.getElementById('backupDataTextArea');
+    textArea.select();
+    textArea.setSelectionRange(0, 99999); /* For mobile devices */
+    try {
+        document.execCommand('copy');
+        alert('ব্যাকআপ ডাটা কপি হয়েছে! এটি একটি টেক্সট ফাইলে পেস্ট করে সেভ করুন।');
+    } catch (err) {
+        alert('কপি করা যায়নি। ম্যানুয়ালি সিলেক্ট করে কপি করুন।');
+    }
+  };
+
+  window.closeBackupDataModal = function() {
+    document.getElementById('backupDataModal').classList.remove('open');
+  };
+
+  // Restore Data Logic
+  window.openRestoreDataModal = function() {
+    document.getElementById('restoreDataTextArea').value = '';
+    document.getElementById('restoreDataModal').classList.add('open');
+  };
+
+  window.closeRestoreDataModal = function() {
+    document.getElementById('restoreDataModal').classList.remove('open');
+  };
+
+  window.executeRestoreData = function() {
+    const jsonStr = document.getElementById('restoreDataTextArea').value.trim();
+    if(!jsonStr) return alert('ব্যাকআপ ডাটা পেস্ট করুন!');
+
+    try {
+        const parsedData = JSON.parse(jsonStr);
+        
+        if(!parsedData || typeof parsedData !== 'object') {
+            return alert('ভুল ফরম্যাট! সঠিক ব্যাকআপ ডাটা পেস্ট করুন।');
+        }
+
+        if(!confirm("সতর্কতা! আপনি কি নিশ্চিত? এটি বর্তমান সব ডাটা মুছে ফেলবে এবং ব্যাকআপ ডাটা ফিরিয়ে আনবে।")) return;
+
+        // Convert arrays back to Firebase objects using item.key or item.id
+        const firebaseData = {};
+        for (let table in parsedData) {
+            if (Array.isArray(parsedData[table])) {
+                firebaseData[table] = {};
+                parsedData[table].forEach(row => {
+                    const rKey = row.key || row.id;
+                    if (rKey) {
+                        // Remove the 'key' property to avoid duplicate data in Firebase
+                        const cleanRow = { ...row };
+                        delete cleanRow.key;
+                        firebaseData[table][rKey] = cleanRow;
+                    }
+                });
+            } else if (typeof parsedData[table] === 'object' && parsedData[table] !== null) {
+                firebaseData[table] = parsedData[table];
+            }
+        }
+
+        database.ref().set(firebaseData).then(() => {
+            alert('সফলভাবে ডাটা রিস্টোর হয়েছে! অ্যাপটি রিলোড হচ্ছে...');
+            closeRestoreDataModal();
+            setTimeout(() => location.reload(), 1000);
+        }).catch(err => {
+            console.error(err);
+            alert('রিস্টোর করতে সমস্যা হয়েছে: ' + err.message);
+        });
+
+    } catch (e) {
+        console.error(e);
+        alert('ডাটাটি সঠিক JSON ফরম্যাটে নেই। আবার চেষ্টা করুন।');
+    }
   };
 
   window.promptResetPassword = function() {
@@ -1667,7 +1830,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     });
   };
 
-  // ================= UPDATED INVOICE PREVIEW =================
+  // ================= UPDATED INVOICE PREVIEW (Removed Ship To) =================
   window.showInvoicePreview = function(invNo, party, items, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod) {
     hideGeneratedImage(); // Ensure we are on the HTML view
 
@@ -1692,6 +1855,7 @@ input:checked + .slider:before { transform: translateX(22px); }
         `;
     }).join('');
 
+    // "Ship To" has been removed here
     const invoiceHTML = `
       <div class="xin-inv-header">
         <div class="xin-inv-left">
@@ -1714,14 +1878,8 @@ input:checked + .slider:before { transform: translateX(22px); }
       </div>
 
       <div class="xin-bill-to">
-        <div class="xin-bill-box">
+        <div class="xin-bill-box" style="width: 100%;">
           <h4>Bill To:</h4>
-          <strong>${esc(party.name)}</strong><br>
-          ${esc(party.address || 'N/A')}<br>
-          Phone: ${esc(party.phone || 'N/A')}
-        </div>
-        <div class="xin-bill-box">
-          <h4>Ship To:</h4>
           <strong>${esc(party.name)}</strong><br>
           ${esc(party.address || 'N/A')}<br>
           Phone: ${esc(party.phone || 'N/A')}
@@ -1823,7 +1981,12 @@ input:checked + .slider:before { transform: translateX(22px); }
     document.getElementById('invoiceActionHeader').style.display = 'flex';
   };
 
-  // ================= NEW DOWNLOAD / SHARE LOGIC =================
+  // নতুন প্রিন্ট ফাংশন (এটি APK-তে PDF সেভ করার জন্য সবচেয়ে ভালো)
+  window.printInvoice = function() {
+      window.print(); 
+  };
+
+  // আপডেট করা ডাউনলোড ফাংশন (Blob এবং Base64 দুই ভাবেই কাজ করবে)
   window.downloadInvoiceImage = function() {
     const element = document.getElementById('invoicePrintArea');
     const btn = document.getElementById('btnDownloadInvoice');
@@ -1832,25 +1995,32 @@ input:checked + .slider:before { transform: translateX(22px); }
     btn.innerHTML = '⏳ তৈরি হচ্ছে...';
     btn.disabled = true;
 
-    // Temporarily widen for better quality capture
+    // A4 সাইজের জন্য সাময়িকভাবে এলিমেন্টের সাইজ বাড়ানো
     const originalStyle = element.getAttribute('style') || '';
-    element.style.width = '800px';
-    element.style.maxWidth = '800px';
+    element.style.width = '794px'; 
+    element.style.maxWidth = '794px';
+    element.style.padding = '40px'; 
+    element.style.background = '#ffffff';
 
     setTimeout(() => {
         html2canvas(element, {
-            scale: 2, 
+            scale: 4, // ম্যাক্সিমাম কোয়ালিটি (Scale 4)
             useCORS: true,
             backgroundColor: '#ffffff',
             logging: false
         }).then(canvas => {
-            // Use JPEG with lower quality to make the file smaller for sharing
-            window.currentGeneratedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            // DataURL তৈরি
+            window.currentGeneratedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
             
-            // Revert element style immediately
+            // WebView-এর জন্য Blob তৈরি
+            canvas.toBlob((blob) => {
+                if(blob) {
+                    window.currentGeneratedBlob = blob;
+                }
+            }, 'image/jpeg', 0.95);
+
             element.setAttribute('style', originalStyle);
 
-            // Show in image container
             document.getElementById('generatedInvoiceImg').src = window.currentGeneratedDataUrl;
             document.getElementById('invoicePrintArea').style.display = 'none';
             document.getElementById('invoiceImageContainer').style.display = 'block';
@@ -1869,45 +2039,70 @@ input:checked + .slider:before { transform: translateX(22px); }
     }, 100); 
   };
 
+  // WebView-এর জন্য বিশেষ ডাউনলোড পদ্ধতি
   window.forceDownloadImage = function() {
     if(!window.currentGeneratedDataUrl) return;
     
     try {
-        // Create a link to download the base64 image
-        const link = document.createElement('a');
-        link.href = window.currentGeneratedDataUrl;
-        link.download = `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // Blob URL ব্যবহার করে ডাউনলোড (WebView তে বেশি কার্যকর)
+        if (window.currentGeneratedBlob) {
+            const blobUrl = URL.createObjectURL(window.currentGeneratedBlob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(blobUrl);
+        } else {
+            // Data URL ফলব্যাক
+            const link = document.createElement('a');
+            link.href = window.currentGeneratedDataUrl;
+            link.download = `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     } catch (e) {
         console.error(e);
-        alert('সরাসরি ডাউনলোড ব্যর্থ হয়েছে। অনুগ্রহ করে "শেয়ার / সেভ করুন" বাটনটি ব্যবহার করুন।');
+        alert('সরাসরি ডাউনলোড ব্যর্থ হয়েছে। ছবিটি চেপে ধরে (Long Press) সেভ করার চেষ্টা করুন।');
     }
   };
 
+  // শেয়ার ফাংশন (ফলব্যাক সহ)
   window.shareGeneratedImage = function() {
     if(!window.currentGeneratedDataUrl) return;
     
-    if (navigator.share) {
-        fetch(window.currentGeneratedDataUrl)
-            .then(res => res.blob())
-            .then(blob => {
-                const file = new File([blob], `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`, { type: 'image/jpeg' });
-                navigator.share({
-                    files: [file],
-                    title: 'Novas Agro Invoice',
-                    text: 'Here is your invoice.'
+    // চেক করা হচ্ছে শেয়ার সাপোর্ট করে কিনা
+    if (navigator.share && navigator.canShare) {
+        try {
+            fetch(window.currentGeneratedDataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    const file = new File([blob], `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`, { type: 'image/jpeg' });
+                    if (navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            files: [file],
+                            title: 'Novas Agro Invoice',
+                            text: 'Here is your invoice.'
+                        }).catch(err => {
+                            console.log('Share failed', err);
+                            // যদি WebView-এ শেয়ার ফেইল করে, তবে ডাউনলোড ট্রিগার করবো
+                            window.forceDownloadImage();
+                        });
+                    } else {
+                        window.forceDownloadImage();
+                    }
                 }).catch(err => {
-                    console.log('Share failed', err);
-                    alert('শেয়ার করা সম্ভব হয়নি। ছবিটি চেপে ধরে সেভ করার চেষ্টা করুন।');
+                    console.error(err);
+                    window.forceDownloadImage();
                 });
-            }).catch(err => {
-                console.error(err);
-                alert('ছবি প্রসেস করতে সমস্যা হয়েছে।');
-            });
+        } catch(e) {
+             window.forceDownloadImage();
+        }
     } else {
-        alert('আপনার ফোনে শেয়ার অপশনটি নেই। ছবিটি চেপে ধরে রেখে (Long Press) সেভ করার চেষ্টা করুন।');
+        // WebView-এ শেয়ার না থাকলে সরাসরি ডাউনলোড ফাংশন কল হবে
+        window.forceDownloadImage();
     }
   };
 
@@ -2546,6 +2741,8 @@ input:checked + .slider:before { transform: translateX(22px); }
         else if (this.id === 'actionMenuModal') window.closeActionMenu();
         else if (this.id === 'packSizeModal') window.closePackModal();
         else if (this.id === 'resetModal') window.closeResetModal();
+        else if (this.id === 'backupDataModal') window.closeBackupDataModal();
+        else if (this.id === 'restoreDataModal') window.closeRestoreDataModal();
         else if (this.id === 'addItemModal') window.closeAddItemModal();
         else if (this.id === 'newSaleModal') window.closeNewSale();
         else if (this.id === 'invoiceModal') window.closeInvoiceModal();
