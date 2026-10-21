@@ -836,8 +836,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     <div class="inv-header-action" id="invoiceActionHeader">
       <h3>ইনভয়েস প্রিভিউ</h3>
       <div style="display: flex; gap: 10px;">
-        <!-- Removed Print Button to prevent crash -->
-        <button class="btn-print" id="btnDownloadInvoice" onclick="downloadInvoiceImage()">📸 ছবি সেভ করুন</button>
+        <button class="btn-print" id="btnDownloadInvoice" onclick="downloadInvoiceImage()">📸 ছবি তৈরি করুন</button>
         <button class="btn-close-inv" onclick="closeInvoiceModal()">✕ বন্ধ করুন</button>
       </div>
     </div>
@@ -846,6 +845,25 @@ input:checked + .slider:before { transform: translateX(22px); }
     <div style="background: white; padding: 10px; overflow-x: hidden;">
         <div id="invoicePrintArea">
           <!-- Invoice HTML will be injected here -->
+        </div>
+        
+        <!-- Container to show generated image for saving -->
+        <div id="invoiceImageContainer" style="display:none; text-align:center; padding: 10px;">
+            <div style="background: #F0FDF4; border: 1px solid #22C55E; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                <p style="font-weight: bold; color: #15803D; font-size: 15px; margin: 0;">
+                    ✅ ছবি তৈরি হয়েছে। সেভ করতে নিচের বাটনে ক্লিক করুন।
+                </p>
+            </div>
+            
+            <div style="display:flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px;">
+                <button class="btn-print" style="background: var(--primary); width: 100%; justify-content: center; padding: 15px;" onclick="shareGeneratedImage()">🔗 শেয়ার / সেভ করুন (সবচেয়ে ভালো)</button>
+                <button class="btn-print" style="background: var(--green); width: 100%; justify-content: center; padding: 15px; margin-top: 5px;" onclick="forceDownloadImage()">💾 ডাউনলোড করুন</button>
+            </div>
+            
+            <p style="font-size:13px; color:#666; margin-bottom:10px;">নিচের ছবির উপর আঙুল চেপে ধরে (Long Press) রেখেও সেভ করার চেষ্টা করতে পারেন।</p>
+            <img id="generatedInvoiceImg" style="width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px;">
+            
+            <button class="btn-print" style="width: 100%; justify-content: center; background: var(--bg); color: var(--text);" onclick="hideGeneratedImage()">← ইনভয়েসে ফিরে যান</button>
         </div>
     </div>
   </div>
@@ -874,6 +892,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   window.currentSaleType = 'cash';
   window.editingSaleId = null; 
   window.editingItemIndex = null;
+  window.currentGeneratedDataUrl = '';
 
   // Theme Logic
   if(localStorage.getItem('theme') === 'dark') { 
@@ -1650,6 +1669,8 @@ input:checked + .slider:before { transform: translateX(22px); }
 
   // ================= UPDATED INVOICE PREVIEW =================
   window.showInvoicePreview = function(invNo, party, items, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod) {
+    hideGeneratedImage(); // Ensure we are on the HTML view
+
     const dateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-'); 
     
     let displayPercent = discPercent;
@@ -1789,12 +1810,20 @@ input:checked + .slider:before { transform: translateX(22px); }
 
   window.closeInvoiceModal = function() {
     document.getElementById('invoiceModal').classList.remove('open');
+    hideGeneratedImage();
     closeNewSale();
     window.currentSaleItems = [];
     switchView('dashboard');
   };
 
-  // ================= NEW IMAGE DOWNLOAD/SHARE LOGIC (FIX FOR HOPWEB) =================
+  window.hideGeneratedImage = function() {
+    document.getElementById('generatedInvoiceImg').src = '';
+    document.getElementById('invoiceImageContainer').style.display = 'none';
+    document.getElementById('invoicePrintArea').style.display = 'block';
+    document.getElementById('invoiceActionHeader').style.display = 'flex';
+  };
+
+  // ================= NEW DOWNLOAD / SHARE LOGIC =================
   window.downloadInvoiceImage = function() {
     const element = document.getElementById('invoicePrintArea');
     const btn = document.getElementById('btnDownloadInvoice');
@@ -1815,41 +1844,18 @@ input:checked + .slider:before { transform: translateX(22px); }
             backgroundColor: '#ffffff',
             logging: false
         }).then(canvas => {
-            const imgData = canvas.toDataURL('image/jpeg', 0.9);
-
-            // Revert element style
+            // Use JPEG with lower quality to make the file smaller for sharing
+            window.currentGeneratedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            
+            // Revert element style immediately
             element.setAttribute('style', originalStyle);
 
-            // Open in a new window to bypass Hopweb's download restriction
-            try {
-                const newWin = window.open('', '_blank');
-                if (newWin) {
-                    newWin.document.write(`
-                        <html>
-                        <head>
-                            <title>Invoice Image</title>
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <style>
-                                body { margin: 0; padding: 10px; background: #f0f0f0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: sans-serif; }
-                                .msg { background: #FEF3C7; color: #92400E; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-bottom: 15px; width: 100%; box-sizing: border-box; font-size: 14px;}
-                                img { max-width: 100%; height: auto; border: 1px solid #ccc; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="msg">👇 ছবিটি সেভ করতে ছবির উপর চাপ দিয়ে ধরে রাখুন (Long Press)</div>
-                            <img src="${imgData}" />
-                        </body>
-                        </html>
-                    `);
-                    newWin.document.close();
-                } else {
-                    alert('নতুন উইন্ডো ওপেন করা সম্ভব হয়নি। অনুগ্রহ করে অ্যাপের সেটিংস থেকে পপ-আপ অনুমতি দিন অথবা স্ক্রিনশট নিয়ে সেভ করুন।');
-                }
-            } catch (e) {
-                console.error(e);
-                alert('ছবি তৈরি হয়েছে কিন্তু দেখানো সম্ভব হচ্ছে না। অনুগ্রহ করে স্ক্রিনশট নিয়ে সেভ করুন।');
-            }
-
+            // Show in image container
+            document.getElementById('generatedInvoiceImg').src = window.currentGeneratedDataUrl;
+            document.getElementById('invoicePrintArea').style.display = 'none';
+            document.getElementById('invoiceImageContainer').style.display = 'block';
+            document.getElementById('invoiceActionHeader').style.display = 'none';
+            
             btn.innerHTML = originalText;
             btn.disabled = false;
 
@@ -1861,6 +1867,48 @@ input:checked + .slider:before { transform: translateX(22px); }
             btn.disabled = false;
         });
     }, 100); 
+  };
+
+  window.forceDownloadImage = function() {
+    if(!window.currentGeneratedDataUrl) return;
+    
+    try {
+        // Create a link to download the base64 image
+        const link = document.createElement('a');
+        link.href = window.currentGeneratedDataUrl;
+        link.download = `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (e) {
+        console.error(e);
+        alert('সরাসরি ডাউনলোড ব্যর্থ হয়েছে। অনুগ্রহ করে "শেয়ার / সেভ করুন" বাটনটি ব্যবহার করুন।');
+    }
+  };
+
+  window.shareGeneratedImage = function() {
+    if(!window.currentGeneratedDataUrl) return;
+    
+    if (navigator.share) {
+        fetch(window.currentGeneratedDataUrl)
+            .then(res => res.blob())
+            .then(blob => {
+                const file = new File([blob], `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`, { type: 'image/jpeg' });
+                navigator.share({
+                    files: [file],
+                    title: 'Novas Agro Invoice',
+                    text: 'Here is your invoice.'
+                }).catch(err => {
+                    console.log('Share failed', err);
+                    alert('শেয়ার করা সম্ভব হয়নি। ছবিটি চেপে ধরে সেভ করার চেষ্টা করুন।');
+                });
+            }).catch(err => {
+                console.error(err);
+                alert('ছবি প্রসেস করতে সমস্যা হয়েছে।');
+            });
+    } else {
+        alert('আপনার ফোনে শেয়ার অপশনটি নেই। ছবিটি চেপে ধরে রেখে (Long Press) সেভ করার চেষ্টা করুন।');
+    }
   };
 
   // ================= CALCULATE QUICK FORM TOTALS =================
