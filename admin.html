@@ -57,29 +57,29 @@ body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: v
     }
 }
 
-/* ================= Header (Top Area) ================= */
+/* ================= Header (Top Area - Made Smaller) ================= */
 .app-header { 
     background: linear-gradient(145deg, #17449d, #2858b9 75%, #7598d9); 
-    color: white; padding: 20px 20px 25px; display: flex; align-items: center; justify-content: space-between; 
+    color: white; padding: 12px 15px 15px; display: flex; align-items: center; justify-content: space-between; 
     position: relative; z-index: 40; 
-    border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
+    border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;
 }
-.header-left { display: flex; align-items: center; gap: 15px; }
-.menu-btn { background: none; color: white; font-size: 20px; cursor: pointer; }
-.app-title { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px;}
-.header-right { display: flex; align-items: center; gap: 18px; font-size: 18px; position: relative; }
+.header-left { display: flex; align-items: center; gap: 10px; }
+.menu-btn { background: none; color: white; font-size: 18px; cursor: pointer; }
+.app-title { font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 5px;}
+.header-right { display: flex; align-items: center; gap: 14px; font-size: 16px; position: relative; }
 .header-right i { cursor: pointer; }
-.badge { position: absolute; top: -4px; right: -4px; min-width: 16px; height: 16px; background: var(--red); border-radius: 50%; color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.badge { position: absolute; top: -4px; right: -4px; min-width: 14px; height: 14px; background: var(--red); border-radius: 50%; color: white; font-size: 9px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
 /* Notification Dropdown */
-.noti-dropdown { position: absolute; top: 35px; right: 0; width: 280px; max-height: 400px; overflow-y: auto; background: var(--card); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: none; flex-direction: column; color: var(--text); z-index: 100; }
+.noti-dropdown { position: absolute; top: 30px; right: 0; width: 280px; max-height: 400px; overflow-y: auto; background: var(--card); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: none; flex-direction: column; color: var(--text); z-index: 100; }
 .noti-dropdown.open { display: flex; }
 .noti-head { padding: 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 14px; }
 .noti-item { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; cursor: pointer; }
 .noti-item strong { display: block; color: var(--primary); margin-bottom: 3px; }
 
 /* ================= Content Area ================= */
-.content-area { padding: 0 18px 110px; flex: 1; position: relative; z-index: 10; margin-top: -15px; }
+.content-area { padding: 0 15px 110px; flex: 1; position: relative; z-index: 10; margin-top: -10px; }
 .view { display: none; animation: fadeIn 0.3s ease; }
 .view.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -87,76 +87,75 @@ body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: v
 /* Glass Panel Base */
 .panel { 
     background: rgba(255,255,255,.78); border: 1px solid rgba(255,255,255,.65); 
-    border-radius: 34px; box-shadow: 0 12px 35px rgba(33,65,122,.07), inset 0 1px 2px rgba(255,255,255,.9); 
+    border-radius: 25px; box-shadow: 0 8px 25px rgba(33,65,122,.07), inset 0 1px 2px rgba(255,255,255,.9); 
     backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
-    padding: 20px; margin-bottom: 20px;
+    padding: 12px; margin-bottom: 15px;
 }
 
-/* ================= Dashboard UI (Matching Design) ================= */
+/* ================= Dashboard Top Panel (Made Smaller) ================= */
 .dash-top-panel { 
-    padding: 25px 20px; margin-top: -10px; text-align: center;
+    padding: 10px 12px; margin-top: -5px; text-align: center;
 }
-.dash-top-title { font-size: 15px; color: #475569; margin-bottom: 5px; font-weight: 500;}
-.dash-top-amount { font-size: 34px; font-weight: 700; color: #1647a7; margin-bottom: 20px; }
+.dash-top-title { font-size: 11px; color: #475569; margin-bottom: 2px; font-weight: 500;}
+.dash-top-amount { font-size: 22px; font-weight: 700; color: #1647a7; margin-bottom: 8px; }
 
 .dash-split-box { 
-    background: rgba(255,255,255,0.6); border-radius: 20px; padding: 15px; 
-    display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.6); border-radius: 12px; padding: 8px; 
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5px; border: 1px solid rgba(255,255,255,0.9);
 }
-.dash-split-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
-.dash-split-item:first-child { border-right: 1px solid rgba(0,0,0,0.05); }
-.dash-split-title { font-size: 13px; color: #64748B; display: flex; align-items: center; gap: 5px; font-weight: 600;}
-.dash-split-val { font-size: 18px; font-weight: 700; color: #1E293B; }
+.dash-split-item { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 3px; }
+.dash-split-title { font-size: 10px; color: #64748B; display: flex; align-items: center; gap: 3px; font-weight: 600;}
+.dash-split-val { font-size: 13px; font-weight: 700; color: #1E293B; }
 
 /* 4 Circles Layout */
-.middle-area { margin-top: 10px; margin-bottom: 20px; }
-.shape-row { display: flex; justify-content: space-around; align-items: flex-start; gap: 10px; }
-.circle-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; width: 70px; }
+.middle-area { margin-top: 5px; margin-bottom: 15px; }
+.shape-row { display: flex; justify-content: space-around; align-items: flex-start; gap: 8px; }
+.circle-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; width: 65px; }
 .circle {
-    width: 60px; height: 60px; flex-shrink: 0; border-radius: 50%;
+    width: 50px; height: 50px; flex-shrink: 0; border-radius: 50%;
     background: linear-gradient(145deg, #1745a6, #285ac3);
-    box-shadow: 0 5px 12px rgba(24,65,151,.18), inset 1px 1px 3px rgba(255,255,255,.3);
-    display: flex; justify-content: center; align-items: center; color: white; font-size: 24px;
+    box-shadow: 0 4px 10px rgba(24,65,151,.18), inset 1px 1px 3px rgba(255,255,255,.3);
+    display: flex; justify-content: center; align-items: center; color: white; font-size: 20px;
     transition: transform 0.2s;
 }
 .circle-item:active .circle { transform: scale(0.9); }
-.circle-label { font-size: 12px; font-weight: 600; color: #1E293B; text-align: center;}
+.circle-label { font-size: 11px; font-weight: 600; color: #1E293B; text-align: center;}
 
 /* Wide Panel */
 .wide-panel {
-    margin-top: 10px; padding: 20px; display: flex; align-items: center; justify-content: space-around;
-    border: 2px dashed rgba(255,255,255,.9); border-radius: 30px; background: rgba(255,255,255,.58);
+    margin-top: 5px; padding: 15px; display: flex; align-items: center; justify-content: space-around;
+    border: 2px dashed rgba(255,255,255,.9); border-radius: 25px; background: rgba(255,255,255,.58);
     backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); cursor: pointer;
 }
 .inner-block {
-    width: 45%; height: 60px; border-radius: 20px;
+    width: 46%; height: 55px; border-radius: 18px;
     background: linear-gradient(135deg, #2149a9, #315fc4);
-    box-shadow: 0 7px 18px rgba(28,66,152,.18);
+    box-shadow: 0 5px 15px rgba(28,66,152,.18);
     display: flex; flex-direction: column; justify-content: center; align-items: center; color: white;
 }
-.inner-block span { font-size: 11px; opacity: 0.8; }
-.inner-block strong { font-size: 16px; font-weight: 700; margin-top: 3px; }
+.inner-block span { font-size: 10px; opacity: 0.8; }
+.inner-block strong { font-size: 14px; font-weight: 700; margin-top: 2px; }
 
 /* Tilted Bank Card Stack (For More Options) */
-.card-stack { margin-top: 25px; position: relative; padding-bottom: 15px; }
+.card-stack { margin-top: 20px; position: relative; padding-bottom: 15px; }
 .bank-card {
     background: linear-gradient(125deg, #f9fbff 0%, #dce7fa 35%, #ffffff 55%, #e7eaf1 75%, #f4f6fb 100%);
-    border-radius: 26px; box-shadow: 0 12px 25px rgba(45,69,116,.12), inset 0 2px 4px rgba(255,255,255,.95);
-    padding: 20px; position: relative; transform: rotate(-2deg); transition: 0.3s; border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 24px; box-shadow: 0 10px 22px rgba(45,69,116,.12), inset 0 2px 4px rgba(255,255,255,.95);
+    padding: 15px; position: relative; transform: rotate(-2deg); transition: 0.3s; border: 1px solid rgba(255,255,255,0.8);
 }
 .bank-card::before {
-    content: ""; position: absolute; width: 100%; height: 100%; top: 9px; left: 0; border-radius: 26px;
-    background: linear-gradient(130deg, #d9e3f4, #f5f7fc); z-index: -1; box-shadow: 0 5px 10px rgba(41,67,111,.08);
+    content: ""; position: absolute; width: 100%; height: 100%; top: 7px; left: 0; border-radius: 24px;
+    background: linear-gradient(130deg, #d9e3f4, #f5f7fc); z-index: -1; box-shadow: 0 4px 8px rgba(41,67,111,.08);
 }
 .bank-card:active { transform: rotate(0deg) scale(0.98); }
-.card-title { font-size: 14px; font-weight: 700; color: #1647a7; margin-bottom: 15px; border-bottom: 1px solid rgba(22,71,167,0.1); padding-bottom: 10px;}
-.old-dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.old-dash-card { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.old-card-icon-sm { width: 35px; height: 35px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; }
+.card-title { font-size: 13px; font-weight: 700; color: #1647a7; margin-bottom: 12px; border-bottom: 1px solid rgba(22,71,167,0.1); padding-bottom: 8px;}
+.old-dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.old-dash-card { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.old-card-icon-sm { width: 30px; height: 30px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; }
 .bg-red { background: var(--red); } .bg-blue { background: #3B82F6; } .bg-teal { background: var(--green); } .bg-purple { background: #8B5CF6; }
 .old-dash-info { display: flex; flex-direction: column; }
-.old-dash-card-title { font-size: 11px; color: #64748B; font-weight: 600; }
-.old-dash-card-value { font-size: 14px; font-weight: 700; color: #1E293B; }
+.old-dash-card-title { font-size: 10px; color: #64748B; font-weight: 600; }
+.old-dash-card-value { font-size: 13px; font-weight: 700; color: #1E293B; }
 
 /* ================= Other Views Wrapper (Glass) ================= */
 .glass-content {
@@ -210,7 +209,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 /* ================= Bottom Nav (Matching Design) ================= */
 .bottom-bar { 
     position: fixed; left: 50%; transform: translateX(-50%); width: calc(100% - 28px); max-width: 452px;
-    bottom: 14px; height: 80px; border-radius: 30px; background: rgba(255,255,255,.88);
+    bottom: 14px; height: 75px; border-radius: 28px; background: rgba(255,255,255,.88);
     border: 1px solid rgba(255,255,255,.9); box-shadow: 0 -5px 30px rgba(43,72,124,.1);
     backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
     display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 50;
@@ -218,9 +217,9 @@ input:checked + .slider:before { transform: translateX(22px); }
 .nav-btn-sell { background: transparent; color: var(--primary); padding: 10px 15px; border-radius: 20px; font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid rgba(29,75,176,0.2);}
 .nav-btn-buy { background: var(--primary); color: white; padding: 12px 20px; border-radius: 20px; font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(29,75,176,0.3); }
 .fab-btn { 
-    width: 65px; height: 65px; border-radius: 50%; background: linear-gradient(145deg, #1d4bb0, #3264d0);
+    width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(145deg, #1d4bb0, #3264d0);
     box-shadow: 0 8px 20px rgba(27,72,170,.3); border: 3px solid rgba(255,255,255,.8);
-    display: flex; justify-content: center; align-items: center; color: white; font-size: 28px;
+    display: flex; justify-content: center; align-items: center; color: white; font-size: 26px;
     cursor: pointer; transform: translateY(-25px); z-index: 51;
 }
 .fab-btn:active { transform: translateY(-25px) scale(0.9); }
@@ -464,27 +463,27 @@ input:checked + .slider:before { transform: translateX(22px); }
     <!-- Dashboard -->
     <section id="dashboard" class="view active">
       
-      <!-- Top Card: Hand Cash + Due/Payable -->
+      <!-- Top Card: Hand Cash + Due/Payable (Made Smaller & Compact) -->
       <div class="panel dash-top-panel">
-        <div class="dash-top-title">হাতে আছে <i class="fa-solid fa-chevron-right" style="font-size:12px;"></i></div>
-        <div class="dash-top-amount" id="cashBalance">৳ ০.০০</div>
+        <div class="dash-top-title">হাতে আছে <i class="fa-solid fa-chevron-right" style="font-size:9px;"></i></div>
+        <div class="dash-top-amount" id="cashBalance">৳ 0.00</div>
         
-        <div class="dash-split-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div class="dash-split-item" style="border-right: none; padding: 5px;">
-            <div class="dash-split-title" style="font-size: 12px;"><span style="color:#10B981; background:#D1FAE5; padding:2px 5px; border-radius:4px; font-size:10px;"><i class="fa-solid fa-arrow-down"></i></span> নগদ প্রাপ্তি</div>
-            <div class="dash-split-val" id="cashIn" style="font-size: 15px;">৳ ০.০০</div>
+        <div class="dash-split-box" style="gap: 6px; padding: 6px;">
+          <div class="dash-split-item" style="border-right: none; padding: 2px;">
+            <div class="dash-split-title" style="font-size: 10px;"><span style="color:#10B981; background:#D1FAE5; padding:1px 3px; border-radius:3px; font-size:8px;"><i class="fa-solid fa-arrow-down"></i></span> নগদ প্রাপ্তি</div>
+            <div class="dash-split-val" id="cashIn" style="font-size: 12px;">৳ 0.00</div>
           </div>
-          <div class="dash-split-item" style="padding: 5px;">
-            <div class="dash-split-title" style="font-size: 12px;"><span style="color:#EF4444; background:#FEE2E2; padding:2px 5px; border-radius:4px; font-size:10px;"><i class="fa-solid fa-arrow-up"></i></span> নগদ প্রদান</div>
-            <div class="dash-split-val" id="cashOut" style="font-size: 15px;">৳ ০.০০</div>
+          <div class="dash-split-item" style="padding: 2px;">
+            <div class="dash-split-title" style="font-size: 10px;"><span style="color:#EF4444; background:#FEE2E2; padding:1px 3px; border-radius:3px; font-size:8px;"><i class="fa-solid fa-arrow-up"></i></span> নগদ প্রদান</div>
+            <div class="dash-split-val" id="cashOut" style="font-size: 12px;">৳ 0.00</div>
           </div>
-          <div class="dash-split-item" style="border-right: none; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px; padding: 5px;">
-            <div class="dash-split-title" style="font-size: 12px;"><span style="color:#3B82F6; background:#DBEAFE; padding:2px 5px; border-radius:4px; font-size:10px;"><i class="fa-solid fa-wallet"></i></span> মোট পাওনা</div>
-            <div class="dash-split-val" id="totalDueDashboard" style="font-size: 15px;">৳ ০.০০</div>
+          <div class="dash-split-item" style="border-right: none; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 4px; padding: 2px;">
+            <div class="dash-split-title" style="font-size: 10px;"><span style="color:#3B82F6; background:#DBEAFE; padding:1px 3px; border-radius:3px; font-size:8px;"><i class="fa-solid fa-wallet"></i></span> মোট পাওনা</div>
+            <div class="dash-split-val" id="totalDueDashboard" style="font-size: 12px;">৳ 0.00</div>
           </div>
-          <div class="dash-split-item" style="border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px; padding: 5px;">
-            <div class="dash-split-title" style="font-size: 12px;"><span style="color:#F59E0B; background:#FEF3C7; padding:2px 5px; border-radius:4px; font-size:10px;"><i class="fa-solid fa-hand-holding-dollar"></i></span> মোট দেনা</div>
-            <div class="dash-split-val" id="totalPayableDashboard" style="font-size: 15px;">৳ ০.০০</div>
+          <div class="dash-split-item" style="border-top: 1px solid rgba(0,0,0,0.05); padding-top: 4px; padding: 2px;">
+            <div class="dash-split-title" style="font-size: 10px;"><span style="color:#F59E0B; background:#FEF3C7; padding:1px 3px; border-radius:3px; font-size:8px;"><i class="fa-solid fa-hand-holding-dollar"></i></span> মোট দেনা</div>
+            <div class="dash-split-val" id="totalPayableDashboard" style="font-size: 12px;">৳ 0.00</div>
           </div>
         </div>
       </div>
@@ -495,35 +494,35 @@ input:checked + .slider:before { transform: translateX(22px); }
           <div class="circle-item" onclick="switchView('users')">
             <div class="circle" style="background: linear-gradient(145deg, #8B5CF6, #A78BFA);"><i class="fa-solid fa-user-tie"></i></div>
             <div class="circle-label">ইউজার SR</div>
-            <div style="font-size:12px; font-weight:700; color:#8B5CF6; margin-top:-4px;" id="totalSRCount">০</div>
+            <div style="font-size:11px; font-weight:700; color:#8B5CF6; margin-top:-2px;" id="totalSRCount">0</div>
           </div>
           <div class="circle-item" onclick="switchView('suppliers')">
             <div class="circle" style="background: linear-gradient(145deg, #F59E0B, #FBBF24);"><i class="fa-solid fa-industry"></i></div>
             <div class="circle-label">সাপ্লায়ার</div>
-            <div style="font-size:12px; font-weight:700; color:#F59E0B; margin-top:-4px;" id="totalSuppliersCount">০</div>
+            <div style="font-size:11px; font-weight:700; color:#F59E0B; margin-top:-2px;" id="totalSuppliersCount">0</div>
           </div>
           <div class="circle-item" onclick="switchView('products')">
             <div class="circle" style="background: linear-gradient(145deg, #10B981, #34D399);"><i class="fa-solid fa-box-open"></i></div>
             <div class="circle-label">পণ্য</div>
-            <div style="font-size:12px; font-weight:700; color:#10B981; margin-top:-4px;" id="totalProductsCount">০</div>
+            <div style="font-size:11px; font-weight:700; color:#10B981; margin-top:-2px;" id="totalProductsCount">0</div>
           </div>
           <div class="circle-item" onclick="switchView('parties')">
             <div class="circle" style="background: linear-gradient(145deg, #3B82F6, #60A5FA);"><i class="fa-solid fa-users"></i></div>
             <div class="circle-label">পার্টি</div>
-            <div style="font-size:12px; font-weight:700; color:#3B82F6; margin-top:-4px;" id="totalPartiesCount">০</div>
+            <div style="font-size:11px; font-weight:700; color:#3B82F6; margin-top:-2px;" id="totalPartiesCount">0</div>
           </div>
         </div>
       </div>
 
       <!-- Wide Panel -->
-      <div class="wide-panel" onclick="switchView('activityLog')">
-        <div class="inner-block">
+      <div class="wide-panel" onclick="switchView('activityLog')" style="padding: 12px; border-radius: 20px;">
+        <div class="inner-block" style="height: 50px;">
           <span>মোট ব্যয়/খরচ</span>
-          <strong id="totalExpenseDashboard">৳ ০.০০</strong>
+          <strong id="totalExpenseDashboard">৳ 0.00</strong>
         </div>
-        <div class="inner-block" style="background: linear-gradient(135deg, #475569, #64748B);">
+        <div class="inner-block" style="background: linear-gradient(135deg, #475569, #64748B); height: 50px;">
           <span>অ্যাক্টিভিটি লগ</span>
-          <strong>দেখুন <i class="fa-solid fa-arrow-right" style="font-size:12px;"></i></strong>
+          <strong>দেখুন <i class="fa-solid fa-arrow-right" style="font-size:11px;"></i></strong>
         </div>
       </div>
 
@@ -536,28 +535,28 @@ input:checked + .slider:before { transform: translateX(22px); }
               <div class="old-card-icon-sm bg-red"><i class="fa-solid fa-clock"></i></div>
               <div class="old-dash-info">
                 <div class="old-dash-card-title">সেলস পেন্ডিং</div>
-                <div class="old-dash-card-value" id="pendingCount">০ টি</div>
+                <div class="old-dash-card-value" id="pendingCount">0 টি</div>
               </div>
             </div>
             <div class="old-dash-card" onclick="switchView('delivery')">
               <div class="old-card-icon-sm bg-blue"><i class="fa-solid fa-truck"></i></div>
               <div class="old-dash-info">
                 <div class="old-dash-card-title">ডেলিভারি পেন্ডিং</div>
-                <div class="old-dash-card-value" id="deliveryCount">০ টি</div>
+                <div class="old-dash-card-value" id="deliveryCount">0 টি</div>
               </div>
             </div>
             <div class="old-dash-card" onclick="switchView('partyRequests')">
               <div class="old-card-icon-sm bg-purple"><i class="fa-solid fa-user-plus"></i></div>
               <div class="old-dash-info">
                 <div class="old-dash-card-title">পার্টি রিকোয়েস্ট</div>
-                <div class="old-dash-card-value" id="partyReqCount">০ টি</div>
+                <div class="old-dash-card-value" id="partyReqCount">0 টি</div>
               </div>
             </div>
             <div class="old-dash-card" onclick="switchView('products')">
               <div class="old-card-icon-sm bg-teal"><i class="fa-solid fa-cubes"></i></div>
               <div class="old-dash-info">
                 <div class="old-dash-card-title">মোট স্টক</div>
-                <div class="old-dash-card-value" id="totalStock">০ পিস</div>
+                <div class="old-dash-card-value" id="totalStock">0 পিস</div>
               </div>
             </div>
           </div>
@@ -632,7 +631,7 @@ input:checked + .slider:before { transform: translateX(22px); }
           <p id="pfPartyPhone"><i class="fa-solid fa-phone"></i> ফোন: --</p>
           <div class="profile-due">
             <span>মোট বাকী পরিমাণ</span>
-            <strong id="pfPartyDue">৳ ০.০০</strong>
+            <strong id="pfPartyDue">৳ 0.00</strong>
           </div>
         </div>
         <div class="section-title">লেনদেনের ইতিহাস</div>
@@ -649,11 +648,11 @@ input:checked + .slider:before { transform: translateX(22px); }
       <!-- Transactions Full View (For Editing) -->
       <section id="transactions" class="view">
         <div class="section-title">লেনদেন এডিট</div>
-        <input type="text" id="txnSearchInput" placeholder="🔍 পণ্য বা পার্টির নাম সার্চ করুন..." oninput="renderTransactionsList(this.value)">
+        <input type="text" id="txnSearchInput" placeholder="🔍 পণ্য, পার্টি বা বিবরণ সার্চ করুন..." oninput="renderTransactionsList(this.value)">
         <div id="transactionsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
       </section>
 
-      <!-- Dues View (New) -->
+      <!-- Dues View -->
       <section id="dues" class="view">
         <div class="section-title">দেনা-পাওনা <button class="btn-add" onclick="switchView('dashboard')" style="background:#F1F5F9; color:#475569; box-shadow:none;">← ফিরে যান</button></div>
         
@@ -1425,7 +1424,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     let nextInvNo = String(maxInvNo + 1).padStart(2, '0');
     const invNo = 'INV-' + nextInvNo;
     
-    const today = new Date().toLocaleDateString('bn-BD');
+    const today = new Date().toLocaleDateString('en-GB');
     document.getElementById('nsInvoiceNo').innerText = invNo;
     document.getElementById('nsInvoiceDate').innerText = today;
 
@@ -1531,7 +1530,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   function getInvoiceListItemHTML(t) {
     const party = window.db.parties.find(p => p.id === t.partyId);
     const pName = party ? party.name : 'Unknown';
-    const date = new Date(t.date).toLocaleDateString('bn-BD');
+    const date = new Date(t.date).toLocaleDateString('en-GB');
     const due = t.due !== undefined ? Number(t.due) : (Number(t.total) - Number(t.paid || 0));
     
     return `<div class="invoice-list-item" onclick="editExistingInvoice('${t.id}')">
@@ -1560,7 +1559,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> বিক্রয় এডিট`;
     
     document.getElementById('nsInvoiceNo').innerText = txn.invoiceNo || 'INV-EDIT';
-    document.getElementById('nsInvoiceDate').innerText = new Date(txn.date).toLocaleDateString('bn-BD');
+    document.getElementById('nsInvoiceDate').innerText = new Date(txn.date).toLocaleDateString('en-GB');
 
     const custSelect = document.getElementById('nsCustomer');
     custSelect.innerHTML = window.db.parties.map(p => {
@@ -1630,15 +1629,19 @@ input:checked + .slider:before { transform: translateX(22px); }
     const container = document.getElementById('transactionsList');
     if(!container) return;
     
-    let txns = window.db.transactions.filter(t => ['purchase', 'sales_return', 'purchase_return'].includes(t.type));
+    // Now includes all types: purchase, sales, sales_return, purchase_return, cash_in, cash_out
+    let txns = window.db.transactions;
     txns.sort((a,b) => new Date(b.date) - new Date(a.date));
     
     if (searchTerm) {
       const lowerSearch = searchTerm.toLowerCase();
       txns = txns.filter(t => {
         const pName = window.db.products.find(p => p.id === t.productId)?.name?.toLowerCase() || '';
-        const entityName = (window.db.parties.find(p => p.id === t.partyId)?.name || window.db.suppliers.find(s => s.id === t.supplierId)?.name || '').toLowerCase();
-        return pName.includes(lowerSearch) || entityName.includes(lowerSearch);
+        const partyName = window.db.parties.find(p => p.id === t.partyId)?.name?.toLowerCase() || '';
+        const supplierName = window.db.suppliers.find(s => s.id === t.supplierId)?.name?.toLowerCase() || '';
+        const invNo = (t.invoiceNo || '').toLowerCase();
+        const note = (t.note || '').toLowerCase();
+        return pName.includes(lowerSearch) || partyName.includes(lowerSearch) || supplierName.includes(lowerSearch) || invNo.includes(lowerSearch) || note.includes(lowerSearch);
       });
     }
 
@@ -1648,24 +1651,80 @@ input:checked + .slider:before { transform: translateX(22px); }
     }
 
     container.innerHTML = txns.map(t => {
-        const pName = window.db.products.find(p => p.id === t.productId)?.name || 'Unknown';
         let typeStr = '';
         let entityStr = '';
         let color = '';
-        if(t.type === 'purchase') { typeStr = 'ক্রয়'; entityStr = window.db.suppliers.find(s => s.id === t.supplierId)?.name || 'Unknown'; color = 'var(--secondary)'; }
-        if(t.type === 'sales_return') { typeStr = 'বিক্রয় রিটার্ন'; entityStr = window.db.parties.find(p => p.id === t.partyId)?.name || 'Unknown'; color = 'var(--orange)'; }
-        if(t.type === 'purchase_return') { typeStr = 'ক্রয় রিটার্ন'; entityStr = window.db.suppliers.find(s => s.id === t.supplierId)?.name || 'Unknown'; color = 'var(--red)'; }
+        let detailsStr = '';
+        let totalAmt = 0;
+        let dueAmt = 0;
+
+        const pName = window.db.products.find(p => p.id === t.productId)?.name || '';
+        const party = window.db.parties.find(p => p.id === t.partyId);
+        const supplier = window.db.suppliers.find(s => s.id === t.supplierId);
+
+        if(t.type === 'purchase') { 
+            typeStr = 'ক্রয়'; 
+            entityStr = supplier?.name || 'Unknown'; 
+            color = 'var(--secondary)'; 
+            detailsStr = `${pName} (${t.qty} পিস)`;
+            totalAmt = Number(t.total || 0);
+            dueAmt = Number(t.due || 0);
+        }
+        else if(t.type === 'sales') { 
+            typeStr = 'বিক্রয়'; 
+            entityStr = party?.name || 'Unknown'; 
+            color = 'var(--green)'; 
+            let itemsCount = t.items ? t.items.length : 0;
+            detailsStr = `${t.invoiceNo || 'N/A'} (${itemsCount} আইটেম)`;
+            totalAmt = Number(t.total || 0);
+            dueAmt = Number(t.due || 0);
+        }
+        else if(t.type === 'sales_return') { 
+            typeStr = 'বিক্রয় রিটার্ন'; 
+            entityStr = party?.name || 'Unknown'; 
+            color = 'var(--orange)'; 
+            detailsStr = `${pName} (${t.qty} পিস)`;
+            totalAmt = Number(t.total || 0);
+            dueAmt = Number(t.due || 0);
+        }
+        else if(t.type === 'purchase_return') { 
+            typeStr = 'ক্রয় রিটার্ন'; 
+            entityStr = supplier?.name || 'Unknown'; 
+            color = 'var(--red)'; 
+            detailsStr = `${pName} (${t.qty} পিস)`;
+            totalAmt = Number(t.total || 0);
+            dueAmt = Number(t.due || 0);
+        }
+        else if(t.type === 'cash_in') {
+            typeStr = 'নগদ প্রাপ্তি'; 
+            entityStr = party?.name || 'Unknown'; 
+            color = 'var(--primary)'; 
+            detailsStr = t.note || 'বাকি আদায়';
+            totalAmt = Number(t.amount || 0);
+            dueAmt = 0;
+        }
+        else if(t.type === 'cash_out') {
+            typeStr = t.supplierId ? 'নগদ প্রদান' : 'খরচ'; 
+            entityStr = supplier?.name || 'Unknown'; 
+            color = 'var(--red)'; 
+            detailsStr = t.note || 'বাকি পরিশোধ';
+            totalAmt = Number(t.amount || 0);
+            dueAmt = 0;
+        }
+
+        let totalHtml = `<div class="inv-list-total">৳ ${totalAmt.toFixed(2)}</div>`;
+        let dueHtml = (t.type !== 'cash_in' && t.type !== 'cash_out') ? `<div class="inv-list-due" style="color:${dueAmt > 0 ? 'var(--red)' : 'var(--green)'};">বাকি: ৳ ${dueAmt.toFixed(2)}</div>` : '';
         
         return `<div class="invoice-list-item" onclick="editTransaction('${t.id}')">
             <div class="inv-list-header">
                 <div>
                     <div class="inv-list-inv" style="color:${color};">${typeStr}</div>
                     <div class="inv-list-cust">${esc(entityStr)}</div>
-                    <div class="inv-list-date">${esc(pName)} (${t.qty} পিস) - ${new Date(t.date).toLocaleDateString('bn-BD')}</div>
+                    <div class="inv-list-date">${esc(detailsStr)} - ${new Date(t.date).toLocaleDateString('en-GB')}</div>
                 </div>
                 <div class="inv-list-amounts">
-                    <div class="inv-list-total">৳ ${Number(t.total).toFixed(2)}</div>
-                    <div class="inv-list-due" style="color:${t.due > 0 ? 'var(--red)' : 'var(--green)'};">বাকি: ৳ ${Number(t.due).toFixed(2)}</div>
+                    ${totalHtml}
+                    ${dueHtml}
                 </div>
             </div>
         </div>`;
@@ -1675,7 +1734,16 @@ input:checked + .slider:before { transform: translateX(22px); }
   window.editTransaction = function(txnId) {
     const txn = window.db.transactions.find(t => t.id === txnId);
     if(!txn) return;
-    openQuickForm(txn.type, txnId);
+    if (txn.type === 'sales') {
+        editExistingInvoice(txnId);
+    } else if (txn.type === 'cash_in') {
+        openQuickForm('due_collect', txnId);
+    } else if (txn.type === 'cash_out') {
+        if (txn.supplierId) openQuickForm('due_pay', txnId);
+        else openQuickForm('expense', txnId);
+    } else {
+        openQuickForm(txn.type, txnId);
+    }
   }
 
   // SALE ITEMS LOGIC
@@ -2189,27 +2257,27 @@ input:checked + .slider:before { transform: translateX(22px); }
         </div>
       `;
     } else if (type === 'due_collect') {
-      title.innerText = 'বাকি আদায়';
-      submitBtn.innerText = 'সেভ করুন';
+      title.innerText = existingTxn ? 'বাকি আদায় এডিট' : 'বাকি আদায়';
+      submitBtn.innerText = existingTxn ? 'আপডেট করুন' : 'সেভ করুন';
       formFields.innerHTML = `
         <div class="form-group"><label>পার্টি</label><select name="partyId" required><option value="">সিলেক্ট করুন</option>${partyOptions}</select></div>
-        <div class="form-group"><label>আদায়ের পরিমাণ</label><input type="number" name="amount" required min="1"></div>
-        <div class="form-group"><label>নোট (ঐচ্ছিক)</label><input type="text" name="note"></div>
+        <div class="form-group"><label>আদায়ের পরিমাণ</label><input type="number" name="amount" value="${existingTxn ? existingTxn.amount : ''}" required min="1"></div>
+        <div class="form-group"><label>নোট (ঐচ্ছিক)</label><input type="text" name="note" value="${existingTxn ? (existingTxn.note || '').replace('বাকি আদায় - ', '') : ''}"></div>
       `;
     } else if (type === 'due_pay') {
-      title.innerText = 'বাকি পরিশোধ';
-      submitBtn.innerText = 'সেভ করুন';
+      title.innerText = existingTxn ? 'বাকি পরিশোধ এডিট' : 'বাকি পরিশোধ';
+      submitBtn.innerText = existingTxn ? 'আপডেট করুন' : 'সেভ করুন';
       formFields.innerHTML = `
         <div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId" required><option value="">সিলেক্ট করুন</option>${supplierOptions}</select></div>
-        <div class="form-group"><label>পরিশোধের পরিমাণ</label><input type="number" name="amount" required min="1"></div>
-        <div class="form-group"><label>নোট (ঐচ্ছিক)</label><input type="text" name="note"></div>
+        <div class="form-group"><label>পরিশোধের পরিমাণ</label><input type="number" name="amount" value="${existingTxn ? existingTxn.amount : ''}" required min="1"></div>
+        <div class="form-group"><label>নোট (ঐচ্ছিক)</label><input type="text" name="note" value="${existingTxn ? (existingTxn.note || '').replace('বাকি পরিশোধ - ', '') : ''}"></div>
       `;
     } else if (type === 'expense') {
-      title.innerText = 'নতুন খরচ';
-      submitBtn.innerText = 'সেভ করুন';
+      title.innerText = existingTxn ? 'খরচ এডিট' : 'নতুন খরচ';
+      submitBtn.innerText = existingTxn ? 'আপডেট করুন' : 'সেভ করুন';
       formFields.innerHTML = `
-        <div class="form-group"><label>খরচের বিবরণ</label><input type="text" name="note" required placeholder="যেমন: বিদ্যুৎ বিল"></div>
-        <div class="form-group"><label>পরিমাণ</label><input type="number" name="amount" required min="1"></div>
+        <div class="form-group"><label>খরচের বিবরণ</label><input type="text" name="note" value="${existingTxn ? (existingTxn.note || '').replace('খরচ: ', '') : ''}" required placeholder="যেমন: বিদ্যুৎ বিল"></div>
+        <div class="form-group"><label>পরিমাণ</label><input type="number" name="amount" value="${existingTxn ? existingTxn.amount : ''}" required min="1"></div>
       `;
     } else if (type === 'sales_return' || type === 'purchase_return') {
       title.innerText = existingTxn ? (type === 'sales_return' ? 'বিক্রয় রিটার্ন এডিট' : 'ক্রয় রিটার্ন এডিট') : (type === 'sales_return' ? 'বিক্রি রিটার্ন' : 'ক্রয় রিটার্ন');
@@ -2254,30 +2322,40 @@ input:checked + .slider:before { transform: translateX(22px); }
     
     setTimeout(() => {
         if(existingTxn) {
-            const entitySelect = form.querySelector('select[name="supplierId"]') || form.querySelector('select[name="partyId"]');
-            if(entitySelect) {
-                if(type === 'purchase' || type === 'purchase_return') {
-                    entitySelect.value = existingTxn.supplierId;
-                    const supplierId = existingTxn.supplierId;
-                    const prodSelect = document.getElementById('q_product');
-                    if(prodSelect) {
-                        let filteredProducts = window.db.products;
-                        if(supplierId) filteredProducts = filteredProducts.filter(p => p.supplierId === supplierId);
-                        let newOptions = `<option value="">সিলেক্ট করুন</option>`;
-                        filteredProducts.forEach(p => {
-                            newOptions += `<option value="${p.id}" data-rate="${p.saleRate}" data-prate="${p.purchaseRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`;
-                        });
-                        newOptions += `<option value="ADD_NEW" style="font-weight:bold; color:var(--primary);">➕ নতুন পণ্য যোগ করুন</option>`;
-                        prodSelect.innerHTML = newOptions;
-                    }
-                } else if(type === 'sales_return') entitySelect.value = existingTxn.partyId;
+            if (type === 'due_collect') {
+                const partySelect = form.querySelector('select[name="partyId"]');
+                if(partySelect) partySelect.value = existingTxn.partyId;
+            } else if (type === 'due_pay') {
+                const supplierSelect = form.querySelector('select[name="supplierId"]');
+                if(supplierSelect) supplierSelect.value = existingTxn.supplierId;
+            } else if (type === 'expense') {
+                // No select to prefill
+            } else {
+                const entitySelect = form.querySelector('select[name="supplierId"]') || form.querySelector('select[name="partyId"]');
+                if(entitySelect) {
+                    if(type === 'purchase' || type === 'purchase_return') {
+                        entitySelect.value = existingTxn.supplierId;
+                        const supplierId = existingTxn.supplierId;
+                        const prodSelect = document.getElementById('q_product');
+                        if(prodSelect) {
+                            let filteredProducts = window.db.products;
+                            if(supplierId) filteredProducts = filteredProducts.filter(p => p.supplierId === supplierId);
+                            let newOptions = `<option value="">সিলেক্ট করুন</option>`;
+                            filteredProducts.forEach(p => {
+                                newOptions += `<option value="${p.id}" data-rate="${p.saleRate}" data-prate="${p.purchaseRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`;
+                            });
+                            newOptions += `<option value="ADD_NEW" style="font-weight:bold; color:var(--primary);">➕ নতুন পণ্য যোগ করুন</option>`;
+                            prodSelect.innerHTML = newOptions;
+                        }
+                    } else if(type === 'sales_return') entitySelect.value = existingTxn.partyId;
+                }
+                const prodSelect = document.getElementById('q_product');
+                if(prodSelect) {
+                    prodSelect.value = existingTxn.productId;
+                    updateQuickFormRate(existingTxn.productId, type);
+                }
+                calcQuickFormTotals();
             }
-            const prodSelect = document.getElementById('q_product');
-            if(prodSelect) {
-                prodSelect.value = existingTxn.productId;
-                updateQuickFormRate(existingTxn.productId, type);
-            }
-            calcQuickFormTotals();
         }
     }, 50);
 
@@ -2394,22 +2472,34 @@ input:checked + .slider:before { transform: translateX(22px); }
       });
     } 
     else if (type === 'due_collect') {
-      database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_in', note: 'বাকি আদায় - ' + d.note, amount: Number(d.amount), partyId: d.partyId }).then(() => { 
+      database.ref('transactions/' + txnId).set({ 
+        id: txnId, date: date, type: 'cash_in', 
+        note: d.note ? 'বাকি আদায় - ' + d.note : 'বাকি আদায়', 
+        amount: Number(d.amount), partyId: d.partyId 
+      }).then(() => { 
         let pName = window.db.parties.find(p=>p.id === d.partyId)?.name || 'Unknown';
-        logActivity('বাকি আদায়', `${pName} থেকে ${money(d.amount)} আদায় করা হয়েছে।`); 
+        logActivity(isEdit ? 'বাকি আদায় এডিট' : 'বাকি আদায়', `${pName} থেকে ${money(d.amount)} আদায় করা হয়েছে।`); 
         alert('সফল!'); 
         closeQuickForm(); 
       });
     } else if (type === 'due_pay') {
-      database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_out', note: 'বাকি পরিশোধ - ' + d.note, amount: Number(d.amount), supplierId: d.supplierId }).then(() => { 
+      database.ref('transactions/' + txnId).set({ 
+        id: txnId, date: date, type: 'cash_out', 
+        note: d.note ? 'বাকি পরিশোধ - ' + d.note : 'বাকি পরিশোধ', 
+        amount: Number(d.amount), supplierId: d.supplierId 
+      }).then(() => { 
         let sName = window.db.suppliers.find(s=>s.id === d.supplierId)?.name || 'Unknown';
-        logActivity('বাকি পরিশোধ', `${sName} কে ${money(d.amount)} পরিশোধ করা হয়েছে।`); 
+        logActivity(isEdit ? 'বাকি পরিশোধ এডিট' : 'বাকি পরিশোধ', `${sName} কে ${money(d.amount)} পরিশোধ করা হয়েছে।`); 
         alert('সফল!'); 
         closeQuickForm(); 
       });
     } else if (type === 'expense') {
-      database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_out', note: 'খরচ: ' + d.note, amount: Number(d.amount) }).then(() => { 
-        logActivity('খরচ', `খরচ যুক্ত হয়েছে: ${d.note} - ${money(d.amount)}`); 
+      database.ref('transactions/' + txnId).set({ 
+        id: txnId, date: date, type: 'cash_out', 
+        note: 'খরচ: ' + d.note, 
+        amount: Number(d.amount) 
+      }).then(() => { 
+        logActivity(isEdit ? 'খরচ এডিট' : 'খরচ', `খরচ যুক্ত হয়েছে: ${d.note} - ${money(d.amount)}`); 
         alert('সফল!'); 
         closeQuickForm(); 
       });
@@ -2460,7 +2550,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   }
 
   const $ = id => document.getElementById(id);
-  const money = n => '৳ ' + Number(n || 0).toLocaleString('bn-BD', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const money = n => '৳ ' + Number(n || 0).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   const sidebar = $('sidebar'), overlay = $('overlay');
@@ -2478,7 +2568,7 @@ input:checked + .slider:before { transform: translateX(22px); }
         document.getElementById('otherViewsContainer').style.display = 'block';
         if(viewId === 'invoices') renderInvoiceView('');
         if(viewId === 'transactions') renderTransactionsList('');
-        if(viewId === 'dues') renderDuesView(); // New render logic
+        if(viewId === 'dues') renderDuesView();
     }
   };
 
@@ -2625,7 +2715,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 
     if(history.length === 0) $('pfPartyHistory').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো লেনদেন নেই</div>';
     else $('pfPartyHistory').innerHTML = `<table><thead><tr><th>তারিখ</th><th>বিবরণ</th><th>টাকা</th></tr></thead><tbody>
-      ${history.map(t => `<tr><td>${new Date(t.date).toLocaleDateString('bn-BD')}</td><td>${t.type}</td><td>${money(t.amount)}</td></tr>`).join('')}
+      ${history.map(t => `<tr><td>${new Date(t.date).toLocaleDateString('en-GB')}</td><td>${t.type}</td><td>${money(t.amount)}</td></tr>`).join('')}
     </tbody></table>`;
     switchView('partyProfile');
   };
@@ -2697,7 +2787,7 @@ input:checked + .slider:before { transform: translateX(22px); }
         <div class="log-content">
           <div class="log-title">${log.type}</div>
           <div class="log-desc">${log.details}</div>
-          <div class="log-time">${new Date(log.timestamp).toLocaleString('bn-BD')}</div>
+          <div class="log-time">${new Date(log.timestamp).toLocaleString('en-GB')}</div>
         </div>
       </div>
     `).join('') || '<div style="text-align:center; padding:20px; color:#999;">কোনো লগ নেই</div>';
