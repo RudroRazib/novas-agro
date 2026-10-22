@@ -3,770 +3,421 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#2456b6">
+<meta name="theme-color" content="#17449d">
 <title>Novas Agro - Admin</title>
+
+<!-- Google Fonts & Icons -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <!-- HTML to Image Converter Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-/* ================= Global & Theme (Glass Blue Theme) ================= */
+/* ================= Global & Theme ================= */
 :root { 
-  --primary: #2456b6; 
-  --primary-dark: #17449d;
-  --primary-grad: linear-gradient(145deg, #1d4bb0, #3264d0);
-  --primary-light: rgba(36,86,182,.12); 
-  --bg: #EEF3FB; 
-  --bg-gradient: 
-    radial-gradient(ellipse at 78% 30%, rgba(255,255,255,.75), transparent 45%),
-    linear-gradient(155deg, #1647a7 0%, #2456b6 20%, #9eb9e9 45%, #e4eaf5 72%, #c9d8ef 100%);
-  --card: rgba(255,255,255,.78); 
+  --primary: #1d4bb0; 
+  --primary-light: rgba(255, 255, 255, 0.78); 
+  --secondary: #285ac3; 
+  --bg: #dce5f5; 
+  --card: #FFFFFF; 
   --text: #1E293B; 
-  --text-muted: #5A6B85; 
+  --text-muted: #64748B; 
   --red: #EF4444; 
   --green: #10B981; 
-  --blue: #3B82F6; 
   --orange: #F59E0B;
-  --border: rgba(190,210,235,.7); 
-  --shadow: 0 10px 30px rgba(33,65,122,.1); 
-  --glass-border: rgba(255,255,255,.7);
-  --glass-blur: blur(22px);
+  --border: rgba(255, 255, 255, 0.65); 
 }
-[data-theme="dark"] {
-  --bg: #0B1A33; 
-  --bg-gradient: 
-    radial-gradient(ellipse at 78% 30%, rgba(60,100,180,.22), transparent 45%),
-    linear-gradient(155deg, #071227 0%, #0c1e3c 35%, #142a4e 68%, #0a1830 100%);
-  --card: rgba(24, 40, 68, .75); 
-  --text: #F1F5F9; 
-  --text-muted: #94A3B8; 
-  --border: rgba(100, 140, 200, .28); 
-  --primary-light: rgba(59, 130, 246, .18); 
-  --shadow: 0 10px 30px rgba(0,0,0,.45); 
-  --glass-border: rgba(100, 140, 200, .25);
-}
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; transition: background-color 0.3s, color 0.3s; }
-body { 
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-  background: var(--bg-gradient); 
-  background-attachment: fixed;
-  background-size: cover;
-  min-height: 100vh;
-  color: var(--text); 
-  padding-bottom: 120px; 
-}
-button, input, select, textarea { font-family: inherit; outline: none; border: none; }
-button:active { transform: scale(0.96); }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
 
-/* ================= Header ================= */
-.app-header { 
-  background: rgba(255,255,255,.72); 
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  color: var(--text); 
-  padding: 12px 20px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: space-between; 
-  position: sticky; 
-  top: 0; 
-  z-index: 40; 
-  box-shadow: 0 4px 20px rgba(33,65,122,.08); 
-  border-bottom: 1px solid var(--glass-border); 
+/* ================= Phone Container (From Template) ================= */
+.phone-wrapper {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    background:
+        radial-gradient(ellipse at 78% 36%, rgba(255,255,255,.85), transparent 42%),
+        linear-gradient(155deg, #1647a7 0%, #2456b6 20%, #9eb9e9 42%, #e4eaf5 67%, #c9d8ef 100%);
+    box-shadow: 0 15px 45px rgba(31,63,120,.18);
+    display: flex;
+    flex-direction: column;
 }
-[data-theme="dark"] .app-header { background: rgba(20, 35, 60, .82); }
+@media (min-width: 500px) {
+    .phone-wrapper {
+        min-height: 900px;
+        margin: 20px 0;
+        border-radius: 42px;
+        border: 5px solid rgba(255,255,255,.7);
+        inset: 0 0 0 2px rgba(255,255,255,.2);
+    }
+}
+
+/* ================= Header (Top Area) ================= */
+.app-header { 
+    background: linear-gradient(145deg, #17449d, #2858b9 75%, #7598d9); 
+    color: white; padding: 20px 20px 25px; display: flex; align-items: center; justify-content: space-between; 
+    position: relative; z-index: 40; 
+    border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
+}
 .header-left { display: flex; align-items: center; gap: 15px; }
-.menu-btn { background: none; color: var(--text); font-size: 24px; cursor: pointer; }
-.app-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px;}
-.admin-badge { background: var(--red); color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-.header-right { display: flex; align-items: center; gap: 12px; font-size: 18px; position: relative; }
-.activity-icon { cursor: pointer; font-size: 18px; background: rgba(255,255,255,.7); padding: 6px 8px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text); border: 1px solid var(--glass-border);}
-[data-theme="dark"] .activity-icon { background: rgba(30,50,85,.6); }
-.bell-icon { cursor: pointer; position: relative; font-size: 20px;}
+.menu-btn { background: none; color: white; font-size: 20px; cursor: pointer; }
+.app-title { font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 8px;}
+.header-right { display: flex; align-items: center; gap: 18px; font-size: 18px; position: relative; }
+.header-right i { cursor: pointer; }
 .badge { position: absolute; top: -4px; right: -4px; min-width: 16px; height: 16px; background: var(--red); border-radius: 50%; color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
 /* Notification Dropdown */
-.noti-dropdown { 
-  position: absolute; 
-  top: 40px; 
-  right: 0; 
-  width: 280px; 
-  max-height: 400px; 
-  overflow-y: auto; 
-  background: rgba(255,255,255,.92); 
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: 20px; 
-  box-shadow: 0 15px 35px rgba(20,45,100,.2); 
-  display: none; 
-  flex-direction: column; 
-  color: var(--text); 
-  z-index: 100; 
-  border: 1px solid var(--glass-border); 
-}
-[data-theme="dark"] .noti-dropdown { background: rgba(20,35,60,.94); }
+.noti-dropdown { position: absolute; top: 35px; right: 0; width: 280px; max-height: 400px; overflow-y: auto; background: var(--card); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: none; flex-direction: column; color: var(--text); z-index: 100; }
 .noti-dropdown.open { display: flex; }
-.noti-head { padding: 14px; border-bottom: 1px solid var(--border); font-weight: bold; font-size: 14px; }
-.noti-item { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; cursor: pointer; }
+.noti-head { padding: 12px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 14px; }
+.noti-item { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; cursor: pointer; }
 .noti-item strong { display: block; color: var(--primary); margin-bottom: 3px; }
 
-/* ================= Content ================= */
-.content-area { padding: 15px 20px; max-width: 800px; margin: 0 auto; }
-.view { display: none; animation: fadeIn 0.2s ease; }
+/* ================= Content Area ================= */
+.content-area { padding: 0 18px 110px; flex: 1; position: relative; z-index: 10; margin-top: -15px; }
+.view { display: none; animation: fadeIn 0.3s ease; }
 .view.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ================= Unified Balance Card ================= */
-.unified-balance-card { 
-  background: linear-gradient(135deg, rgba(255,255,255,.92) 0%, rgba(230,238,250,.78) 100%); 
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-radius: 24px; padding: 16px 18px; 
-  box-shadow: 0 14px 38px rgba(33,65,122,.14); 
-  margin-bottom: 15px; 
-  border: 1px solid var(--glass-border); 
+/* Glass Panel Base */
+.panel { 
+    background: rgba(255,255,255,.78); border: 1px solid rgba(255,255,255,.65); 
+    border-radius: 34px; box-shadow: 0 12px 35px rgba(33,65,122,.07), inset 0 1px 2px rgba(255,255,255,.9); 
+    backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+    padding: 20px; margin-bottom: 20px;
 }
-[data-theme="dark"] .unified-balance-card { 
-  background: rgba(24, 40, 68, .82); 
-  border: 1px solid var(--border); 
-  box-shadow: var(--shadow); 
-}
-.ub-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed rgba(36,86,182,.25); }
-[data-theme="dark"] .ub-top { border-bottom: 1px dashed var(--border); }
-.ub-item { display: flex; flex-direction: column; gap: 4px; flex: 1; padding: 5px; border-radius: 10px; transition: background 0.2s; cursor: pointer;}
-.ub-item:hover { background: rgba(255,255,255,0.55); }
-[data-theme="dark"] .ub-item:hover { background: rgba(255,255,255,0.05); }
-.ub-item.right-align { text-align: right; align-items: flex-end; }
-.ub-label { font-size: 12px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 5px;}
-.ub-val { font-size: 20px; font-weight: 800; color: var(--primary); }
-.ub-val.red { color: var(--red); }
-.ub-val.orange { color: var(--orange); }
-.ub-divider { width: 1px; height: 35px; background: rgba(36,86,182,.25); margin: 0 15px; }
-[data-theme="dark"] .ub-divider { background: var(--border); }
-.ub-bottom { display: flex; justify-content: space-between; }
-.ub-split-item { font-size: 12px; display: flex; align-items: center; gap: 4px; font-weight: 600; }
-.ub-split-item.green { color: var(--green); }
-.ub-split-item.red { color: var(--red); }
 
-/* ================= Dashboard Grid ================= */
-.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-.dash-card { 
-  background: rgba(255,255,255,.78); 
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 20px; 
-  padding: 14px; 
-  box-shadow: 0 10px 28px rgba(33,65,122,.08); 
-  border: 1px solid var(--glass-border); 
-  display: flex; 
-  flex-direction: column; 
-  position: relative; 
-  cursor: pointer;
+/* ================= Dashboard UI (Matching Design) ================= */
+.dash-top-panel { 
+    padding: 25px 20px; margin-top: -10px; text-align: center;
 }
-[data-theme="dark"] .dash-card { background: rgba(24, 40, 68, .75); border: 1px solid var(--border); }
-.card-icon-sm { position: absolute; top: -8px; left: 10px; width: 30px; height: 30px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-.bg-red { background: var(--red); } .bg-blue { background: var(--blue); } .bg-teal { background: var(--green); } .bg-purple { background: #8B5CF6; }
-.dash-card-title { font-size: 11px; color: var(--text-muted); margin-top: 12px; margin-bottom: 4px; font-weight: 600; }
-.dash-card-value { font-size: 15px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; color: var(--text); }
+.dash-top-title { font-size: 15px; color: #475569; margin-bottom: 5px; font-weight: 500;}
+.dash-top-amount { font-size: 34px; font-weight: 700; color: #1647a7; margin-bottom: 20px; }
+
+.dash-split-box { 
+    background: rgba(255,255,255,0.6); border-radius: 20px; padding: 15px; 
+    display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.9);
+}
+.dash-split-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.dash-split-item:first-child { border-right: 1px solid rgba(0,0,0,0.05); }
+.dash-split-title { font-size: 13px; color: #64748B; display: flex; align-items: center; gap: 5px; font-weight: 600;}
+.dash-split-val { font-size: 18px; font-weight: 700; color: #1E293B; }
+
+/* 4 Circles Layout */
+.middle-area { margin-top: 10px; margin-bottom: 20px; }
+.shape-row { display: flex; justify-content: space-around; align-items: flex-start; gap: 10px; }
+.circle-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; width: 70px; }
+.circle {
+    width: 60px; height: 60px; flex-shrink: 0; border-radius: 50%;
+    background: linear-gradient(145deg, #1745a6, #285ac3);
+    box-shadow: 0 5px 12px rgba(24,65,151,.18), inset 1px 1px 3px rgba(255,255,255,.3);
+    display: flex; justify-content: center; align-items: center; color: white; font-size: 24px;
+    transition: transform 0.2s;
+}
+.circle-item:active .circle { transform: scale(0.9); }
+.circle-label { font-size: 12px; font-weight: 600; color: #1E293B; text-align: center;}
+
+/* Wide Panel */
+.wide-panel {
+    margin-top: 10px; padding: 20px; display: flex; align-items: center; justify-content: space-around;
+    border: 2px dashed rgba(255,255,255,.9); border-radius: 30px; background: rgba(255,255,255,.58);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); cursor: pointer;
+}
+.inner-block {
+    width: 45%; height: 60px; border-radius: 20px;
+    background: linear-gradient(135deg, #2149a9, #315fc4);
+    box-shadow: 0 7px 18px rgba(28,66,152,.18);
+    display: flex; flex-direction: column; justify-content: center; align-items: center; color: white;
+}
+.inner-block span { font-size: 11px; opacity: 0.8; }
+.inner-block strong { font-size: 16px; font-weight: 700; margin-top: 3px; }
+
+/* Tilted Bank Card Stack (For More Options) */
+.card-stack { margin-top: 25px; position: relative; padding-bottom: 15px; }
+.bank-card {
+    background: linear-gradient(125deg, #f9fbff 0%, #dce7fa 35%, #ffffff 55%, #e7eaf1 75%, #f4f6fb 100%);
+    border-radius: 26px; box-shadow: 0 12px 25px rgba(45,69,116,.12), inset 0 2px 4px rgba(255,255,255,.95);
+    padding: 20px; position: relative; transform: rotate(-2deg); transition: 0.3s; border: 1px solid rgba(255,255,255,0.8);
+}
+.bank-card::before {
+    content: ""; position: absolute; width: 100%; height: 100%; top: 9px; left: 0; border-radius: 26px;
+    background: linear-gradient(130deg, #d9e3f4, #f5f7fc); z-index: -1; box-shadow: 0 5px 10px rgba(41,67,111,.08);
+}
+.bank-card:active { transform: rotate(0deg) scale(0.98); }
+.card-title { font-size: 14px; font-weight: 700; color: #1647a7; margin-bottom: 15px; border-bottom: 1px solid rgba(22,71,167,0.1); padding-bottom: 10px;}
+.old-dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.old-dash-card { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.old-card-icon-sm { width: 35px; height: 35px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; }
+.bg-red { background: var(--red); } .bg-blue { background: #3B82F6; } .bg-teal { background: var(--green); } .bg-purple { background: #8B5CF6; }
+.old-dash-info { display: flex; flex-direction: column; }
+.old-dash-card-title { font-size: 11px; color: #64748B; font-weight: 600; }
+.old-dash-card-value { font-size: 14px; font-weight: 700; color: #1E293B; }
+
+/* ================= Other Views Wrapper (Glass) ================= */
+.glass-content {
+    background: rgba(255,255,255,.85); border-radius: 30px; padding: 20px; margin-top: 10px;
+    box-shadow: 0 10px 30px rgba(33,65,122,.1); backdrop-filter: blur(20px); min-height: 60vh;
+}
 
 /* ================= Lists & Tables ================= */
-.section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-.btn-add { 
-  background: var(--primary-grad); 
-  color: white; 
-  padding: 8px 14px; 
-  border-radius: 10px; 
-  font-size: 12px; 
-  font-weight: 600; 
-  cursor: pointer; 
-  box-shadow: 0 6px 16px rgba(29,75,176,.28);
-}
-.table-wrap { 
-  overflow-x: auto; 
-  background: rgba(255,255,255,.82); 
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 20px; 
-  box-shadow: 0 10px 28px rgba(33,65,122,.08); 
-  margin-bottom: 15px; 
-  border: 1px solid var(--glass-border);
-}
-[data-theme="dark"] .table-wrap { background: rgba(24, 40, 68, .75); border: 1px solid var(--border); }
+.section-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; color: #1E293B; }
+.btn-add { background: var(--primary); color: white; padding: 8px 15px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 10px rgba(29,75,176,0.3); border: none;}
+.table-wrap { overflow-x: auto; margin-bottom: 15px; border-radius: 16px; border: 1px solid #eee; background: white;}
 table { width: 100%; border-collapse: collapse; min-width: 400px; }
-th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
-th { background: rgba(255,255,255,.4); color: var(--text-muted); font-weight: 600; font-size: 12px;}
-[data-theme="dark"] th { background: rgba(30,50,80,.4); }
+th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; color: var(--text); }
+th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size: 13px;}
 
 /* Product Card */
-.product-card { 
-  display: flex; 
-  align-items: center; 
-  gap: 12px; 
-  background: rgba(255,255,255,.8); 
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 20px; 
-  padding: 14px; 
-  margin-bottom: 10px; 
-  border: 1px solid var(--glass-border); 
-  box-shadow: 0 10px 26px rgba(33,65,122,.08); 
-}
-[data-theme="dark"] .product-card { background: rgba(24, 40, 68, .75); border: 1px solid var(--border); }
-.product-card .img-wrap { width: 50px; height: 50px; border-radius: 12px; background: rgba(255,255,255,.8); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-[data-theme="dark"] .product-card .img-wrap { background: rgba(30,50,80,.6); }
+.product-card { display: flex; align-items: center; gap: 12px; background: white; border-radius: 16px; padding: 12px; margin-bottom: 10px; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+.product-card .img-wrap { width: 50px; height: 50px; border-radius: 12px; background: #F1F5F9; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 22px; }
 .product-card .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
 .product-card .info { flex: 1; }
-.product-card .info h4 { font-size: 14px; margin-bottom: 2px; font-weight: 700; display: flex; align-items: center; gap: 5px; flex-wrap: wrap;}
+.product-card .info h4 { font-size: 15px; margin-bottom: 2px; font-weight: 600; color: #1E293B;}
 .product-card .info p { font-size: 12px; color: var(--text-muted); }
-.btn-edit-icon { width: 34px; height: 34px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; }
-.btn-add-stock { 
-  background: linear-gradient(145deg, #10B981, #059669); 
-  color: white; 
-  padding: 7px 11px; 
-  border-radius: 10px; 
-  font-size: 12px; 
-  font-weight: bold; 
-  cursor: pointer; 
-  display: flex; 
-  align-items: center; 
-  gap: 3px; 
-  box-shadow: 0 5px 14px rgba(16,185,129,.3);
-}
+.btn-edit-icon { width: 34px; height: 34px; border-radius: 50%; background: #F1F5F9; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; border: none;}
+.btn-add-stock { background: var(--green); color: white; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 3px; border: none;}
 
 /* ================= Settings & Activity Log ================= */
-.settings-list { 
-  background: rgba(255,255,255,.8); 
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 24px; 
-  padding: 16px; 
-  box-shadow: 0 12px 32px rgba(33,65,122,.1); 
-  border: 1px solid var(--glass-border); 
-  margin-bottom: 15px; 
-}
-[data-theme="dark"] .settings-list { background: rgba(24, 40, 68, .78); border: 1px solid var(--border); }
-.settings-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border); }
+.settings-list { background: white; border-radius: 16px; padding: 0 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 15px; border: 1px solid #eee;}
+.settings-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
 .settings-item:last-child { border-bottom: none; }
 .settings-item-left { display: flex; flex-direction: column; gap: 4px; }
-.settings-item-title { font-size: 15px; font-weight: 700; }
+.settings-item-title { font-size: 15px; font-weight: 600; color: #1E293B;}
 .settings-item-desc { font-size: 12px; color: var(--text-muted); }
-.btn-action { padding: 8px 15px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer; }
-.btn-action.primary { background: var(--primary-light); color: var(--primary); }
-.btn-action.danger { background: rgba(239, 68, 68, 0.1); color: var(--red); }
+.btn-action { padding: 10px 15px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; border: none;}
+.btn-action.primary { background: #EFF6FF; color: var(--primary); }
+.btn-action.danger { background: #FEE2E2; color: var(--red); }
 .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
 .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
 .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-input:checked + .slider { background: var(--primary-grad); }
+input:checked + .slider { background-color: var(--primary); }
 input:checked + .slider:before { transform: translateX(22px); }
 
-.log-item { 
-  display: flex; 
-  gap: 12px; 
-  background: rgba(255,255,255,.82); 
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 14px; 
-  border-radius: 18px; 
-  margin-bottom: 10px; 
-  border: 1px solid var(--glass-border); 
-  box-shadow: 0 8px 22px rgba(33,65,122,.06);
-}
-[data-theme="dark"] .log-item { background: rgba(24, 40, 68, .75); border: 1px solid var(--border); }
-.log-icon { font-size: 20px; width: 30px; text-align: center;}
+.log-item { display: flex; gap: 12px; background: white; padding: 15px; border-radius: 16px; margin-bottom: 10px; border: 1px solid #eee; }
+.log-icon { font-size: 20px; width: 35px; height: 35px; border-radius: 50%; background: #EFF6FF; color: var(--primary); display: flex; align-items: center; justify-content: center;}
 .log-content { flex: 1; }
-.log-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-.log-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-.log-time { font-size: 10px; color: #94a3b8; }
+.log-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; color: #1E293B;}
+.log-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+.log-time { font-size: 11px; color: #94a3b8; }
 
-/* ================= Bottom Nav (Floating Glass) ================= */
-.bottom-nav { 
-  position: fixed; 
-  bottom: 14px; 
-  left: 14px; 
-  right: 14px; 
-  height: 80px; 
-  background: rgba(255,255,255,.82); 
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255,255,255,.9); 
-  border-radius: 28px; 
-  display: flex; 
-  justify-content: space-around; 
-  align-items: center; 
-  box-shadow: 0 12px 38px rgba(33,65,122,.18); 
-  z-index: 50; 
+/* ================= Bottom Nav (Matching Design) ================= */
+.bottom-bar { 
+    position: fixed; left: 50%; transform: translateX(-50%); width: calc(100% - 28px); max-width: 452px;
+    bottom: 14px; height: 80px; border-radius: 30px; background: rgba(255,255,255,.88);
+    border: 1px solid rgba(255,255,255,.9); box-shadow: 0 -5px 30px rgba(43,72,124,.1);
+    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    display: flex; justify-content: space-between; align-items: center; padding: 0 20px; z-index: 50;
 }
-[data-theme="dark"] .bottom-nav { background: rgba(20, 35, 60, .88); border: 1px solid var(--border); }
-.nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 11px; font-weight: 600; cursor: pointer; width: 80px; }
-.nav-item.active { color: var(--primary); }
-.nav-item span.icon { font-size: 20px; margin-bottom: 2px; }
+.nav-btn-sell { background: transparent; color: var(--primary); padding: 10px 15px; border-radius: 20px; font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; cursor: pointer; border: 1px solid rgba(29,75,176,0.2);}
+.nav-btn-buy { background: var(--primary); color: white; padding: 12px 20px; border-radius: 20px; font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(29,75,176,0.3); }
 .fab-btn { 
-  width: 58px; 
-  height: 58px; 
-  background: var(--primary-grad); 
-  color: white; 
-  border-radius: 50%; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  font-size: 28px; 
-  box-shadow: 0 10px 26px rgba(29,75,176,.5); 
-  cursor: pointer; 
-  transform: translateY(-15px); 
-  border: 3px solid rgba(255,255,255,.9); 
-  z-index: 51;
+    width: 65px; height: 65px; border-radius: 50%; background: linear-gradient(145deg, #1d4bb0, #3264d0);
+    box-shadow: 0 8px 20px rgba(27,72,170,.3); border: 3px solid rgba(255,255,255,.8);
+    display: flex; justify-content: center; align-items: center; color: white; font-size: 28px;
+    cursor: pointer; transform: translateY(-25px); z-index: 51;
 }
+.fab-btn:active { transform: translateY(-25px) scale(0.9); }
 
-/* ================= Modals & Forms ================= */
-.modal { 
-  display: none; 
-  position: fixed; 
-  inset: 0; 
-  background: rgba(10, 25, 55, 0.5); 
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  z-index: 90; 
-  align-items: flex-end; 
-}
-.modal.open { display: flex; }
-.modal-box { 
-  background: rgba(255,255,255,.95); 
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  width: 100%; 
-  max-height: 90vh; 
-  border-top-left-radius: 32px; 
-  border-top-right-radius: 32px; 
-  padding: 22px; 
-  overflow-y: auto; 
-  animation: slideUp 0.3s ease; 
-  color: var(--text); 
-  box-shadow: 0 -15px 45px rgba(20,40,80,.22);
-}
-[data-theme="dark"] .modal-box { background: rgba(20,35,60,.96); }
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-head h3 { font-size: 18px; font-weight: 800; color: var(--primary);}
-.close-btn { background: rgba(255,255,255,.7); color: var(--text-muted); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight:bold; border: 1px solid var(--border);}
-[data-theme="dark"] .close-btn { background: rgba(30,50,80,.7); }
-.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
-.form-group label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
-.form-group input, .form-group select, .form-group textarea { padding: 12px 14px; border: 1px solid rgba(180,200,230,.75); border-radius: 14px; font-size: 14px; background: rgba(255,255,255,.85); color: var(--text); }
-[data-theme="dark"] .form-group input, [data-theme="dark"] .form-group select, [data-theme="dark"] .form-group textarea { background: rgba(20,35,60,.85); border: 1px solid var(--border); }
-.form-group input:focus, .form-group select:focus { border-color: var(--primary); }
-.form-actions { display: flex; gap: 10px; margin-top: 15px; }
-.form-actions button { flex: 1; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer;}
-.btn-cancel { background: rgba(200,215,235,.5); color: var(--text-muted); }
-[data-theme="dark"] .btn-cancel { background: rgba(30,50,80,.6); }
-.btn-submit { background: var(--primary-grad); color: white; box-shadow: 0 8px 20px rgba(29,75,176,.3); }
-.btn-submit.danger { background: linear-gradient(145deg, #EF4444, #DC2626); box-shadow: 0 8px 20px rgba(239,68,68,.3); }
-
-/* Quick Menu Grid */
-.action-menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: center; }
-.action-menu-category { grid-column: 1 / -1; color: var(--text-muted); font-weight: 700; font-size: 14px; margin: 15px 0 5px; text-align: left; }
-.action-item { background: rgba(255,255,255,.72); border: 1px solid var(--glass-border); padding: 15px 5px; border-radius: 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 6px 16px rgba(33,65,122,.05);}
-[data-theme="dark"] .action-item { background: rgba(24,40,68,.7); border: 1px solid var(--border); }
-.action-item:active { background: var(--primary-light); border-color: var(--primary); }
-.action-item .a-icon { font-size: 24px; }
-.action-item .a-text { font-size: 12px; font-weight: 700; color: var(--text); }
-
-/* Party Profile */
-.profile-header { 
-  background: var(--primary-grad); 
-  color: white; 
-  padding: 22px; 
-  border-radius: 24px; 
-  text-align: center; 
-  margin-bottom: 15px; 
-  position: relative; 
-  box-shadow: 0 14px 38px rgba(29,75,176,.35);
-}
-.profile-header h2 { font-size: 20px; margin-bottom: 5px; }
-.profile-due { background: rgba(255,255,255,0.2); padding: 12px; border-radius: 16px; margin-top: 15px; }
-.profile-due span { font-size: 12px; display: block; margin-bottom: 5px; }
-.profile-due strong { font-size: 24px; font-weight: 800; }
-.back-btn { background: none; color: var(--primary); font-size: 14px; font-weight: 700; margin-bottom: 10px; cursor: pointer; display: inline-block; }
-
-/* Image Preview Box */
-.img-preview-box { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,.55); border-radius: 14px; border: 1px dashed rgba(180,200,230,.8); }
-[data-theme="dark"] .img-preview-box { background: rgba(30,50,80,.5); border: 1px dashed var(--border); }
-.img-preview { width: 55px; height: 55px; border-radius: 12px; background: rgba(255,255,255,.85); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 22px; border: 1px solid var(--border); flex-shrink: 0;}
-[data-theme="dark"] .img-preview { background: rgba(30,50,80,.8); }
-.img-preview img { width: 100%; height: 100%; object-fit: cover; }
-
-/* Sidebar */
-.overlay { position: fixed; inset: 0; background: rgba(10, 25, 55, 0.55); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 60; }
+/* ================= Sidebar ================= */
+.overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 60; backdrop-filter: blur(3px);}
 .overlay.open { opacity: 1; visibility: visible; }
 .sidebar { 
-  position: fixed; 
-  top: 0; 
-  left: -300px; 
-  bottom: 0; 
-  width: 280px; 
-  background: rgba(255,255,255,.96); 
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  z-index: 70; 
-  transition: 0.3s ease-in-out; 
-  display: flex; 
-  flex-direction: column; 
-  box-shadow: 5px 0 30px rgba(20,40,80,.18); 
+    position: fixed; top: 0; left: -300px; bottom: 0; width: 280px; 
+    background: rgba(255,255,255,.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+    z-index: 70; transition: 0.3s ease-in-out; display: flex; flex-direction: column; box-shadow: 5px 0 20px rgba(0,0,0,0.1); 
 }
-[data-theme="dark"] .sidebar { background: rgba(15,28,50,.97); }
 .sidebar.open { left: 0; }
-.side-profile { background: var(--primary-grad); color: white; padding: 32px 20px 22px; display: flex; flex-direction: column; align-items: center; }
-.profile-pic { width: 72px; height: 72px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 35px; margin-bottom: 10px; overflow: hidden; padding: 5px; border: 2px solid rgba(255,255,255,.5); }
-.profile-pic img { width: 100%; height: 100%; object-fit: contain; }
-.side-name { font-size: 18px; font-weight: 700; }
-.side-menu { padding: 15px 10px; overflow-y: auto; flex: 1; }
-.side-menu-item { display: flex; align-items: center; padding: 13px 16px; color: var(--text); font-weight: 600; font-size: 14px; border-radius: 14px; cursor: pointer; margin-bottom: 4px;}
-.side-menu-item:active { background: rgba(200,215,235,.4); }
-[data-theme="dark"] .side-menu-item:active { background: rgba(30,50,80,.5); }
-.side-menu-item.active-side { background: var(--primary-light); color: var(--primary); }
+.side-profile { background: linear-gradient(145deg, #17449d, #2858b9); color: white; padding: 30px 20px 20px; display: flex; flex-direction: column; align-items: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;}
+.side-profile h3 { font-size: 14px; opacity: 0.8; font-weight: 400; margin-bottom: 5px;}
+.side-profile .business-name { background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 5px;}
+.side-menu { padding: 15px 0; overflow-y: auto; flex: 1; }
+.side-menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; color: var(--text); font-weight: 500; font-size: 15px; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.05);}
+.side-menu-item:active { background: rgba(0,0,0,0.03); }
 .side-menu-left { display: flex; align-items: center; gap: 15px; }
+.side-menu-left i { font-size: 18px; color: var(--primary); width: 20px; text-align: center;}
+.side-menu-badge { background: #EFF6FF; color: var(--primary); padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; display: flex; align-items: center; gap: 4px;}
+.side-package { padding: 15px 20px; border-top: 1px solid rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; font-size: 13px;}
+.side-package .subscribe-btn { background: var(--primary); color: white; padding: 5px 15px; border-radius: 15px; font-weight: 600;}
+.version-text { text-align: center; font-size: 12px; color: var(--text-muted); padding-bottom: 15px; }
+
+/* ================= Modals & Forms ================= */
+.modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); z-index: 90; align-items: flex-end; backdrop-filter: blur(4px); }
+.modal.open { display: flex; }
+.modal-box { background: var(--card); width: 100%; max-height: 90vh; border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 25px 20px; overflow-y: auto; animation: slideUp 0.3s ease; color: var(--text); }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-head h3 { font-size: 18px; font-weight: 700; color: var(--text);}
+.close-btn { background: var(--bg); color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight:bold;}
+.form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+.form-group label { font-size: 14px; color: var(--text); font-weight: 500; }
+.form-group input, .form-group select, .form-group textarea { padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #F8FAFC; color: var(--text); }
+.form-group input:focus, .form-group select:focus { border-color: var(--primary); background: var(--card); }
+.form-actions { display: flex; gap: 10px; margin-top: 20px; }
+.form-actions button { flex: 1; padding: 15px; border-radius: 12px; font-weight: 600; font-size: 16px; cursor: pointer; border: none;}
+.btn-cancel { background: #F1F5F9; color: var(--text-muted); }
+.btn-submit { background: var(--primary); color: white; }
+.btn-submit.danger { background: var(--red); }
+
+/* Quick Menu Grid */
+.action-menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; }
+.action-menu-category { grid-column: 1 / -1; color: var(--text-muted); font-weight: 600; font-size: 14px; margin: 15px 0 5px; text-align: left; }
+.action-item { background: #F8FAFC; border: 1px solid #e2e8f0; padding: 15px 5px; border-radius: 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.action-item:active { background: #EFF6FF; border-color: var(--primary); }
+.action-item .a-icon { font-size: 24px; color: var(--primary); }
+.action-item .a-text { font-size: 13px; font-weight: 500; color: var(--text); }
+
+/* Party Profile */
+.profile-header { background: white; padding: 25px 20px; border-radius: 24px; text-align: center; margin-bottom: 20px; position: relative; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+.profile-header h2 { font-size: 22px; margin-bottom: 5px; color: var(--text); }
+.profile-header p { color: var(--text-muted); font-size: 14px; }
+.profile-due { background: #EFF6FF; padding: 15px; border-radius: 16px; margin-top: 20px; }
+.profile-due span { font-size: 13px; display: block; margin-bottom: 5px; color: var(--primary); font-weight: 500;}
+.profile-due strong { font-size: 24px; font-weight: 700; color: var(--primary); }
+.back-btn { background: none; color: var(--primary); font-size: 15px; font-weight: 600; margin-bottom: 15px; cursor: pointer; display: inline-block; }
+
+/* Image Preview Box */
+.img-preview-box { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding: 15px; background: #F8FAFC; border-radius: 16px; border: 1px dashed #cbd5e1; }
+.img-preview { width: 60px; height: 60px; border-radius: 12px; background: var(--card); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 24px; border: 1px solid #e2e8f0; flex-shrink: 0;}
+.img-preview img { width: 100%; height: 100%; object-fit: cover; }
 
 /* Login */
-#loginScreen { 
-  position: fixed; 
-  inset: 0; 
-  z-index: 9999; 
-  background: 
-    radial-gradient(ellipse at 30% 20%, rgba(120,160,240,.4), transparent 55%),
-    linear-gradient(155deg, #1647a7 0%, #2456b6 45%, #3264d0 100%);
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  padding: 20px; 
-}
-.login-box { 
-  background: rgba(255,255,255,.94); 
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  padding: 32px; 
-  border-radius: 28px; 
-  width: 100%; 
-  max-width: 400px; 
-  border: 1px solid rgba(255,255,255,.75);
-  box-shadow: 0 20px 55px rgba(10,30,80,.35);
-}
-[data-theme="dark"] .login-box { background: rgba(15,28,50,.96); }
+#loginScreen { position: fixed; inset: 0; z-index: 9999; background: linear-gradient(145deg, #17449d, #2858b9); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-box { background: var(--card); padding: 30px; border-radius: 24px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 .login-logo { width: 80px; height: 80px; object-fit: contain; margin: 0 auto 10px; display: block; }
-.login-box h2 { text-align: center; margin-bottom: 20px; color: var(--text); }
+.login-box h2 { text-align: center; margin-bottom: 25px; color: var(--text); font-weight: 700; }
 .login-input-group { margin-bottom: 15px; }
-.login-input-group label { font-size: 13px; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 5px; }
-.login-input-group input { width: 100%; padding: 13px 14px; border: 1px solid rgba(180,200,230,.75); border-radius: 14px; font-size: 15px; background: rgba(255,255,255,.85); color: var(--text); }
-[data-theme="dark"] .login-input-group input { background: rgba(20,35,60,.85); border: 1px solid var(--border); }
-.login-btn { 
-  width: 100%; 
-  padding: 15px; 
-  background: var(--primary-grad); 
-  color: white; 
-  border-radius: 14px; 
-  font-size: 16px; 
-  font-weight: bold; 
-  cursor: pointer; 
-  box-shadow: 0 10px 26px rgba(29,75,176,.4);
-}
+.login-input-group label { font-size: 14px; color: var(--text); font-weight: 500; display: block; margin-bottom: 8px; }
+.login-input-group input { width: 100%; padding: 14px 15px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #F8FAFC; color: var(--text); }
+.login-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; border: none;}
 
 /* ================= NEW SALE MODAL STYLES ================= */
-#newSaleModal { 
-  background: var(--bg-gradient); 
-  background-attachment: fixed;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  padding: 0; 
-  display: none; 
-  flex-direction: column; 
-  z-index: 95; 
-  align-items: stretch; 
-}
+#newSaleModal { background: #F8FAFC; padding: 0; display: none; flex-direction: column; z-index: 95; align-items: stretch; }
 #newSaleModal.open { display: flex; }
-.ns-header { 
-  background: var(--primary-grad); 
-  color: white; 
-  padding: 15px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: space-between; 
-  position: sticky; 
-  top: 0; 
-  z-index: 10; 
-  box-shadow: 0 6px 20px rgba(20,50,120,.28);
-}
-.ns-header-left { display: flex; align-items: center; gap: 15px; font-size: 18px; font-weight: 700; }
-.ns-back { font-size: 24px; cursor: pointer; font-weight: bold;}
-.ns-toggle { display: flex; background: rgba(255,255,255,0.22); border-radius: 20px; overflow: hidden; }
-.ns-toggle button { padding: 6px 16px; font-size: 14px; font-weight: bold; color: white; background: none; cursor:pointer;}
+.ns-header { background: linear-gradient(145deg, #17449d, #2858b9); color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;}
+.ns-header-left { display: flex; align-items: center; gap: 15px; font-size: 18px; font-weight: 600; }
+.ns-back { font-size: 20px; cursor: pointer;}
+.ns-toggle { display: flex; background: rgba(255,255,255,0.2); border-radius: 20px; overflow: hidden; }
+.ns-toggle button { padding: 6px 16px; font-size: 14px; font-weight: 600; color: white; background: none; cursor:pointer; border:none;}
 .ns-toggle button.active { background: white; color: var(--primary); }
 
-.ns-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
-.ns-invoice-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #334155; margin-bottom: 15px; border-bottom: 1px dashed rgba(36,86,182,.3); padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
-[data-theme="dark"] .ns-invoice-row { color: var(--text-muted); }
-.btn-inv-list { background: var(--primary-light); color: var(--primary); padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px;}
+.ns-content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
+.ns-invoice-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text); margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px; }
+.btn-inv-list { background: #EFF6FF; color: var(--primary); padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; border: none;}
 
-.ns-customer-box { 
-  background: rgba(255,255,255,.85); 
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  padding: 15px; 
-  border-radius: 16px; 
-  border: 1px solid var(--glass-border); 
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-  margin-bottom: 15px; 
-  box-shadow: 0 8px 22px rgba(33,65,122,.06);
-}
-[data-theme="dark"] .ns-customer-box { background: rgba(24,40,68,.85); border: 1px solid var(--border); }
-.ns-customer-box select { border: none; font-size: 15px; width: 100%; outline: none; background: transparent; color: #1E293B; }
-[data-theme="dark"] .ns-customer-box select { color: var(--text); }
-.ns-add-item-btn { 
-  background: rgba(36,86,182,.1); 
-  color: var(--primary); 
-  padding: 13px; 
-  border-radius: 14px; 
-  text-align: center; 
-  font-weight: 600; 
-  font-size: 15px; 
-  cursor: pointer; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  gap: 8px; 
-  margin-bottom: 15px; 
-  border: 1px dashed rgba(36,86,182,.35);
-}
+.ns-customer-box { background: white; padding: 15px; border-radius: 16px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.ns-customer-box select { border: none; font-size: 15px; width: 100%; outline: none; background: transparent; color: var(--text); }
+.ns-add-item-btn { background: #EFF6FF; color: var(--primary); padding: 15px; border-radius: 16px; text-align: center; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; border: 1px dashed var(--primary);}
 
-.ns-items-list { 
-  background: rgba(255,255,255,.85); 
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-radius: 16px; 
-  border: 1px solid var(--glass-border); 
-  margin-bottom: 15px; 
-  overflow: hidden; 
-  box-shadow: 0 8px 22px rgba(33,65,122,.06);
-}
-[data-theme="dark"] .ns-items-list { background: rgba(24,40,68,.85); border: 1px solid var(--border); }
-.ns-item-row { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 14px; }
+.ns-items-list { background: white; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; overflow: hidden; }
+.ns-item-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
 .ns-item-row:last-child { border-bottom: none; }
 .ns-item-info { display: flex; flex-direction: column; }
-.ns-item-name { font-weight: bold; color: var(--text); }
-.ns-item-details { font-size: 12px; color: var(--text-muted); }
-.ns-item-total { font-weight: bold; color: var(--primary); }
+.ns-item-name { font-weight: 600; color: var(--text); }
+.ns-item-details { font-size: 12px; color: var(--text-muted); margin-top: 3px;}
+.ns-item-total { font-weight: 700; color: var(--primary); }
 .ns-remove-item { color: var(--red); cursor: pointer; margin-left: 10px; font-size: 16px;}
 
-.ns-form-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 15px; color: var(--text); }
+.ns-form-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 15px; color: var(--text); }
 .ns-label { width: 40%; font-weight: 500;}
 .ns-input-group { width: 60%; display: flex; gap: 5px; align-items: center; justify-content: flex-end; }
-.ns-input-group input { width: 100%; padding: 10px 14px; border: 1px solid rgba(180,200,230,.75); border-radius: 10px; font-size: 15px; text-align: right; outline: none; background: rgba(255,255,255,.9); color:#1E293B;}
-[data-theme="dark"] .ns-input-group input { background: rgba(20,35,60,.85); border: 1px solid var(--border); color: var(--text); }
+.ns-input-group input { width: 100%; padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; text-align: right; outline: none; background: white; color:var(--text);}
 .ns-input-group input:focus { border-color: var(--primary); }
-.ns-input-group input[readonly] { background: rgba(230,238,250,.7); }
-[data-theme="dark"] .ns-input-group input[readonly] { background: rgba(30,50,80,.6); }
-.ns-symbol { font-weight: bold; width: 20px; text-align: center; color: var(--text-muted);}
+.ns-input-group input[readonly] { background: #F8FAFC; }
+.ns-symbol { font-weight: 600; width: 20px; text-align: center; color: var(--text-muted);}
 
 .ns-discount-row { display: flex; gap: 10px; width: 60%; justify-content: flex-end;}
 .ns-discount-row input { width: 45%; }
-.ns-discount-row .symbol-box { display: flex; align-items: center; border: 1px solid rgba(180,200,230,.75); border-radius: 10px; overflow: hidden; background: rgba(255,255,255,.9); width: 45%;}
-[data-theme="dark"] .ns-discount-row .symbol-box { background: rgba(20,35,60,.85); border: 1px solid var(--border); }
+.ns-discount-row .symbol-box { display: flex; align-items: center; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; background: white; width: 45%;}
 .ns-discount-row .symbol-box input { border: none; width: 100%; border-radius: 0; }
-.ns-discount-row .symbol-box span { background: rgba(230,238,250,.85); padding: 0 10px; display: flex; align-items: center; justify-content: center; border-left: 1px solid rgba(180,200,230,.75); font-size: 14px; color: var(--text-muted);}
-[data-theme="dark"] .ns-discount-row .symbol-box span { background: rgba(30,50,80,.7); border-left: 1px solid var(--border); }
+.ns-discount-row .symbol-box span { background: #F8FAFC; padding: 0 10px; display: flex; align-items: center; justify-content: center; border-left: 1px solid #e2e8f0; font-size: 14px; color: var(--text-muted);}
 
-.ns-payment-section { 
-  background: rgba(255,255,255,.85); 
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  padding: 15px; 
-  border-radius: 16px; 
-  border: 1px solid var(--glass-border); 
-  margin-top: 20px; 
-  box-shadow: 0 8px 22px rgba(33,65,122,.06);
-}
-[data-theme="dark"] .ns-payment-section { background: rgba(24,40,68,.85); border: 1px solid var(--border); }
+.ns-payment-section { background: white; padding: 15px; border-radius: 16px; border: 1px solid #e2e8f0; margin-top: 20px; }
 .ns-payment-section label { font-size: 14px; font-weight: 600; margin-bottom: 10px; display: block; color: var(--text);}
-.ns-payment-select { width: 100%; padding: 12px; border: 1px solid rgba(180,200,230,.75); border-radius: 10px; font-size: 15px; background: rgba(255,255,255,.9); color:#1E293B;}
-[data-theme="dark"] .ns-payment-select { background: rgba(20,35,60,.85); border: 1px solid var(--border); color: var(--text); }
+.ns-payment-select { width: 100%; padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 15px; background: #F8FAFC; color:var(--text);}
 
-.ns-footer { 
-  position: fixed; 
-  bottom: 0; 
-  left: 0; 
-  right: 0; 
-  background: rgba(255,255,255,.94); 
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  padding: 15px; 
-  box-shadow: 0 -6px 22px rgba(20,40,80,.1); 
-  z-index: 100; 
-  border-top: 1px solid rgba(200,215,235,.5);
-}
-[data-theme="dark"] .ns-footer { background: rgba(15,28,50,.95); border-top: 1px solid var(--border); }
-.ns-save-btn { 
-  width: 100%; 
-  background: var(--primary-grad); 
-  color: white; 
-  padding: 16px; 
-  border-radius: 14px; 
-  font-size: 18px; 
-  font-weight: bold; 
-  cursor: pointer; 
-  border: none; 
-  box-shadow: 0 10px 26px rgba(29,75,176,.35);
-}
+.ns-footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px 20px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); z-index: 100; }
+.ns-save-btn { width: 100%; background: var(--primary); color: white; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; border: none; }
 
 /* Item Add Modal */
 #addItemModal { align-items: center; justify-content: center; z-index: 110; }
-#addItemModal .modal-box { border-radius: 24px; width: 90%; max-width: 400px; max-height: 80vh; animation: popIn 0.3s ease; padding:22px;}
+#addItemModal .modal-box { border-radius: 24px; width: 90%; max-width: 400px; max-height: 80vh; animation: popIn 0.3s ease; padding:20px;}
 @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 /* ================= INVOICE STYLES (Xin Style) ================= */
 #invoiceModal { z-index: 120; align-items: center; justify-content: center; padding: 10px; }
 #invoiceModal .modal-box { border-radius: 16px; width: 100%; max-width: 800px; max-height: 95vh; padding: 0; background: white; }
-.inv-header-action { background: rgba(230,238,250,.85); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-.inv-header-action h3 { margin: 0; color: var(--primary); font-size: 18px; }
-.btn-print { background: var(--primary-grad); color: white; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 15px; border:none; box-shadow: 0 6px 16px rgba(29,75,176,.28);}
-.btn-close-inv { background: linear-gradient(145deg, #EF4444, #DC2626); color: white; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 15px; border:none;}
+.inv-header-action { background: #F8FAFC; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+.inv-header-action h3 { margin: 0; color: var(--text); font-size: 18px; font-weight: 700;}
+.btn-print { background: var(--primary); color: white; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px; border:none;}
+.btn-close-inv { background: #FEE2E2; color: var(--red); padding: 10px 15px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px; border:none;}
 
-/* The actual Xin Style Invoice Box (Fully Responsive) */
-#invoicePrintArea { 
-    padding: 15px; 
-    background: white; 
-    color: black; 
-    font-family: Arial, Helvetica, sans-serif; 
-    font-size: 11px; 
-    width: 100%; 
-    box-sizing: border-box;
-}
+#invoicePrintArea { padding: 20px; background: white; color: black; font-family: Arial, Helvetica, sans-serif; font-size: 11px; width: 100%; box-sizing: border-box; }
 .xin-inv-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; border-bottom: 2px solid black; padding-bottom: 10px; }
 .xin-inv-left { display: flex; flex-direction: row; gap: 10px; align-items: center; }
-.xin-logo-box { width: 60px; height: 60px; background: #000; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; font-style: italic; flex-shrink: 0;}
+.xin-logo-box { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; font-style: italic; flex-shrink: 0;}
 .xin-company-info { font-size: 11px; line-height: 1.4; }
 .xin-company-info h3 { font-size: 15px; margin-bottom: 3px; font-weight: bold; }
 .xin-inv-right { text-align: left; font-size: 11px; line-height: 1.6; }
 .xin-inv-right strong { display: inline-block; width: 90px; }
-
 .xin-title-row { display: flex; align-items: center; justify-content: space-between; margin: 15px 0; }
 .xin-title-row::before, .xin-title-row::after { content: ""; flex: 1; border-bottom: 2px solid black; }
 .xin-title-row h2 { margin: 0 15px; font-size: 20px; font-weight: bold; }
-
 .xin-bill-to { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; font-size: 11px; line-height: 1.5; border-bottom: 1px dashed #ccc; padding-bottom: 10px;}
 .xin-bill-box { width: 100%; }
 .xin-bill-box h4 { font-size: 12px; margin-bottom: 3px; font-weight: bold; }
 .xin-bill-box strong { font-size: 12px; font-weight: bold; }
-
 .xin-meta-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
 .xin-meta-table th, .xin-meta-table td { border: 1px solid #000; padding: 5px; text-align: left; }
 .xin-meta-table th { background: #d9d9d9; font-weight: bold; width: 20%; }
-
-/* Updated Items Table without forced height */
 .xin-items-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
 .xin-items-table th, .xin-items-table td { border: 1px solid #000; padding: 6px; text-align: left; word-break: break-word; }
 .xin-items-table th { background: #e6e6e6; font-weight: bold; text-align: center; }
 .xin-items-table td.text-right { text-align: right; }
 .xin-items-table td.text-center { text-align: center; }
-
 .xin-footer-section { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
 .xin-footer-left { width: 100%; font-size: 11px; line-height: 1.5; }
 .xin-footer-right { width: 100%; font-size: 11px; border-top: 1px dashed #ccc; padding-top: 10px; }
 .xin-sum-row { display: flex; justify-content: space-between; padding: 4px 0; }
 .xin-sum-row.bold { font-weight: bold; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px 0; margin-top: 5px;}
 .xin-sum-row.total-due { font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 6px;}
-
 .xin-sign-area { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; font-size: 11px;}
 .xin-sign-line { width: 150px; border-top: 1px solid #000; text-align: center; padding-top: 5px; margin-top: 30px;}
 .xin-page-no { text-align: right; font-size: 11px; margin-top: 10px; }
 
-/* Ensure the table inside HTML2Canvas renders correctly */
-#invoicePrintArea table { min-width: 100%; }
-
 /* ================= NEW INVOICE LIST & TRANSACTIONS STYLES ================= */
-.invoice-list-item { 
-  background: rgba(255,255,255,.82); 
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 18px; 
-  padding: 16px; 
-  margin-bottom: 12px; 
-  box-shadow: 0 8px 24px rgba(33,65,122,.08); 
-  border: 1px solid var(--glass-border); 
-  cursor: pointer; 
-  transition: 0.2s;
-}
-[data-theme="dark"] .invoice-list-item { background: rgba(24,40,68,.78); border: 1px solid var(--border); }
-.invoice-list-item:active { background: rgba(36,86,182,.12); border-color: var(--primary); }
-
+.invoice-list-item { background: white; border-radius: 16px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; }
+.invoice-list-item:active { background: #EFF6FF; border-color: var(--primary); }
 .inv-list-header { display: flex; justify-content: space-between; align-items: flex-start; }
 .inv-list-inv { color: var(--primary); font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-.inv-list-cust { font-size: 14px; color: var(--text); margin-bottom: 4px; }
+.inv-list-cust { font-size: 14px; color: var(--text); margin-bottom: 4px; font-weight: 500;}
 .inv-list-date { font-size: 12px; color: var(--text-muted); }
 .inv-list-amounts { text-align: right; }
-.inv-list-total { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.inv-list-total { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .inv-list-due { font-size: 12px; font-weight: 600; }
 
-#invoiceSearchInput, #invoiceViewSearchInput, #txnSearchInput { 
-  width: 100%; 
-  padding: 13px 16px; 
-  border-radius: 14px; 
-  border: 1px solid rgba(180,200,230,.7); 
-  font-size: 14px; 
-  background: rgba(255,255,255,.8); 
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  color: var(--text); 
-  margin-bottom: 15px; 
-  outline: none;
-  box-shadow: 0 6px 18px rgba(33,65,122,.05);
-}
-[data-theme="dark"] #invoiceSearchInput, [data-theme="dark"] #invoiceViewSearchInput, [data-theme="dark"] #txnSearchInput { background: rgba(24,40,68,.8); border: 1px solid var(--border); }
+#invoiceSearchInput, #invoiceViewSearchInput, #txnSearchInput { width: 100%; padding: 14px 15px; border-radius: 14px; border: 1px solid #e2e8f0; font-size: 14px; background: white; color: var(--text); margin-bottom: 15px; outline: none;}
 
-/* Styles for Quick Form calculator box */
-.q-calc-box { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 15px; margin-top: 10px; background: rgba(36,86,182,.08); padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(36,86,182,.18); }
-[data-theme="dark"] .q-calc-box { background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.28); }
-
-/* Breakdown List Item */
-.breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border); }
+.q-calc-box { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 15px; margin-top: 15px; background: #EFF6FF; padding: 15px; border-radius: 12px; color: var(--primary); }
+.breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; }
 .breakdown-item:last-child { border-bottom: none; }
-.breakdown-name { font-weight: 600; font-size: 14px; }
-.breakdown-amount { font-weight: 700; font-size: 15px; }
+.breakdown-name { font-weight: 500; font-size: 15px; }
+.breakdown-amount { font-weight: 700; font-size: 16px; }
 
 /* ================= A4 Print Styles ================= */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  #invoiceModal, #invoiceModal .modal-box, #invoicePrintArea, #invoicePrintArea * {
-    visibility: visible;
-  }
-  #invoiceModal {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    background: white;
-  }
-  #invoiceModal .modal-box {
-    box-shadow: none;
-    border: none;
-    max-height: none;
-    overflow: visible;
-    padding: 0;
-  }
-  .inv-header-action, #invoiceImageContainer {
-    display: none !important;
-  }
-  #invoicePrintArea {
-    width: 210mm;
-    min-height: 297mm;
-    padding: 15mm;
-    box-sizing: border-box;
-    margin: 0 auto;
-  }
+  body * { visibility: hidden; }
+  #invoiceModal, #invoiceModal .modal-box, #invoicePrintArea, #invoicePrintArea * { visibility: visible; }
+  #invoiceModal { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; background: white; }
+  #invoiceModal .modal-box { box-shadow: none; border: none; max-height: none; overflow: visible; padding: 0; }
+  .inv-header-action, #invoiceImageContainer { display: none !important; }
+  #invoicePrintArea { width: 210mm; min-height: 297mm; padding: 15mm; box-sizing: border-box; margin: 0 auto; }
 }
 </style>
 
@@ -790,16 +441,17 @@ input:checked + .slider:before { transform: translateX(22px); }
 </div>
 
 <!-- Main App -->
-<div id="appContent" style="display: none;">
+<div class="phone-wrapper" id="appContent" style="display: none;">
   <header class="app-header">
     <div class="header-left">
-      <button class="menu-btn" id="menuBtn">☰</button>
-      <div class="app-title">Novas Agro <span class="admin-badge">ADMIN</span></div>
+      <i class="fa-solid fa-bars menu-btn" id="menuBtn"></i>
+      <div class="app-title">Novas Agro</div>
     </div>
     <div class="header-right">
-      <div class="activity-icon" onclick="switchView('activityLog')" title="Activity Log">⋮≡</div>
-      <div class="bell-icon" onclick="toggleNotifications()">
-        🔔 <div class="badge" id="notiBadge" style="display:none;">0</div>
+      <i class="fa-solid fa-filter" onclick="alert('ফিল্টার অপশন শীঘ্রই আসছে!')"></i>
+      <div style="position: relative;">
+        <i class="fa-regular fa-bell" onclick="toggleNotifications()"></i>
+        <div class="badge" id="notiBadge" style="display:none;">0</div>
       </div>
       <div class="noti-dropdown" id="notiDropdown">
         <div class="noti-head">নোটিফিকেশন</div>
@@ -811,205 +463,318 @@ input:checked + .slider:before { transform: translateX(22px); }
   <main class="content-area">
     <!-- Dashboard -->
     <section id="dashboard" class="view active">
-      <div id="lowStockAlert" style="display:none; background:var(--red); color:white; padding:10px; border-radius:14px; margin-bottom:10px; font-size:12px; font-weight:bold; text-align:center; box-shadow:0 8px 20px rgba(239,68,68,.3);">
-        ⚠️ কিছু পণ্যের স্টক কমে গেছে!
-      </div>
-
-      <div class="unified-balance-card">
-        <div class="ub-top">
-          <div class="ub-item" onclick="showReceivableDetails()">
-            <span class="ub-label">মোট ক্যাশ ইন-হ্যান্ড</span>
-            <strong class="ub-val" id="cashBalance">৳ ০.০০</strong>
-          </div>
-          <div class="ub-divider"></div>
-          <div class="ub-item right-align" onclick="showReceivableDetails()">
-            <span class="ub-label red">সর্বমোট বাকী (পাবো) ⓘ</span>
-            <strong class="ub-val red" id="totalDueDashboard">৳ ০.০০</strong>
-          </div>
-        </div>
-        <div class="ub-bottom">
-          <div class="ub-item" style="flex:1;" onclick="showPayableDetails()">
-            <span class="ub-label" style="color:var(--orange)">সর্বমোট দেনা (দিবো) ⓘ</span>
-            <strong class="ub-val orange" id="totalPayableDashboard" style="font-size:16px;">৳ ০.০০</strong>
-          </div>
-          <div class="ub-item right-align" style="justify-content:flex-end;">
-            <div class="ub-split-item green" style="margin-bottom:2px;">
-                <span>↓ প্রাপ্তি:</span> <strong id="cashIn">৳ ০</strong>
-            </div>
-            <div class="ub-split-item red">
-                <span>↑ প্রদান:</span> <strong id="cashOut">৳ ০</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="dash-grid">
-        <div class="dash-card" onclick="switchView('approvals')">
-          <div class="card-icon-sm bg-red">⏳</div>
-          <div class="dash-card-title">সেলস পেন্ডিং</div>
-          <div class="dash-card-value" id="pendingCount">০ টি <span>→</span></div>
-        </div>
-        <div class="dash-card" onclick="switchView('delivery')">
-          <div class="card-icon-sm bg-blue">🚚</div>
-          <div class="dash-card-title">ডেলিভারি পেন্ডিং</div>
-          <div class="dash-card-value" id="deliveryCount">০ টি <span>→</span></div>
-        </div>
-        <div class="dash-card" onclick="switchView('products')">
-          <div class="card-icon-sm bg-teal">📦</div>
-          <div class="dash-card-title">মোট স্টক আইটেম</div>
-          <div class="dash-card-value" id="totalStock">০ <span>→</span></div>
-        </div>
-        <div class="dash-card" onclick="switchView('partyRequests')">
-          <div class="card-icon-sm bg-purple">👥</div>
-          <div class="dash-card-title">পার্টি রিকোয়েস্ট</div>
-          <div class="dash-card-value" id="partyReqCount">০ টি <span>→</span></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Activity Log View -->
-    <section id="activityLog" class="view">
-      <div class="section-title">অ্যাক্টিভিটি লগ</div>
-      <div id="activityLogList"></div>
-    </section>
-
-    <!-- Settings View -->
-    <section id="settings" class="view">
-      <div class="section-title">সেটিংস</div>
       
-      <div class="settings-list">
-        <div class="settings-item">
-          <div class="settings-item-left">
-            <span class="settings-item-title">ডার্ক মোড</span>
-            <span class="settings-item-desc">অ্যাপের থিম পরিবর্তন করুন</span>
+      <!-- Top Card: Hand Cash + Due/Payable -->
+      <div class="panel dash-top-panel">
+        <div class="dash-top-title">হাতে আছে <i class="fa-solid fa-chevron-right" style="font-size:12px;"></i></div>
+        <div class="dash-top-amount" id="cashBalance">৳ ০.০০</div>
+        
+        <div class="dash-split-box" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div class="dash-split-item" style="border-right: none; padding: 5px;">
+            <div class="dash-split-title" style="font-size: 12px;"><span style="color:#10B981; background:#D1FAE5; padding:2px 5px; border-radius:4px; font-size:10px;"><i class="fa-solid fa-arrow-down"></i></span> নগদ প্রাপ্তি</div>
+            <div class="dash-split-val" id="cashIn" style="font-size: 15px;">৳ ০.০০</div>
           </div>
-          <label class="switch">
-            <input type="checkbox" id="darkModeToggle" onchange="toggleTheme()">
-            <span class="slider"></span>
-          </label>
+          <div class="dash-split-item" style="padding: 5px;">
+            <div class="dash-split-title" style="font-size: 12px;"><span style="color:#EF4444; background:#FEE2E2; padding:2px 5px; border-radius:4px; font-size:10px;"><i class="fa-solid fa-arrow-up"></i></span> নগদ প্রদান</div>
+            <div class="dash-split-val" id="cashOut" style="font-size: 15px;">৳ ০.০০</div>
+          </div>
+          <div class="dash-split-item" style="border-right: none; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px; padding: 5px;">
+            <div class="dash-split-title" style="font-size: 12px;"><span style="color:#3B82F6; background:#DBEAFE; padding:2px 5px; border-radius:4px; font-size:10px;"><i class="fa-solid fa-wallet"></i></span> মোট পাওনা</div>
+            <div class="dash-split-val" id="totalDueDashboard" style="font-size: 15px;">৳ ০.০০</div>
+          </div>
+          <div class="dash-split-item" style="border-top: 1px solid rgba(0,0,0,0.05); padding-top: 10px; padding: 5px;">
+            <div class="dash-split-title" style="font-size: 12px;"><span style="color:#F59E0B; background:#FEF3C7; padding:2px 5px; border-radius:4px; font-size:10px;"><i class="fa-solid fa-hand-holding-dollar"></i></span> মোট দেনা</div>
+            <div class="dash-split-val" id="totalPayableDashboard" style="font-size: 15px;">৳ ০.০০</div>
+          </div>
         </div>
       </div>
 
-      <div class="settings-list">
-        <div class="settings-item" style="flex-direction: column; align-items: flex-start; gap: 10px;">
-          <div class="settings-item-left">
-            <span class="settings-item-title">ডাটা ব্যাকআপ</span>
-            <span class="settings-item-desc">সব ডাটা JSON ফাইলে সেভ করে রাখুন</span>
+      <!-- 4 Circles -->
+      <div class="middle-area">
+        <div class="shape-row">
+          <div class="circle-item" onclick="switchView('users')">
+            <div class="circle" style="background: linear-gradient(145deg, #8B5CF6, #A78BFA);"><i class="fa-solid fa-user-tie"></i></div>
+            <div class="circle-label">ইউজার SR</div>
+            <div style="font-size:12px; font-weight:700; color:#8B5CF6; margin-top:-4px;" id="totalSRCount">০</div>
           </div>
-          <button class="btn-action primary" onclick="downloadBackup()" style="width: 100%;">📥 ব্যাকআপ ডাউনলোড করুন</button>
-          <button class="btn-action" onclick="showBackupDataModal()" style="width: 100%; background: var(--bg); color: var(--text-muted); font-size: 12px;">👁️ ব্যাকআপ ডাটা দেখুন / কপি করুন</button>
-        </div>
-
-        <div class="settings-item" style="flex-direction: column; align-items: flex-start; gap: 10px; border-top: 1px solid var(--border); padding-top: 15px;">
-          <div class="settings-item-left">
-            <span class="settings-item-title" style="color: var(--green);">ডাটা রিস্টোর</span>
-            <span class="settings-item-desc">কপি করা ব্যাকআপ ডাটা ফিরিয়ে আনুন</span>
+          <div class="circle-item" onclick="switchView('suppliers')">
+            <div class="circle" style="background: linear-gradient(145deg, #F59E0B, #FBBF24);"><i class="fa-solid fa-industry"></i></div>
+            <div class="circle-label">সাপ্লায়ার</div>
+            <div style="font-size:12px; font-weight:700; color:#F59E0B; margin-top:-4px;" id="totalSuppliersCount">০</div>
           </div>
-          <button class="btn-action primary" style="width: 100%; background: rgba(16,185,129,.15); color: var(--green);" onclick="openRestoreDataModal()">📤 ডাটা রিস্টোর করুন</button>
-        </div>
-
-        <div class="settings-item" style="flex-direction: column; align-items: flex-start; gap: 10px; border-top: 1px solid var(--border); padding-top: 15px;">
-          <div class="settings-item-left">
-            <span class="settings-item-title" style="color: var(--red);">ডাটা রিসেট</span>
-            <span class="settings-item-desc">অ্যাপের সব ডাটা মুছে ফেলুন (ব্যাকআপ ছাড়া সম্ভব নয়)</span>
+          <div class="circle-item" onclick="switchView('products')">
+            <div class="circle" style="background: linear-gradient(145deg, #10B981, #34D399);"><i class="fa-solid fa-box-open"></i></div>
+            <div class="circle-label">পণ্য</div>
+            <div style="font-size:12px; font-weight:700; color:#10B981; margin-top:-4px;" id="totalProductsCount">০</div>
           </div>
-          <button class="btn-action danger" id="btnResetApp" onclick="promptResetPassword()" disabled style="width: 100%;">⚠️ সব ডাটা রিসেট করুন</button>
+          <div class="circle-item" onclick="switchView('parties')">
+            <div class="circle" style="background: linear-gradient(145deg, #3B82F6, #60A5FA);"><i class="fa-solid fa-users"></i></div>
+            <div class="circle-label">পার্টি</div>
+            <div style="font-size:12px; font-weight:700; color:#3B82F6; margin-top:-4px;" id="totalPartiesCount">০</div>
+          </div>
         </div>
       </div>
-    </section>
 
-    <!-- Party Profile -->
-    <section id="partyProfile" class="view">
-      <span class="back-btn" onclick="switchView('parties')">❮ পার্টি লিস্টে ফিরে যান</span>
-      <div class="profile-header">
-        <button onclick="editCurrentParty()" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.25); color: white; padding: 5px 10px; border-radius: 10px; font-size: 12px; cursor: pointer;">✏️ এডিট</button>
-        <h2 id="pfPartyName">পার্টির নাম</h2>
-        <p id="pfPartyPhone">ফোন: --</p>
-        <div class="profile-due">
-          <span>মোট বাকী পরিমাণ</span>
-          <strong id="pfPartyDue">৳ ০.০০</strong>
+      <!-- Wide Panel -->
+      <div class="wide-panel" onclick="switchView('activityLog')">
+        <div class="inner-block">
+          <span>মোট ব্যয়/খরচ</span>
+          <strong id="totalExpenseDashboard">৳ ০.০০</strong>
+        </div>
+        <div class="inner-block" style="background: linear-gradient(135deg, #475569, #64748B);">
+          <span>অ্যাক্টিভিটি লগ</span>
+          <strong>দেখুন <i class="fa-solid fa-arrow-right" style="font-size:12px;"></i></strong>
         </div>
       </div>
-      <div class="section-title">লেনদেনের ইতিহাস</div>
-      <div id="pfPartyHistory" class="table-wrap"></div>
+
+      <!-- Tilted Card Stack (More Options) -->
+      <div class="card-stack">
+        <div class="bank-card">
+          <div class="card-title">আরও অপশন <i class="fa-solid fa-circle-info" style="float:right; font-size:12px; opacity:0.6;"></i></div>
+          <div class="old-dash-grid">
+            <div class="old-dash-card" onclick="switchView('approvals')">
+              <div class="old-card-icon-sm bg-red"><i class="fa-solid fa-clock"></i></div>
+              <div class="old-dash-info">
+                <div class="old-dash-card-title">সেলস পেন্ডিং</div>
+                <div class="old-dash-card-value" id="pendingCount">০ টি</div>
+              </div>
+            </div>
+            <div class="old-dash-card" onclick="switchView('delivery')">
+              <div class="old-card-icon-sm bg-blue"><i class="fa-solid fa-truck"></i></div>
+              <div class="old-dash-info">
+                <div class="old-dash-card-title">ডেলিভারি পেন্ডিং</div>
+                <div class="old-dash-card-value" id="deliveryCount">০ টি</div>
+              </div>
+            </div>
+            <div class="old-dash-card" onclick="switchView('partyRequests')">
+              <div class="old-card-icon-sm bg-purple"><i class="fa-solid fa-user-plus"></i></div>
+              <div class="old-dash-info">
+                <div class="old-dash-card-title">পার্টি রিকোয়েস্ট</div>
+                <div class="old-dash-card-value" id="partyReqCount">০ টি</div>
+              </div>
+            </div>
+            <div class="old-dash-card" onclick="switchView('products')">
+              <div class="old-card-icon-sm bg-teal"><i class="fa-solid fa-cubes"></i></div>
+              <div class="old-dash-info">
+                <div class="old-dash-card-title">মোট স্টক</div>
+                <div class="old-dash-card-value" id="totalStock">০ পিস</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
-    <!-- Invoice Full View -->
-    <section id="invoices" class="view">
-      <div class="section-title">ইনভয়েস লিস্ট <button class="btn-add" onclick="openNewSale()">+ নতুন বিক্রয়</button></div>
-      <input type="text" id="invoiceViewSearchInput" placeholder="🔍 কাস্টমারের নাম বা ইনভয়েস নম্বর সার্চ করুন..." oninput="renderInvoiceView(this.value)">
-      <div id="invoiceViewContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
-    </section>
+    <!-- Other Views (Wrapped in Glass Content) -->
+    <div class="glass-content" id="otherViewsContainer" style="display:none;">
+      <!-- Activity Log View -->
+      <section id="activityLog" class="view">
+        <div class="section-title">অ্যাক্টিভিটি লগ <button class="btn-add" onclick="switchView('dashboard')" style="background:#F1F5F9; color:#475569; box-shadow:none;">← ফিরে যান</button></div>
+        <div id="activityLogList"></div>
+      </section>
 
-    <!-- Transactions Full View (For Editing) -->
-    <section id="transactions" class="view">
-      <div class="section-title">লেনদেন এডিট</div>
-      <input type="text" id="txnSearchInput" placeholder="🔍 পণ্য বা পার্টির নাম সার্চ করুন..." oninput="renderTransactionsList(this.value)">
-      <div id="transactionsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
-    </section>
+      <!-- Settings View -->
+      <section id="settings" class="view">
+        <div class="section-title">সেটিংস <button class="btn-add" onclick="switchView('dashboard')" style="background:#F1F5F9; color:#475569; box-shadow:none;">← ফিরে যান</button></div>
+        
+        <div class="settings-list">
+          <div class="settings-item">
+            <div class="settings-item-left">
+              <span class="settings-item-title">ডার্ক মোড</span>
+              <span class="settings-item-desc">অ্যাপের থিম পরিবর্তন করুন</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="darkModeToggle" onchange="toggleTheme()">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
 
-    <!-- Other Views -->
-    <section id="partyRequests" class="view">
-      <div class="section-title">পার্টি রিকোয়েস্ট</div>
-      <div id="partyRequestsList"></div>
-    </section>
-    <section id="parties" class="view">
-      <div class="section-title">পার্টি লিস্ট <button class="btn-add" onclick="openForm('party')">+ নতুন</button></div>
-      <div id="partiesTable"></div>
-    </section>
-    <section id="suppliers" class="view">
-      <div class="section-title">সাপ্লায়ার লিস্ট <button class="btn-add" onclick="openForm('supplier')">+ নতুন</button></div>
-      <div id="suppliersTable"></div>
-    </section>
-    <section id="approvals" class="view">
-      <div class="section-title">বিক্রয়ের আবেদন (SR)</div>
-      <div id="approvalsList"></div>
-    </section>
-    <section id="delivery" class="view">
-      <div class="section-title">ডেলিভারি কনফার্ম</div>
-      <div class="table-wrap"><table><thead><tr><th>ক্রেতা</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="deliveryTableBody"></tbody></table></div>
-    </section>
-    <section id="products" class="view">
-      <div class="section-title">পণ্য ও স্টক <button class="btn-add" onclick="openForm('product')">+ পণ্য</button></div>
-      <div id="productsList"></div>
-    </section>
-    <section id="users" class="view">
-      <div class="section-title">ইউজার (SR) <button class="btn-add" onclick="openForm('sr')">+ নতুন</button></div>
-      <div id="srTable"></div>
-    </section>
+        <div class="settings-list" style="padding: 15px;">
+          <div class="settings-item" style="flex-direction: column; align-items: flex-start; gap: 10px; border: none; padding: 0;">
+            <div class="settings-item-left" style="margin-bottom: 10px;">
+              <span class="settings-item-title">ডাটা ব্যাকআপ</span>
+              <span class="settings-item-desc">সব ডাটা JSON ফাইলে সেভ করে রাখুন</span>
+            </div>
+            <button class="btn-action primary" onclick="downloadBackup()" style="width: 100%;">📥 ব্যাকআপ ডাউনলোড করুন</button>
+            <button class="btn-action" onclick="showBackupDataModal()" style="width: 100%; background: #F8FAFC; color: #64748B; border: 1px solid #e2e8f0;">👁️ ব্যাকআপ ডাটা দেখুন / কপি করুন</button>
+          </div>
+        </div>
+
+        <div class="settings-list" style="padding: 15px;">
+          <div class="settings-item" style="flex-direction: column; align-items: flex-start; gap: 10px; border: none; padding: 0;">
+            <div class="settings-item-left" style="margin-bottom: 10px;">
+              <span class="settings-item-title" style="color: var(--green);">ডাটা রিস্টোর</span>
+              <span class="settings-item-desc">কপি করা ব্যাকআপ ডাটা ফিরিয়ে আনুন</span>
+            </div>
+            <button class="btn-action primary" style="width: 100%; background: #dcfce7; color: var(--green);" onclick="openRestoreDataModal()">📤 ডাটা রিস্টোর করুন</button>
+          </div>
+        </div>
+
+        <div class="settings-list" style="padding: 15px;">
+          <div class="settings-item" style="flex-direction: column; align-items: flex-start; gap: 10px; border: none; padding: 0;">
+            <div class="settings-item-left" style="margin-bottom: 10px;">
+              <span class="settings-item-title" style="color: var(--red);">ডাটা রিসেট</span>
+              <span class="settings-item-desc">অ্যাপের সব ডাটা মুছে ফেলুন</span>
+            </div>
+            <button class="btn-action danger" id="btnResetApp" onclick="promptResetPassword()" disabled style="width: 100%;">⚠️ সব ডাটা রিসেট করুন</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Party Profile -->
+      <section id="partyProfile" class="view">
+        <span class="back-btn" onclick="switchView('parties')"><i class="fa-solid fa-arrow-left"></i> পার্টি লিস্টে ফিরে যান</span>
+        <div class="profile-header">
+          <button onclick="editCurrentParty()" style="position: absolute; top: 20px; right: 20px; background: #F1F5F9; color: var(--text); padding: 8px 12px; border-radius: 10px; font-size: 14px; cursor: pointer; border:none;"><i class="fa-solid fa-pen"></i></button>
+          <h2 id="pfPartyName">পার্টির নাম</h2>
+          <p id="pfPartyPhone"><i class="fa-solid fa-phone"></i> ফোন: --</p>
+          <div class="profile-due">
+            <span>মোট বাকী পরিমাণ</span>
+            <strong id="pfPartyDue">৳ ০.০০</strong>
+          </div>
+        </div>
+        <div class="section-title">লেনদেনের ইতিহাস</div>
+        <div id="pfPartyHistory" class="table-wrap"></div>
+      </section>
+
+      <!-- Invoice Full View -->
+      <section id="invoices" class="view">
+        <div class="section-title">ইনভয়েস লিস্ট <button class="btn-add" onclick="openNewSale()">+ নতুন</button></div>
+        <input type="text" id="invoiceViewSearchInput" placeholder="🔍 কাস্টমারের নাম বা ইনভয়েস নম্বর..." oninput="renderInvoiceView(this.value)">
+        <div id="invoiceViewContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      </section>
+
+      <!-- Transactions Full View (For Editing) -->
+      <section id="transactions" class="view">
+        <div class="section-title">লেনদেন এডিট</div>
+        <input type="text" id="txnSearchInput" placeholder="🔍 পণ্য বা পার্টির নাম সার্চ করুন..." oninput="renderTransactionsList(this.value)">
+        <div id="transactionsList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      </section>
+
+      <!-- Dues View (New) -->
+      <section id="dues" class="view">
+        <div class="section-title">দেনা-পাওনা <button class="btn-add" onclick="switchView('dashboard')" style="background:#F1F5F9; color:#475569; box-shadow:none;">← ফিরে যান</button></div>
+        
+        <div style="margin-bottom: 25px;">
+          <h4 style="color: var(--red); font-size: 16px; margin-bottom: 10px;"><i class="fa-solid fa-arrow-up"></i> পাওনা (পাবো)</h4>
+          <div class="table-wrap">
+            <table style="min-width: 100%;">
+              <thead><tr><th>পার্টির নাম</th><th style="text-align:right;">পরিমাণ</th></tr></thead>
+              <tbody id="receivableListBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="color: var(--orange); font-size: 16px; margin-bottom: 10px;"><i class="fa-solid fa-arrow-down"></i> দেনা (দিবো)</h4>
+          <div class="table-wrap">
+            <table style="min-width: 100%;">
+              <thead><tr><th>সাপ্লায়ারের নাম</th><th style="text-align:right;">পরিমাণ</th></tr></thead>
+              <tbody id="payableListBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Other Views -->
+      <section id="partyRequests" class="view"><div class="section-title">পার্টি রিকোয়েস্ট</div><div id="partyRequestsList"></div></section>
+      <section id="parties" class="view"><div class="section-title">পার্টি লিস্ট <button class="btn-add" onclick="openForm('party')">+ নতুন</button></div><div id="partiesTable"></div></section>
+      <section id="suppliers" class="view"><div class="section-title">সাপ্লায়ার লিস্ট <button class="btn-add" onclick="openForm('supplier')">+ নতুন</button></div><div id="suppliersTable"></div></section>
+      <section id="approvals" class="view"><div class="section-title">বিক্রয়ের আবেদন (SR)</div><div id="approvalsList"></div></section>
+      <section id="delivery" class="view"><div class="section-title">ডেলিভারি কনফার্ম</div><div class="table-wrap"><table><thead><tr><th>ক্রেতা</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="deliveryTableBody"></tbody></table></div></section>
+      <section id="products" class="view"><div class="section-title">পণ্য ও স্টক <button class="btn-add" onclick="openForm('product')">+ পণ্য</button></div><div id="productsList"></div></section>
+      <section id="users" class="view"><div class="section-title">ইউজার (SR) <button class="btn-add" onclick="openForm('sr')">+ নতুন</button></div><div id="srTable"></div></section>
+    </div>
   </main>
 
-  <nav class="bottom-nav">
-    <div class="nav-item active" onclick="switchView('dashboard')"><span class="icon">🏠</span>হোম</div>
-    <div class="fab-btn" onclick="openActionMenu()">+</div>
-    <div class="nav-item" onclick="switchView('products')"><span class="icon">📦</span>স্টক</div>
+  <!-- Bottom Navigation -->
+  <nav class="bottom-bar">
+    <div class="nav-btn-buy" onclick="switchView('dashboard')">
+      <i class="fa-solid fa-house"></i> হোম
+    </div>
+    <div class="fab-btn" onclick="openActionMenu()">
+      <i class="fa-solid fa-plus"></i>
+    </div>
+    <div class="nav-btn-sell" onclick="openNewSale()">
+      <i class="fa-solid fa-cash-register"></i> বিক্রি
+    </div>
   </nav>
 
   <div class="overlay" id="overlay"></div>
+  
+  <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
-    <div class="side-profile">
-      <div class="profile-pic">
-        <img src="https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png" alt="Admin Logo">
-      </div>
-      <div class="side-name">Admin Panel</div>
+    <div class="side-profile" style="padding-top: 20px; padding-bottom: 20px;">
+      <img src="https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png" alt="Logo" style="width: 60px; height: 60px; object-fit: contain; margin-bottom: 10px; background: rgba(255,255,255,0.2); border-radius: 50%; padding: 5px;">
+      <div class="business-name" style="font-size: 18px;">Admin Panel</div>
     </div>
+    
     <div class="side-menu">
-      <div class="side-menu-item" onclick="switchView('dashboard')"><div class="side-menu-left"><span class="icon">📊</span> ড্যাশবোর্ড</div></div>
-      <div class="side-menu-item" onclick="switchView('invoices')"><div class="side-menu-left"><span class="icon">🧾</span> ইনভয়েস লিস্ট</div></div>
-      <div class="side-menu-item" onclick="switchView('transactions')"><div class="side-menu-left"><span class="icon">📝</span> লেনদেন এডিট</div></div>
-      <div class="side-menu-item" onclick="switchView('parties')"><div class="side-menu-left"><span class="icon">🤝</span> পার্টি লিস্ট</div></div>
-      <div class="side-menu-item" onclick="switchView('suppliers')"><div class="side-menu-left"><span class="icon">🏭</span> সাপ্লায়ার লিস্ট</div></div>
-      <div class="side-menu-item" onclick="switchView('products')"><div class="side-menu-left"><span class="icon">📦</span> পণ্য ও স্টক</div></div>
-      <div class="side-menu-item" onclick="switchView('users')"><div class="side-menu-left"><span class="icon">👥</span> ইউজার (SR)</div></div>
-      <div class="side-menu-item" onclick="switchView('settings')"><div class="side-menu-left"><span class="icon">⚙️</span> সেটিংস</div></div>
-      <div class="side-menu-item" onclick="logoutUser()" style="color: var(--red); margin-top: 10px;"><div class="side-menu-left"><span class="icon" style="color:var(--red);">🚪</span> লগআউট</div></div>
+      <div class="side-menu-item" onclick="switchView('dashboard')">
+        <div class="side-menu-left"><i class="fa-solid fa-house"></i> ড্যাশবোর্ড</div>
+      </div>
+
+      <div class="side-menu-item" onclick="switchView('invoices')">
+        <div class="side-menu-left"><i class="fa-solid fa-file-invoice"></i> ইনভয়েস লিস্ট</div>
+      </div>
+      
+      <div class="side-menu-item" onclick="switchView('transactions')">
+        <div class="side-menu-left"><i class="fa-solid fa-bag-shopping"></i> লেনদেন এডিট</div>
+      </div>
+
+      <div class="side-menu-item" onclick="switchView('dues')">
+        <div class="side-menu-left"><i class="fa-solid fa-file-invoice-dollar"></i> দেনা-পাওনা</div>
+      </div>
+
+      <div class="side-menu-item" onclick="switchView('activityLog')">
+        <div class="side-menu-left"><i class="fa-solid fa-money-bill-trend-up"></i> ব্যয়/খরচ</div>
+      </div>
+
+      <div class="side-menu-item" onclick="openQuickForm('cash_match')">
+        <div class="side-menu-left"><i class="fa-solid fa-scale-balanced"></i> ক্যাশ মিলাই</div>
+      </div>
+
+      <div class="side-menu-item" onclick="switchView('products')">
+        <div class="side-menu-left"><i class="fa-solid fa-boxes-stacked"></i> পণ্য</div>
+      </div>
+      
+      <div class="side-menu-item" onclick="switchView('parties')">
+        <div class="side-menu-left"><i class="fa-solid fa-users"></i> পার্টি</div>
+      </div>
+
+      <div class="side-menu-item" onclick="switchView('suppliers')">
+        <div class="side-menu-left"><i class="fa-solid fa-industry"></i> সাপ্লায়ার</div>
+      </div>
+
+      <div class="side-menu-item" onclick="switchView('users')">
+        <div class="side-menu-left"><i class="fa-solid fa-user-tie"></i> ইউজার (SR)</div>
+      </div>
+
+      <div class="side-menu-item" onclick="switchView('settings')">
+        <div class="side-menu-left"><i class="fa-solid fa-gear"></i> সেটিংস</div>
+      </div>
+      
+      <div class="side-menu-item" onclick="logoutUser()" style="color: var(--red);">
+        <div class="side-menu-left"><i class="fa-solid fa-right-from-bracket" style="color:var(--red)"></i> লগআউট</div>
+      </div>
     </div>
+    
+    <div class="side-package">
+      <div>
+        <div style="font-weight:600; color:var(--text)">বর্তমান প্যাকেজ</div>
+        <div style="color:var(--text-muted)">Basic</div>
+      </div>
+      <div class="subscribe-btn">সাবস্ক্রাইব</div>
+    </div>
+    <div class="version-text">Novas Agro | ভার্সন: ২.৭.৪</div>
   </aside>
 
   <!-- Modals -->
   <div class="modal" id="modal">
     <div class="modal-box">
-      <div class="modal-head"><h3 id="modalTitle">তথ্য দিন</h3><button class="close-btn" onclick="closeModal()">✕</button></div>
+      <div class="modal-head"><h3 id="modalTitle">তথ্য দিন</h3><button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button></div>
       <form id="dataForm" autocomplete="off">
         <div id="formFields"></div>
         <div class="form-actions">
@@ -1023,9 +788,9 @@ input:checked + .slider:before { transform: translateX(22px); }
   <!-- Backup Data Modal -->
   <div class="modal" id="backupDataModal">
     <div class="modal-box">
-      <div class="modal-head"><h3>ব্যাকআপ ডাটা</h3><button class="close-btn" onclick="closeBackupDataModal()">✕</button></div>
-      <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">ফাইল ডাউনলোড না হলে, নিচের ডাটা কপি করে একটি টেক্সট ফাইলে সেভ করুন।</p>
-      <textarea id="backupDataTextArea" style="width: 100%; height: 200px; padding: 10px; border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,.85); color: var(--text); font-size: 12px; font-family: monospace; resize: none;"></textarea>
+      <div class="modal-head"><h3>ব্যাকআপ ডাটা</h3><button class="close-btn" onclick="closeBackupDataModal()"><i class="fa-solid fa-xmark"></i></button></div>
+      <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">ফাইল ডাউনলোড না হলে, নিচের ডাটা কপি করে টেক্সট ফাইলে সেভ করুন।</p>
+      <textarea id="backupDataTextArea" style="width: 100%; height: 200px; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; background: #F8FAFC; color: var(--text); font-size: 12px; font-family: monospace; resize: none;"></textarea>
       <div class="form-actions">
         <button type="button" class="btn-cancel" onclick="closeBackupDataModal()">বন্ধ করুন</button>
         <button type="button" class="btn-submit" onclick="copyBackupData()">📋 ডাটা কপি করুন</button>
@@ -1036,12 +801,12 @@ input:checked + .slider:before { transform: translateX(22px); }
   <!-- Restore Data Modal -->
   <div class="modal" id="restoreDataModal">
     <div class="modal-box">
-      <div class="modal-head"><h3 style="color:var(--green)">ডাটা রিস্টোর</h3><button class="close-btn" onclick="closeRestoreDataModal()">✕</button></div>
-      <p style="font-size:12px; color:var(--red); margin-bottom:10px;">সতর্কতা! ডাটা রিস্টোর করলে বর্তমান সব ডাটা মুছে যাবে এবং কপি করা ডাটা ফিরে আসবে।</p>
-      <textarea id="restoreDataTextArea" placeholder="এখানে আপনার কপি করা ব্যাকআপ ডাটা (JSON) পেস্ট করুন..." style="width: 100%; height: 200px; padding: 10px; border-radius: 14px; border: 1px solid var(--border); background: rgba(255,255,255,.85); color: var(--text); font-size: 12px; font-family: monospace; resize: none;"></textarea>
+      <div class="modal-head"><h3 style="color:var(--green)">ডাটা রিস্টোর</h3><button class="close-btn" onclick="closeRestoreDataModal()"><i class="fa-solid fa-xmark"></i></button></div>
+      <p style="font-size:13px; color:var(--red); margin-bottom:10px;">সতর্কতা! ডাটা রিস্টোর করলে বর্তমান সব ডাটা মুছে যাবে।</p>
+      <textarea id="restoreDataTextArea" placeholder="এখানে আপনার কপি করা ব্যাকআপ ডাটা (JSON) পেস্ট করুন..." style="width: 100%; height: 200px; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; background: #F8FAFC; color: var(--text); font-size: 12px; font-family: monospace; resize: none;"></textarea>
       <div class="form-actions">
         <button type="button" class="btn-cancel" onclick="closeRestoreDataModal()">বাতিল</button>
-        <button type="button" class="btn-submit" style="background:linear-gradient(145deg,#10B981,#059669); box-shadow:0 8px 20px rgba(16,185,129,.3);" onclick="executeRestoreData()">✅ রিস্টোর করুন</button>
+        <button type="button" class="btn-submit" style="background:var(--green);" onclick="executeRestoreData()">✅ রিস্টোর করুন</button>
       </div>
     </div>
   </div>
@@ -1049,12 +814,12 @@ input:checked + .slider:before { transform: translateX(22px); }
   <!-- Add Stock Modal -->
   <div class="modal" id="addStockModal">
     <div class="modal-box">
-      <div class="modal-head"><h3 style="color:var(--green)">নতুন স্টক যোগ করুন</h3><button class="close-btn" onclick="closeAddStockModal()">✕</button></div>
-      <p style="font-size:14px; margin-bottom:15px; font-weight:bold;" id="addStockProdName">পণ্যের নাম</p>
+      <div class="modal-head"><h3 style="color:var(--green)">নতুন স্টক যোগ করুন</h3><button class="close-btn" onclick="closeAddStockModal()"><i class="fa-solid fa-xmark"></i></button></div>
+      <p style="font-size:15px; margin-bottom:15px; font-weight:600;" id="addStockProdName">পণ্যের নাম</p>
       <input type="hidden" id="addStockProdId">
       
       <div class="form-group">
-          <label>সাপ্লায়ার (কার থেকে কিনেছেন?)</label>
+          <label>সাপ্লায়ার</label>
           <select id="addStockSupplier">
               <option value="">সিলেক্ট করুন</option>
           </select>
@@ -1066,14 +831,14 @@ input:checked + .slider:before { transform: translateX(22px); }
             <input type="number" id="newStockQty" min="1" placeholder="0">
         </div>
         <div class="form-group" style="flex:1;">
-            <label>নতুন ক্রয় মূল্য (ঐচ্ছিক)</label>
+            <label>নতুন ক্রয় মূল্য</label>
             <input type="number" id="newStockRate" min="0" placeholder="0.00">
         </div>
       </div>
 
       <div class="form-actions">
         <button type="button" class="btn-cancel" onclick="closeAddStockModal()">বাতিল</button>
-        <button type="button" class="btn-submit" style="background:linear-gradient(145deg,#10B981,#059669); box-shadow:0 8px 20px rgba(16,185,129,.3);" onclick="saveAddStock()">স্টক যোগ করুন</button>
+        <button type="button" class="btn-submit" style="background:var(--green);" onclick="saveAddStock()">স্টক যোগ করুন</button>
       </div>
     </div>
   </div>
@@ -1081,14 +846,14 @@ input:checked + .slider:before { transform: translateX(22px); }
   <!-- Breakdown Modals (Payable & Receivable) -->
   <div class="modal" id="payableDetailsModal">
     <div class="modal-box">
-      <div class="modal-head"><h3 style="color:var(--orange)">দেনা বিবরণ (দিবো)</h3><button class="close-btn" onclick="closePayableDetailsModal()">✕</button></div>
+      <div class="modal-head"><h3 style="color:var(--secondary)">দেনা বিবরণ (দিবো)</h3><button class="close-btn" onclick="closePayableDetailsModal()"><i class="fa-solid fa-xmark"></i></button></div>
       <div id="payableDetailsList" style="max-height: 60vh; overflow-y: auto;"></div>
     </div>
   </div>
 
   <div class="modal" id="receivableDetailsModal">
     <div class="modal-box">
-      <div class="modal-head"><h3 style="color:var(--red)">বাকী বিবরণ (পাবো)</h3><button class="close-btn" onclick="closeReceivableDetailsModal()">✕</button></div>
+      <div class="modal-head"><h3 style="color:var(--red)">বাকী বিবরণ (পাবো)</h3><button class="close-btn" onclick="closeReceivableDetailsModal()"><i class="fa-solid fa-xmark"></i></button></div>
       <div id="receivableDetailsList" style="max-height: 60vh; overflow-y: auto;"></div>
     </div>
   </div>
@@ -1096,8 +861,8 @@ input:checked + .slider:before { transform: translateX(22px); }
   <!-- Password Prompt for Reset -->
   <div class="modal" id="resetModal">
     <div class="modal-box">
-      <div class="modal-head"><h3 style="color:var(--red)">ডাটা রিসেট</h3><button class="close-btn" onclick="closeResetModal()">✕</button></div>
-      <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">আপনি কি নিশ্চিত? এটি সব ডাটা মুছে ফেলবে। চালিয়ে যেতে আপনার পাসওয়ার্ড দিন।</p>
+      <div class="modal-head"><h3 style="color:var(--red)">ডাটা রিসেট</h3><button class="close-btn" onclick="closeResetModal()"><i class="fa-solid fa-xmark"></i></button></div>
+      <p style="font-size:14px; color:var(--text-muted); margin-bottom:15px;">আপনি কি নিশ্চিত? এটি সব ডাটা মুছে ফেলবে। চালিয়ে যেতে আপনার পাসওয়ার্ড দিন।</p>
       <div class="form-group">
         <label>পাসওয়ার্ড</label>
         <input type="password" id="resetPasswordInput" placeholder="••••••••">
@@ -1112,29 +877,29 @@ input:checked + .slider:before { transform: translateX(22px); }
   <!-- Quick Action Menu -->
   <div class="modal" id="actionMenuModal">
     <div class="modal-box" style="max-height: 85vh;">
-      <div class="modal-head"><h3 style="color:var(--primary)">কুইক মেনু</h3><button class="close-btn" onclick="closeActionMenu()">✕</button></div>
+      <div class="modal-head"><h3 style="color:var(--primary)">কুইক মেনু</h3><button class="close-btn" onclick="closeActionMenu()"><i class="fa-solid fa-xmark"></i></button></div>
       <div class="action-menu-grid">
         <div class="action-menu-category">বিক্রয়</div>
-        <div class="action-item" onclick="openNewSale()"><div class="a-icon">💻</div><div class="a-text">বিক্রয়</div></div>
-        <div class="action-item" onclick="openQuickForm('sales_return')"><div class="a-icon">🛍️</div><div class="a-text">বিক্রি রিটার্ন</div></div>
-        <div class="action-item" onclick="openQuickForm('due_collect')"><div class="a-icon">💵</div><div class="a-text">বাকি আদায়</div></div>
+        <div class="action-item" onclick="openNewSale()"><div class="a-icon"><i class="fa-solid fa-cash-register"></i></div><div class="a-text">বিক্রয়</div></div>
+        <div class="action-item" onclick="openQuickForm('sales_return')"><div class="a-icon"><i class="fa-solid fa-rotate-left"></i></div><div class="a-text">বিক্রি রিটার্ন</div></div>
+        <div class="action-item" onclick="openQuickForm('due_collect')"><div class="a-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div><div class="a-text">বাকি আদায়</div></div>
 
         <div class="action-menu-category">ক্রয়</div>
-        <div class="action-item" onclick="openQuickForm('purchase')"><div class="a-icon">🛒</div><div class="a-text">ক্রয়</div></div>
-        <div class="action-item" onclick="openQuickForm('purchase_return')"><div class="a-icon">🔄</div><div class="a-text">ক্রয় রিটার্ন</div></div>
-        <div class="action-item" onclick="openQuickForm('due_pay')"><div class="a-icon">💸</div><div class="a-text">বাকি পরিশোধ</div></div>
+        <div class="action-item" onclick="openQuickForm('purchase')"><div class="a-icon"><i class="fa-solid fa-cart-shopping"></i></div><div class="a-text">ক্রয়</div></div>
+        <div class="action-item" onclick="openQuickForm('purchase_return')"><div class="a-icon"><i class="fa-solid fa-arrow-rotate-left"></i></div><div class="a-text">ক্রয় রিটার্ন</div></div>
+        <div class="action-item" onclick="openQuickForm('due_pay')"><div class="a-icon"><i class="fa-solid fa-money-bill-transfer"></i></div><div class="a-text">বাকি পরিশোধ</div></div>
 
         <div class="action-menu-category">অন্যান্য</div>
-        <div class="action-item" onclick="openQuickForm('expense')"><div class="a-icon">🧾</div><div class="a-text">ব্যয়/খরচ</div></div>
-        <div class="action-item" onclick="openQuickForm('cash_match')"><div class="a-icon">⚖️</div><div class="a-text">ক্যাশ মিলাই</div></div>
+        <div class="action-item" onclick="openQuickForm('expense')"><div class="a-icon"><i class="fa-solid fa-receipt"></i></div><div class="a-text">ব্যয়/খরচ</div></div>
+        <div class="action-item" onclick="openQuickForm('cash_match')"><div class="a-icon"><i class="fa-solid fa-scale-balanced"></i></div><div class="a-text">ক্যাশ মিলাই</div></div>
       </div>
     </div>
   </div>
 
-  <!-- Dynamic Quick Form Modal (For Non-Sales) -->
+  <!-- Dynamic Quick Form Modal -->
   <div class="modal" id="quickFormModal">
     <div class="modal-box">
-      <div class="modal-head"><h3 id="quickFormTitle">ফর্ম</h3><button class="close-btn" onclick="closeQuickForm()">✕</button></div>
+      <div class="modal-head"><h3 id="quickFormTitle">ফর্ম</h3><button class="close-btn" onclick="closeQuickForm()"><i class="fa-solid fa-xmark"></i></button></div>
       <form id="quickForm" autocomplete="off">
         <div id="quickFormFields"></div>
         <div class="form-actions"><button type="button" class="btn-cancel" onclick="closeQuickForm()">বাতিল</button><button type="submit" class="btn-submit">সেভ করুন</button></div>
@@ -1142,11 +907,11 @@ input:checked + .slider:before { transform: translateX(22px); }
     </div>
   </div>
 
-  <!-- ================= NEW FULL SCREEN SALE MODAL ================= -->
+  <!-- NEW FULL SCREEN SALE MODAL -->
   <div class="modal" id="newSaleModal">
     <div class="ns-header">
       <div class="ns-header-left">
-        <span class="ns-back" onclick="closeNewSale()">←</span> নতুন বিক্রয়
+        <span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> নতুন বিক্রয়
       </div>
       <div class="ns-toggle">
         <button id="btnCashToggle" class="active" onclick="setSaleType('cash')">Cash</button>
@@ -1158,25 +923,23 @@ input:checked + .slider:before { transform: translateX(22px); }
       <div class="ns-invoice-row">
         <div>
           <span>ইনভয়েস নম্বর : <strong id="nsInvoiceNo" style="color:var(--primary);">--</strong></span><br>
-          <span style="font-size:11px;">ইনভয়েস তারিখ : <span id="nsInvoiceDate">--</span></span>
+          <span style="font-size:12px; color:var(--text-muted);">ইনভয়েস তারিখ : <span id="nsInvoiceDate">--</span></span>
         </div>
-        <button class="btn-inv-list" onclick="openInvoiceList()">📋 ইনভয়েস লিস্ট</button>
+        <button class="btn-inv-list" onclick="openInvoiceList()"><i class="fa-solid fa-list"></i> ইনভয়েস লিস্ট</button>
       </div>
 
       <div class="ns-customer-box">
         <select id="nsCustomer" required>
           <option value="">কাস্টমার যোগ করুন</option>
         </select>
-        <span style="color:#888; cursor:pointer;" onclick="alert('কাস্টমার লিস্ট থেকে সিলেক্ট করুন। নতুন কাস্টমার যোগ করতে মেনু থেকে পার্টি লিস্টে যান।')">ⓘ</span>
+        <i class="fa-solid fa-circle-info" style="color:var(--text-muted); cursor:pointer;" onclick="alert('কাস্টমার লিস্ট থেকে সিলেক্ট করুন। নতুন কাস্টমার যোগ করতে মেনু থেকে পার্টি লিস্টে যান।')"></i>
       </div>
 
       <div class="ns-add-item-btn" onclick="openAddItemModal()">
-        <span>⊕</span> আইটেম যোগ করুন (না দিলেও হবে)
+        <i class="fa-solid fa-circle-plus"></i> আইটেম যোগ করুন (না দিলেও হবে)
       </div>
 
-      <div class="ns-items-list" id="nsItemsList">
-        <!-- Items will be injected here -->
-      </div>
+      <div class="ns-items-list" id="nsItemsList"></div>
 
       <div class="ns-form-row">
         <div class="ns-label">ডিসকাউন্ট</div>
@@ -1228,12 +991,12 @@ input:checked + .slider:before { transform: translateX(22px); }
         <div class="ns-label" style="font-weight:bold;">বাকি</div>
         <div class="ns-input-group">
           <span class="ns-symbol">৳</span>
-          <input type="number" id="nsDue" readonly value="0.00" style="color:#d9534f;">
+          <input type="number" id="nsDue" readonly value="0.00" style="color:var(--red); font-weight:bold;">
         </div>
       </div>
 
       <div class="ns-payment-section">
-        <label>পেমেন্টের মাধ্যম ⓘ</label>
+        <label>পেমেন্টের মাধ্যম</label>
         <select class="ns-payment-select" id="nsPaymentMethod">
           <option value="Cash">💵 Cash</option>
           <option value="Bank">🏦 Bank</option>
@@ -1250,7 +1013,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   <!-- Add Item Sub-Modal -->
   <div class="modal" id="addItemModal">
     <div class="modal-box">
-      <div class="modal-head"><h3>আইটেম যোগ করুন</h3><button class="close-btn" onclick="closeAddItemModal()">✕</button></div>
+      <div class="modal-head"><h3>আইটেম যোগ করুন</h3><button class="close-btn" onclick="closeAddItemModal()"><i class="fa-solid fa-xmark"></i></button></div>
       <div class="form-group">
         <label>পণ্য</label>
         <select id="aiProduct" onchange="updateAiRate()">
@@ -1267,59 +1030,53 @@ input:checked + .slider:before { transform: translateX(22px); }
           <input type="number" id="aiRate" value="0" min="0" oninput="updateAiTotal()">
         </div>
       </div>
-      <div style="text-align:right; font-weight:bold; margin-bottom:15px; color:var(--primary);">সাব-টোটাল: ৳ <span id="aiSubTotal">0.00</span></div>
-      <button class="btn-submit" style="width:100%; padding:14px; border-radius:14px;" onclick="addItemToSale()">যুক্ত করুন</button>
+      <div style="text-align:right; font-weight:bold; margin-bottom:15px; color:var(--primary); font-size:18px;">সাব-টোটাল: ৳ <span id="aiSubTotal">0.00</span></div>
+      <button class="btn-submit" style="width:100%; padding:15px; border-radius:12px;" onclick="addItemToSale()">যুক্ত করুন</button>
     </div>
   </div>
 
 </div>
 
-<!-- ================= INVOICE LIST MODAL (Quick Access inside Sale) ================= -->
+<!-- INVOICE LIST MODAL -->
 <div class="modal" id="invoiceListModal">
   <div class="modal-box">
-    <div class="modal-head"><h3>ইনভয়েস লিস্ট</h3><button class="close-btn" onclick="closeInvoiceList()">✕</button></div>
-    <input type="text" id="invoiceSearchInput" placeholder="🔍 কাস্টমারের নাম বা ইনভয়েস নম্বর সার্চ করুন..." oninput="renderInvoiceList(this.value)">
-    <div id="invoiceListContainer" style="max-height: 60vh; overflow-y: auto;">
-      <!-- List items -->
-    </div>
+    <div class="modal-head"><h3>ইনভয়েস লিস্ট</h3><button class="close-btn" onclick="closeInvoiceList()"><i class="fa-solid fa-xmark"></i></button></div>
+    <input type="text" id="invoiceSearchInput" placeholder="🔍 কাস্টমারের নাম বা ইনভয়েস নম্বর..." oninput="renderInvoiceList(this.value)">
+    <div id="invoiceListContainer" style="max-height: 60vh; overflow-y: auto;"></div>
   </div>
 </div>
 
-<!-- ================= INVOICE PREVIEW/DOWNLOAD MODAL ================= -->
+<!-- INVOICE PREVIEW/DOWNLOAD MODAL -->
 <div class="modal" id="invoiceModal">
   <div class="modal-box">
     <div class="inv-header-action" id="invoiceActionHeader">
-      <h3>ইনভয়েস প্রিভিউ</h3>
+      <h3>ইনভয়েস</h3>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
-        <button class="btn-print" style="background: linear-gradient(145deg,#10B981,#059669); box-shadow:0 6px 16px rgba(16,185,129,.3);" onclick="printInvoice()">🖨️ প্রিন্ট (A4)</button>
-        <button class="btn-print" id="btnDownloadInvoice" onclick="downloadInvoiceImage()">📸 ছবি তৈরি করুন</button>
-        <button class="btn-close-inv" onclick="closeInvoiceModal()">✕ বন্ধ করুন</button>
+        <button class="btn-print" style="background: var(--green);" onclick="printInvoice()"><i class="fa-solid fa-print"></i> প্রিন্ট (A4)</button>
+        <button class="btn-print" id="btnDownloadInvoice" onclick="downloadInvoiceImage()"><i class="fa-solid fa-camera"></i> ছবি</button>
+        <button class="btn-close-inv" onclick="closeInvoiceModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
     </div>
     
-    <!-- Background area for HTML2Canvas to capture with proper padding -->
-    <div style="background: white; padding: 10px; overflow-x: hidden;">
-        <div id="invoicePrintArea">
-          <!-- Invoice HTML will be injected here -->
-        </div>
+    <div style="background: white; padding: 0; overflow-x: hidden;">
+        <div id="invoicePrintArea"></div>
         
-        <!-- Container to show generated image for saving -->
-        <div id="invoiceImageContainer" style="display:none; text-align:center; padding: 10px;">
-            <div style="background: #F0FDF4; border: 1px solid #22C55E; padding: 12px; border-radius: 12px; margin-bottom: 15px;">
+        <div id="invoiceImageContainer" style="display:none; text-align:center; padding: 20px;">
+            <div style="background: #F0FDF4; border: 1px solid #22C55E; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
                 <p style="font-weight: bold; color: #15803D; font-size: 15px; margin: 0;">
                     ✅ ছবি তৈরি হয়েছে। সেভ করতে নিচের বাটনে ক্লিক করুন।
                 </p>
             </div>
             
-            <div style="display:flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px;">
-                <button class="btn-print" style="background: var(--primary-grad); width: 100%; justify-content: center; padding: 15px;" onclick="shareGeneratedImage()">🔗 শেয়ার / সেভ করুন (সবচেয়ে ভালো)</button>
-                <button class="btn-print" style="background: linear-gradient(145deg,#10B981,#059669); width: 100%; justify-content: center; padding: 15px; margin-top: 5px;" onclick="forceDownloadImage()">💾 ডাউনলোড করুন</button>
+            <div style="display:flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+                <button class="btn-print" style="background: var(--primary); width: 100%; justify-content: center; padding: 15px; font-size:16px;" onclick="shareGeneratedImage()"><i class="fa-solid fa-share-nodes"></i> শেয়ার / সেভ করুন</button>
+                <button class="btn-print" style="background: var(--green); width: 100%; justify-content: center; padding: 15px; margin-top: 5px; font-size:16px;" onclick="forceDownloadImage()"><i class="fa-solid fa-download"></i> ডাউনলোড করুন</button>
             </div>
             
             <p style="font-size:13px; color:#666; margin-bottom:10px;">নিচের ছবির উপর আঙুল চেপে ধরে (Long Press) রেখেও সেভ করার চেষ্টা করতে পারেন।</p>
-            <img id="generatedInvoiceImg" style="width: 100%; height: auto; border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); margin-bottom: 15px;">
+            <img id="generatedInvoiceImg" style="width: 100%; height: auto; border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px;">
             
-            <button class="btn-print" style="width: 100%; justify-content: center; background: rgba(230,238,250,.85); color: var(--text); box-shadow:none;" onclick="hideGeneratedImage()">← ইনভয়েসে ফিরে যান</button>
+            <button class="btn-print" style="width: 100%; justify-content: center; background: #F1F5F9; color: var(--text); padding: 15px;" onclick="hideGeneratedImage()"><i class="fa-solid fa-arrow-left"></i> ইনভয়েসে ফিরে যান</button>
         </div>
     </div>
   </div>
@@ -1370,7 +1127,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   // Auth
   const loginScreen = document.getElementById('loginScreen'), appContent = document.getElementById('appContent');
   auth.onAuthStateChanged((user) => {
-    if (user) { loginScreen.style.display = 'none'; appContent.style.display = 'block'; listenToData(); } 
+    if (user) { loginScreen.style.display = 'none'; appContent.style.display = 'flex'; listenToData(); } 
     else { loginScreen.style.display = 'flex'; appContent.style.display = 'none'; }
   });
   document.getElementById('loginForm').addEventListener('submit', (e) => {
@@ -1445,14 +1202,14 @@ input:checked + .slider:before { transform: translateX(22px); }
     logActivity('এসআর', `নতুন এসআর যোগ করা হয়েছে: ${data.name}`);
   };
 
-  // ================= ADD STOCK LOGIC =================
+  // ADD STOCK LOGIC
   window.openAddStockModal = function(id, name) {
+    if(!id) return alert('পণ্য তালিকা থেকে স্টক পরিবর্তন করুন।');
     document.getElementById('addStockProdId').value = id;
     document.getElementById('addStockProdName').innerText = "পণ্য: " + name;
     document.getElementById('newStockQty').value = '';
     document.getElementById('newStockRate').value = '';
     
-    // Populate Suppliers
     const supSelect = document.getElementById('addStockSupplier');
     supSelect.innerHTML = `<option value="">সিলেক্ট করুন</option>` + window.db.suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
     
@@ -1472,41 +1229,29 @@ input:checked + .slider:before { transform: translateX(22px); }
     if(!supplierId) return alert('সাপ্লায়ার সিলেক্ট করুন!');
     if(!qty || qty <= 0) return alert('সঠিক পরিমাণ দিন!');
 
-    // 1. Add Stock Batch
     let bId = Date.now().toString(36) + 's';
     database.ref('batches/' + bId).set({ id: bId, productId: pId, qty: qty, batchNo: 'MANUAL_ADD' });
 
-    // 2. Update Product Purchase Rate if provided
     if(rate > 0) {
       database.ref('products/' + pId).update({ purchaseRate: rate });
     }
 
-    // 3. Create a Purchase Transaction to track Supplier Due
     const txnId = 'TXN-' + Date.now().toString(36).toUpperCase();
     const total = qty * rate;
     const txnData = {
-        id: txnId,
-        date: new Date().toISOString(),
-        type: 'purchase',
-        productId: pId,
-        qty: qty,
-        rate: rate,
-        total: total,
-        paid: 0,
-        due: total,
-        supplierId: supplierId
+        id: txnId, date: new Date().toISOString(), type: 'purchase',
+        productId: pId, qty: qty, rate: rate, total: total, paid: 0, due: total, supplierId: supplierId
     };
     database.ref('transactions/' + txnId).set(txnData);
 
     const pName = window.db.products.find(p => p.id === pId)?.name || 'Unknown';
-    const supName = window.db.suppliers.find(s => s.id === supplierId)?.name || 'Unknown';
-    logActivity('স্টক যোগ', `${supName} থেকে ${pName} - এ নতুন ${qty} পিস স্টক যোগ করা হয়েছে।`);
+    logActivity('স্টক যোগ', `${pName} - এ নতুন ${qty} পিস স্টক যোগ করা হয়েছে।`);
 
-    alert('সফলভাবে স্টক যোগ হয়েছে এবং সাপ্লায়ারের দেনায় যুক্ত হয়েছে!');
+    alert('সফলভাবে স্টক যোগ হয়েছে!');
     closeAddStockModal();
   };
 
-  // ================= Backup & Reset Logic =================
+  // Backup & Reset Logic
   window.downloadBackup = function() {
     try {
         const dataStr = JSON.stringify(window.db, null, 2);
@@ -1519,12 +1264,11 @@ input:checked + .slider:before { transform: translateX(22px); }
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
         
-        // Revoke after a delay to ensure download starts
         setTimeout(() => URL.revokeObjectURL(url), 1000);
 
         window.backupTaken = true;
         document.getElementById('btnResetApp').disabled = false;
-        alert('ব্যাকআপ ফাইল ডাউনলোড শুরু হয়েছে। যদি ফাইলটি না নামে, তবে "ব্যাকআপ ডাটা দেখুন / কপি করুন" বাটনে ক্লিক করুন।');
+        alert('ব্যাকআপ ফাইল ডাউনলোড শুরু হয়েছে।');
     } catch (e) {
         console.error(e);
         showBackupDataModal();
@@ -1542,10 +1286,10 @@ input:checked + .slider:before { transform: translateX(22px); }
   window.copyBackupData = function() {
     const textArea = document.getElementById('backupDataTextArea');
     textArea.select();
-    textArea.setSelectionRange(0, 99999); /* For mobile devices */
+    textArea.setSelectionRange(0, 99999); 
     try {
         document.execCommand('copy');
-        alert('ব্যাকআপ ডাটা কপি হয়েছে! এটি একটি টেক্সট ফাইলে পেস্ট করে সেভ করুন।');
+        alert('ব্যাকআপ ডাটা কপি হয়েছে!');
     } catch (err) {
         alert('কপি করা যায়নি। ম্যানুয়ালি সিলেক্ট করে কপি করুন।');
     }
@@ -1571,14 +1315,9 @@ input:checked + .slider:before { transform: translateX(22px); }
 
     try {
         const parsedData = JSON.parse(jsonStr);
-        
-        if(!parsedData || typeof parsedData !== 'object') {
-            return alert('ভুল ফরম্যাট! সঠিক ব্যাকআপ ডাটা পেস্ট করুন।');
-        }
+        if(!parsedData || typeof parsedData !== 'object') return alert('ভুল ফরম্যাট!');
+        if(!confirm("সতর্কতা! বর্তমান সব ডাটা মুছে ফেলবে এবং ব্যাকআপ ডাটা ফিরিয়ে আনবে।")) return;
 
-        if(!confirm("সতর্কতা! আপনি কি নিশ্চিত? এটি বর্তমান সব ডাটা মুছে ফেলবে এবং ব্যাকআপ ডাটা ফিরিয়ে আনবে।")) return;
-
-        // Convert arrays back to Firebase objects using item.key or item.id
         const firebaseData = {};
         for (let table in parsedData) {
             if (Array.isArray(parsedData[table])) {
@@ -1586,7 +1325,6 @@ input:checked + .slider:before { transform: translateX(22px); }
                 parsedData[table].forEach(row => {
                     const rKey = row.key || row.id;
                     if (rKey) {
-                        // Remove the 'key' property to avoid duplicate data in Firebase
                         const cleanRow = { ...row };
                         delete cleanRow.key;
                         firebaseData[table][rKey] = cleanRow;
@@ -1598,17 +1336,15 @@ input:checked + .slider:before { transform: translateX(22px); }
         }
 
         database.ref().set(firebaseData).then(() => {
-            alert('সফলভাবে ডাটা রিস্টোর হয়েছে! অ্যাপটি রিলোড হচ্ছে...');
+            alert('সফলভাবে ডাটা রিস্টোর হয়েছে!');
             closeRestoreDataModal();
             setTimeout(() => location.reload(), 1000);
         }).catch(err => {
-            console.error(err);
             alert('রিস্টোর করতে সমস্যা হয়েছে: ' + err.message);
         });
 
     } catch (e) {
-        console.error(e);
-        alert('ডাটাটি সঠিক JSON ফরম্যাটে নেই। আবার চেষ্টা করুন।');
+        alert('ডাটাটি সঠিক JSON ফরম্যাটে নেই।');
     }
   };
 
@@ -1631,43 +1367,33 @@ input:checked + .slider:before { transform: translateX(22px); }
       const confirmReset = confirm("সতর্কতা! আপনি কি নিশ্চিত সব ডাটা মুছে ফেলতে চান?");
       if(confirmReset) {
         database.ref().remove().then(() => {
-          alert('সব ডাটা সফলভাবে মুছে ফেলা হয়েছে!');
+          alert('সব ডাটা মুছে ফেলা হয়েছে!');
           closeResetModal();
           location.reload();
         });
       }
     }).catch((error) => {
-      alert('ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।');
+      alert('ভুল পাসওয়ার্ড!');
     });
   };
 
-  // ================= DUE CALCULATION HELPER =================
+  // DUE CALCULATION HELPER
   function calculatePartyDue(party) {
     let due = Number(party.previousDue || 0);
-    
-    // Old approved sales
     window.db.approvedSales.filter(s => s.customerName === party.name || s.partyId === party.id).forEach(s => {
       due += (Number(s.total || 0) - Number(s.paid || 0));
     });
-    
-    // New transactions
     window.db.transactions.filter(t => t.partyId === party.id).forEach(t => {
       let tTotal = Number(t.total || 0);
       let tPaid = Number(t.paid || 0);
       let tAmount = Number(t.amount || 0);
-      
       if (t.type === 'sales') {
         let txnDue = (t.due !== undefined && t.due !== null) ? Number(t.due) : (tTotal - tPaid);
         due += txnDue;
       }
-      if (t.type === 'due_collect' || t.type === 'cash_in') {
-        due -= tAmount;
-      }
-      if (t.type === 'sales_return') {
-        due -= (tTotal - tPaid);
-      }
+      if (t.type === 'due_collect' || t.type === 'cash_in') due -= tAmount;
+      if (t.type === 'sales_return') due -= (tTotal - tPaid);
     });
-    
     return due;
   }
 
@@ -1681,8 +1407,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     return due;
   }
 
-  // ================= NEW SALE LOGIC =================
-
+  // NEW SALE LOGIC
   window.openNewSale = function() {
     closeActionMenu();
     window.currentSaleItems = [];
@@ -1690,7 +1415,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     window.editingSaleId = null;
     window.editingItemIndex = null;
     document.getElementById('nsSaveBtn').innerText = 'সেভ করুন';
-    document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()">←</span> নতুন বিক্রয়`;
+    document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> নতুন বিক্রয়`;
     
     let maxInvNo = 0;
     window.db.transactions.filter(t => t.type === 'sales' && t.invoiceNo).forEach(t => {
@@ -1727,7 +1452,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     window.editingSaleId = null;
     window.editingItemIndex = null;
     document.getElementById('nsSaveBtn').innerText = 'সেভ করুন';
-    document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()">←</span> নতুন বিক্রয়`;
+    document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> নতুন বিক্রয়`;
   };
 
   window.setSaleType = function(type) {
@@ -1745,8 +1470,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     calcSaleTotals();
   };
 
-  // ================= INVOICE LIST & EDIT LOGIC =================
-  
+  // INVOICE LIST & EDIT LOGIC
   window.openInvoiceList = function() {
     document.getElementById('invoiceSearchInput').value = '';
     renderInvoiceList('');
@@ -1830,18 +1554,14 @@ input:checked + .slider:before { transform: translateX(22px); }
     if(!txn) return;
     
     closeInvoiceList();
-    
-    // Set Edit Mode
     window.editingSaleId = txn.id;
     window.editingItemIndex = null;
     document.getElementById('nsSaveBtn').innerText = 'আপডেট করুন';
-    document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()">←</span> বিক্রয় এডিট`;
+    document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> বিক্রয় এডিট`;
     
-    // Populate Headers
     document.getElementById('nsInvoiceNo').innerText = txn.invoiceNo || 'INV-EDIT';
     document.getElementById('nsInvoiceDate').innerText = new Date(txn.date).toLocaleDateString('bn-BD');
 
-    // Populate Customer
     const custSelect = document.getElementById('nsCustomer');
     custSelect.innerHTML = window.db.parties.map(p => {
         let due = calculatePartyDue(p);
@@ -1850,17 +1570,14 @@ input:checked + .slider:before { transform: translateX(22px); }
     }).join('');
     custSelect.value = txn.partyId;
 
-    // Populate Items
     window.currentSaleItems = txn.items ? JSON.parse(JSON.stringify(txn.items)) : [];
     renderSaleItems();
 
-    // Populate Financials
     document.getElementById('nsDiscPercent').value = '';
     document.getElementById('nsDiscFlat').value = txn.discount || '';
     document.getElementById('nsDelivery').value = txn.delivery || 0;
     document.getElementById('nsPaid').value = txn.paid || 0;
     
-    // Determine Sale Type
     if(txn.due > 0) {
         window.currentSaleType = 'credit';
         document.getElementById('btnCashToggle').classList.remove('active');
@@ -1872,12 +1589,10 @@ input:checked + .slider:before { transform: translateX(22px); }
     }
 
     calcSaleTotals();
-    
-    // Show Modal
     document.getElementById('newSaleModal').classList.add('open');
   };
 
-  // ================= BREAKDOWN MODALS LOGIC =================
+  // BREAKDOWN MODALS
   window.showPayableDetails = function() {
     let html = '';
     let count = 0;
@@ -1885,14 +1600,7 @@ input:checked + .slider:before { transform: translateX(22px); }
         let sDue = calculateSupplierDue(s.id);
         if (sDue > 0) { 
             count++;
-            html += `
-                <div class="breakdown-item">
-                    <span class="breakdown-name">${esc(s.name)}</span>
-                    <strong class="breakdown-amount" style="color:var(--orange);">
-                        ৳ ${sDue.toFixed(2)}
-                    </strong>
-                </div>
-            `;
+            html += `<div class="breakdown-item"><span class="breakdown-name">${esc(s.name)}</span><strong class="breakdown-amount" style="color:var(--secondary);">৳ ${sDue.toFixed(2)}</strong></div>`;
         }
     });
     if (count === 0) html = '<div style="text-align:center; padding:20px; color:#999;">কোনো দেনা নেই</div>';
@@ -1908,14 +1616,7 @@ input:checked + .slider:before { transform: translateX(22px); }
         let pDue = calculatePartyDue(p);
         if (pDue > 0) { 
             count++;
-            html += `
-                <div class="breakdown-item">
-                    <span class="breakdown-name">${esc(p.name)}</span>
-                    <strong class="breakdown-amount" style="color:var(--red);">
-                        ৳ ${pDue.toFixed(2)}
-                    </strong>
-                </div>
-            `;
+            html += `<div class="breakdown-item"><span class="breakdown-name">${esc(p.name)}</span><strong class="breakdown-amount" style="color:var(--red);">৳ ${pDue.toFixed(2)}</strong></div>`;
         }
     });
     if (count === 0) html = '<div style="text-align:center; padding:20px; color:#999;">কোনো বাকী নেই</div>';
@@ -1924,8 +1625,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   };
   window.closeReceivableDetailsModal = function() { document.getElementById('receivableDetailsModal').classList.remove('open'); };
 
-
-  // ================= TRANSACTIONS EDIT LOGIC (New) =================
+  // TRANSACTIONS EDIT LOGIC
   window.renderTransactionsList = function(searchTerm = '') {
     const container = document.getElementById('transactionsList');
     if(!container) return;
@@ -1952,7 +1652,7 @@ input:checked + .slider:before { transform: translateX(22px); }
         let typeStr = '';
         let entityStr = '';
         let color = '';
-        if(t.type === 'purchase') { typeStr = 'ক্রয়'; entityStr = window.db.suppliers.find(s => s.id === t.supplierId)?.name || 'Unknown'; color = 'var(--blue)'; }
+        if(t.type === 'purchase') { typeStr = 'ক্রয়'; entityStr = window.db.suppliers.find(s => s.id === t.supplierId)?.name || 'Unknown'; color = 'var(--secondary)'; }
         if(t.type === 'sales_return') { typeStr = 'বিক্রয় রিটার্ন'; entityStr = window.db.parties.find(p => p.id === t.partyId)?.name || 'Unknown'; color = 'var(--orange)'; }
         if(t.type === 'purchase_return') { typeStr = 'ক্রয় রিটার্ন'; entityStr = window.db.suppliers.find(s => s.id === t.supplierId)?.name || 'Unknown'; color = 'var(--red)'; }
         
@@ -1978,10 +1678,9 @@ input:checked + .slider:before { transform: translateX(22px); }
     openQuickForm(txn.type, txnId);
   }
 
-  // ================= SALE ITEMS LOGIC =================
-
+  // SALE ITEMS LOGIC
   window.openAddItemModal = function() {
-    window.editingItemIndex = null; // Reset edit mode
+    window.editingItemIndex = null;
     const prodSelect = document.getElementById('aiProduct');
     prodSelect.innerHTML = `<option value="">সিলেক্ট করুন</option>` + window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('');
     document.getElementById('aiQty').value = 1;
@@ -1993,20 +1692,18 @@ input:checked + .slider:before { transform: translateX(22px); }
   window.editSaleItem = function(index) {
     window.editingItemIndex = index;
     const item = window.currentSaleItems[index];
-    
     const prodSelect = document.getElementById('aiProduct');
     prodSelect.innerHTML = window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('');
     prodSelect.value = item.productId;
     document.getElementById('aiQty').value = item.qty;
     document.getElementById('aiRate').value = item.rate;
     updateAiTotal();
-    
     document.getElementById('addItemModal').classList.add('open');
   };
 
   window.closeAddItemModal = function() {
     document.getElementById('addItemModal').classList.remove('open');
-    window.editingItemIndex = null; // Reset
+    window.editingItemIndex = null;
   };
 
   window.updateAiRate = function() {
@@ -2035,33 +1732,21 @@ input:checked + .slider:before { transform: translateX(22px); }
     let totalStock = window.db.batches.filter(b => b.productId === prodId).reduce((a,b)=>a+Number(b.qty),0);
     
     if (window.editingItemIndex !== null && window.editingItemIndex !== undefined) {
-        // Edit mode
-        if (totalStock < qty) {
-            return alert(`পণ্য "${prod.name}" এর পর্যাপ্ত স্টক নেই! বর্তমান স্টক: ${totalStock}`);
-        }
+        if (totalStock < qty) return alert(`পর্যাপ্ত স্টক নেই! স্টক: ${totalStock}`);
         window.currentSaleItems[window.editingItemIndex].qty = qty;
         window.currentSaleItems[window.editingItemIndex].rate = rate;
     } else {
-        // Add mode
         const existingItem = window.currentSaleItems.find(i => i.productId === prodId && i.rate === rate);
         let currentQtyInCart = existingItem ? existingItem.qty : 0;
         
-        if(totalStock < (qty + currentQtyInCart)) {
-          return alert(`পণ্য "${prod.name}" এর পর্যাপ্ত স্টক নেই! বর্তমান স্টক: ${totalStock}`);
-        }
+        if(totalStock < (qty + currentQtyInCart)) return alert(`পর্যাপ্ত স্টক নেই! স্টক: ${totalStock}`);
 
         if(existingItem) {
           existingItem.qty += qty;
         } else {
-          window.currentSaleItems.push({
-            productId: prodId,
-            name: prod.name,
-            qty: qty,
-            rate: rate
-          });
+          window.currentSaleItems.push({ productId: prodId, name: prod.name, qty: qty, rate: rate });
         }
     }
-
     closeAddItemModal();
     renderSaleItems();
   };
@@ -2074,7 +1759,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   window.renderSaleItems = function() {
     const list = document.getElementById('nsItemsList');
     if(window.currentSaleItems.length === 0) {
-      list.innerHTML = `<div style="padding:15px; text-align:center; color:#999; font-size:14px;">কোনো আইটেম যুক্ত করা হয়নি</div>`;
+      list.innerHTML = `<div style="padding:20px; text-align:center; color:#999; font-size:14px;">কোনো আইটেম যুক্ত করা হয়নি</div>`;
     } else {
       list.innerHTML = window.currentSaleItems.map((item, index) => `
         <div class="ns-item-row">
@@ -2084,8 +1769,8 @@ input:checked + .slider:before { transform: translateX(22px); }
           </div>
           <div style="display:flex; align-items:center;">
             <span class="ns-item-total">৳${money(item.qty * item.rate).replace('৳ ', '')}</span>
-            <span onclick="editSaleItem(${index})" style="color:var(--blue); cursor:pointer; margin-left:10px; font-size:16px;">✏️</span>
-            <span class="ns-remove-item" onclick="removeItemFromSale(${index})">✕</span>
+            <span onclick="editSaleItem(${index})" style="color:var(--secondary); cursor:pointer; margin-left:10px; font-size:16px;"><i class="fa-solid fa-pen"></i></span>
+            <span class="ns-remove-item" onclick="removeItemFromSale(${index})"><i class="fa-solid fa-xmark"></i></span>
           </div>
         </div>
       `).join('');
@@ -2110,9 +1795,8 @@ input:checked + .slider:before { transform: translateX(22px); }
       discountAmount = flat;
       discPercentInput.value = subTotal > 0 && flat > 0 ? ((flat / subTotal) * 100).toFixed(2) : '';
     } else {
-      if (discFlatInput.value !== '') {
-        discountAmount = Number(discFlatInput.value);
-      } else if (discPercentInput.value !== '') {
+      if (discFlatInput.value !== '') discountAmount = Number(discFlatInput.value);
+      else if (discPercentInput.value !== '') {
         discountAmount = (subTotal * Number(discPercentInput.value)) / 100;
         discFlatInput.value = discountAmount > 0 ? discountAmount.toFixed(2) : '';
       }
@@ -2134,7 +1818,6 @@ input:checked + .slider:before { transform: translateX(22px); }
     document.getElementById('nsDue').value = due.toFixed(2);
   };
 
-  // Helper to deduct stock
   function deductStock(productId, qty) {
       let remaining = qty;
       let bList = window.db.batches.filter(x => x.productId === productId && Number(x.qty) > 0);
@@ -2152,7 +1835,6 @@ input:checked + .slider:before { transform: translateX(22px); }
       }
   }
 
-  // Helper to add stock
   function addStock(productId, qty, prefix='RETURN') {
       let bId = Date.now().toString(36) + Math.random().toString(36).substring(2, 5);
       database.ref('batches/' + bId).set({ id: bId, productId: productId, qty: Number(qty), batchNo: prefix });
@@ -2163,13 +1845,9 @@ input:checked + .slider:before { transform: translateX(22px); }
     if(!partyId) return alert('কাস্টমার সিলেক্ট করুন!');
     if(window.currentSaleItems.length === 0) return alert('কমপক্ষে ১টি আইটেম যোগ করুন!');
 
-    // Stock Validation
     for(let item of window.currentSaleItems) {
       let totalStock = window.db.batches.filter(x => x.productId === item.productId).reduce((a,b)=>a+Number(b.qty),0);
-      if(totalStock < item.qty) {
-        let pName = window.db.products.find(p => p.id === item.productId)?.name || 'Unknown';
-        return alert(`পণ্য "${pName}" এর পর্যাপ্ত স্টক নেই! বর্তমান স্টক: ${totalStock}`);
-      }
+      if(totalStock < item.qty) return alert(`পণ্য "${window.db.products.find(p => p.id === item.productId)?.name}" এর পর্যাপ্ত স্টক নেই!`);
     }
 
     const invNo = document.getElementById('nsInvoiceNo').innerText;
@@ -2185,16 +1863,12 @@ input:checked + .slider:before { transform: translateX(22px); }
     const isEdit = window.editingSaleId !== null;
     const txnId = isEdit ? window.editingSaleId : 'TXN-' + Date.now().toString(36).toUpperCase();
     const date = isEdit ? window.db.transactions.find(t => t.id === txnId).date : new Date().toISOString();
-    
     const saleItemsCopy = [...window.currentSaleItems];
     const partyObj = window.db.parties.find(p => p.id === partyId);
 
-    // Stock Management
     if (isEdit) {
         const oldTxn = window.db.transactions.find(t => t.id === txnId);
-        if (oldTxn && oldTxn.items) {
-            for(let item of oldTxn.items) addStock(item.productId, item.qty, 'EDIT_RESTORE'); 
-        }
+        if (oldTxn && oldTxn.items) for(let item of oldTxn.items) addStock(item.productId, item.qty, 'EDIT_RESTORE'); 
     }
     for(let item of saleItemsCopy) deductStock(item.productId, item.qty);
 
@@ -2211,20 +1885,18 @@ input:checked + .slider:before { transform: translateX(22px); }
       
       window.editingSaleId = null;
       document.getElementById('nsSaveBtn').innerText = 'সেভ করুন';
-      document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()">←</span> নতুন বিক্রয়`;
+      document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> নতুন বিক্রয়`;
     });
   };
 
-  // ================= UPDATED INVOICE PREVIEW (Removed Ship To) =================
+  // INVOICE PREVIEW
   window.showInvoicePreview = function(invNo, party, items, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod) {
-    hideGeneratedImage(); // Ensure we are on the HTML view
+    hideGeneratedImage();
 
     const dateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-'); 
     
     let displayPercent = discPercent;
-    if (displayPercent === 0 && subTotal > 0 && discFlat > 0) {
-        displayPercent = ((discFlat / subTotal) * 100).toFixed(2);
-    }
+    if (displayPercent === 0 && subTotal > 0 && discFlat > 0) displayPercent = ((discFlat / subTotal) * 100).toFixed(2);
 
     const itemRows = items.map((item, index) => {
         const prodCode = window.db.products.find(p => p.id === item.productId)?.code || 'N/A';
@@ -2240,11 +1912,10 @@ input:checked + .slider:before { transform: translateX(22px); }
         `;
     }).join('');
 
-    // "Ship To" has been removed here
     const invoiceHTML = `
       <div class="xin-inv-header">
         <div class="xin-inv-left">
-          <div class="xin-logo-box" style="background: var(--primary); color: white;">Novas</div>
+          <div class="xin-logo-box">Novas</div>
           <div class="xin-company-info">
             <h3>Novas Agro</h3>
             <p>123, Krishi Market, Dhaka<br>Bangladesh</p>
@@ -2295,9 +1966,7 @@ input:checked + .slider:before { transform: translateX(22px); }
             <th width="15%">Amount</th>
           </tr>
         </thead>
-        <tbody>
-          ${itemRows}
-        </tbody>
+        <tbody>${itemRows}</tbody>
       </table>
 
       <div class="xin-footer-section">
@@ -2366,21 +2035,16 @@ input:checked + .slider:before { transform: translateX(22px); }
     document.getElementById('invoiceActionHeader').style.display = 'flex';
   };
 
-  // নতুন প্রিন্ট ফাংশন (এটি APK-তে PDF সেভ করার জন্য সবচেয়ে ভালো)
-  window.printInvoice = function() {
-      window.print(); 
-  };
+  window.printInvoice = function() { window.print(); };
 
-  // আপডেট করা ডাউনলোড ফাংশন (Blob এবং Base64 দুই ভাবেই কাজ করবে)
   window.downloadInvoiceImage = function() {
     const element = document.getElementById('invoicePrintArea');
     const btn = document.getElementById('btnDownloadInvoice');
     const originalText = btn.innerHTML;
     
-    btn.innerHTML = '⏳ তৈরি হচ্ছে...';
+    btn.innerHTML = '⏳...';
     btn.disabled = true;
 
-    // A4 সাইজের জন্য সাময়িকভাবে এলিমেন্টের সাইজ বাড়ানো
     const originalStyle = element.getAttribute('style') || '';
     element.style.width = '794px'; 
     element.style.maxWidth = '794px';
@@ -2389,20 +2053,10 @@ input:checked + .slider:before { transform: translateX(22px); }
 
     setTimeout(() => {
         html2canvas(element, {
-            scale: 4, // ম্যাক্সিমাম কোয়ালিটি (Scale 4)
-            useCORS: true,
-            backgroundColor: '#ffffff',
-            logging: false
+            scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false
         }).then(canvas => {
-            // DataURL তৈরি
             window.currentGeneratedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-            
-            // WebView-এর জন্য Blob তৈরি
-            canvas.toBlob((blob) => {
-                if(blob) {
-                    window.currentGeneratedBlob = blob;
-                }
-            }, 'image/jpeg', 0.95);
+            canvas.toBlob((blob) => { if(blob) window.currentGeneratedBlob = blob; }, 'image/jpeg', 0.95);
 
             element.setAttribute('style', originalStyle);
 
@@ -2415,8 +2069,7 @@ input:checked + .slider:before { transform: translateX(22px); }
             btn.disabled = false;
 
         }).catch(err => {
-            console.error("Image generation failed:", err);
-            alert('ইনভয়েস তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+            alert('ইনভয়েস তৈরি করতে সমস্যা হয়েছে।');
             element.setAttribute('style', originalStyle);
             btn.innerHTML = originalText;
             btn.disabled = false;
@@ -2424,12 +2077,9 @@ input:checked + .slider:before { transform: translateX(22px); }
     }, 100); 
   };
 
-  // WebView-এর জন্য বিশেষ ডাউনলোড পদ্ধতি
   window.forceDownloadImage = function() {
     if(!window.currentGeneratedDataUrl) return;
-    
     try {
-        // Blob URL ব্যবহার করে ডাউনলোড (WebView তে বেশি কার্যকর)
         if (window.currentGeneratedBlob) {
             const blobUrl = URL.createObjectURL(window.currentGeneratedBlob);
             const link = document.createElement('a');
@@ -2440,7 +2090,6 @@ input:checked + .slider:before { transform: translateX(22px); }
             document.body.removeChild(link);
             URL.revokeObjectURL(blobUrl);
         } else {
-            // Data URL ফলব্যাক
             const link = document.createElement('a');
             link.href = window.currentGeneratedDataUrl;
             link.download = `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`;
@@ -2449,54 +2098,29 @@ input:checked + .slider:before { transform: translateX(22px); }
             document.body.removeChild(link);
         }
     } catch (e) {
-        console.error(e);
-        alert('সরাসরি ডাউনলোড ব্যর্থ হয়েছে। ছবিটি চেপে ধরে (Long Press) সেভ করার চেষ্টা করুন।');
+        alert('সরাসরি ডাউনলোড ব্যর্থ হয়েছে। ছবিটি চেপে ধরে সেভ করার চেষ্টা করুন।');
     }
   };
 
-  // শেয়ার ফাংশন (ফলব্যাক সহ)
   window.shareGeneratedImage = function() {
     if(!window.currentGeneratedDataUrl) return;
-    
-    // চেক করা হচ্ছে শেয়ার সাপোর্ট করে কিনা
     if (navigator.share && navigator.canShare) {
         try {
-            fetch(window.currentGeneratedDataUrl)
-                .then(res => res.blob())
-                .then(blob => {
+            fetch(window.currentGeneratedDataUrl).then(res => res.blob()).then(blob => {
                     const file = new File([blob], `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`, { type: 'image/jpeg' });
                     if (navigator.canShare({ files: [file] })) {
-                        navigator.share({
-                            files: [file],
-                            title: 'Novas Agro Invoice',
-                            text: 'Here is your invoice.'
-                        }).catch(err => {
-                            console.log('Share failed', err);
-                            // যদি WebView-এ শেয়ার ফেইল করে, তবে ডাউনলোড ট্রিগার করবো
-                            window.forceDownloadImage();
-                        });
-                    } else {
-                        window.forceDownloadImage();
-                    }
-                }).catch(err => {
-                    console.error(err);
-                    window.forceDownloadImage();
-                });
-        } catch(e) {
-             window.forceDownloadImage();
-        }
-    } else {
-        // WebView-এ শেয়ার না থাকলে সরাসরি ডাউনলোড ফাংশন কল হবে
-        window.forceDownloadImage();
-    }
+                        navigator.share({ files: [file], title: 'Novas Agro Invoice', text: 'Here is your invoice.' }).catch(err => { window.forceDownloadImage(); });
+                    } else { window.forceDownloadImage(); }
+                }).catch(err => { window.forceDownloadImage(); });
+        } catch(e) { window.forceDownloadImage(); }
+    } else { window.forceDownloadImage(); }
   };
 
-  // ================= CALCULATE QUICK FORM TOTALS =================
+  // CALCULATE QUICK FORM TOTALS
   window.calcQuickFormTotals = function(source = null) {
     const qty = Number(document.getElementById('q_qty').value) || 0;
     const rate = Number(document.getElementById('q_rate').value) || 0;
     const subTotal = qty * rate;
-    
     const discPInput = document.getElementById('q_discPercent');
     const discFInput = document.getElementById('q_discFlat');
     let discount = 0;
@@ -2560,7 +2184,7 @@ input:checked + .slider:before { transform: translateX(22px); }
         <div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${deliveryVal}" min="0" oninput="calcQuickFormTotals()"></div>
         <div class="form-group" style="margin-top:12px;"><label>পরিশোধ</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div>
         <div class="q-calc-box">
-            <span>সর্বমোট: <span id="q_total_display" style="color:var(--primary);">৳ ${existingTxn ? existingTxn.total.toFixed(2) : '0.00'}</span></span>
+            <span>সর্বমোট: <span id="q_total_display">৳ ${existingTxn ? existingTxn.total.toFixed(2) : '0.00'}</span></span>
             <span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${existingTxn ? existingTxn.due.toFixed(2) : '0.00'}</span></span>
         </div>
       `;
@@ -2609,7 +2233,7 @@ input:checked + .slider:before { transform: translateX(22px); }
         <div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${deliveryVal}" min="0" oninput="calcQuickFormTotals()"></div>
         <div class="form-group" style="margin-top:12px;"><label>টাকা ফেরত দেওয়া/নেওয়া</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div>
         <div class="q-calc-box">
-            <span>সর্বমোট: <span id="q_total_display" style="color:var(--primary);">৳ ${existingTxn ? existingTxn.total.toFixed(2) : '0.00'}</span></span>
+            <span>সর্বমোট: <span id="q_total_display">৳ ${existingTxn ? existingTxn.total.toFixed(2) : '0.00'}</span></span>
             <span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${existingTxn ? existingTxn.due.toFixed(2) : '0.00'}</span></span>
         </div>
       `;
@@ -2618,7 +2242,7 @@ input:checked + .slider:before { transform: translateX(22px); }
       submitBtn.innerText = 'সেভ করুন';
       formFields.innerHTML = `
         <div class="form-group"><label>আপনার কাছে থাকা বর্তমান ক্যাশ</label><input type="number" name="physicalCash" required></div>
-        <p style="font-size:12px; color:var(--text-muted); margin-top:10px;">সিস্টেম ক্যাশ: <strong id="sysCash" style="color:var(--primary)"></strong></p>
+        <p style="font-size:14px; color:var(--text-muted); margin-top:10px;">সিস্টেম ক্যাশ: <strong id="sysCash" style="color:var(--primary)"></strong></p>
       `;
       setTimeout(() => {
         let sysCash = calculateSystemCash().balance;
@@ -2634,14 +2258,11 @@ input:checked + .slider:before { transform: translateX(22px); }
             if(entitySelect) {
                 if(type === 'purchase' || type === 'purchase_return') {
                     entitySelect.value = existingTxn.supplierId;
-                    // Manually filter products before setting product ID
                     const supplierId = existingTxn.supplierId;
                     const prodSelect = document.getElementById('q_product');
                     if(prodSelect) {
                         let filteredProducts = window.db.products;
-                        if(supplierId) {
-                            filteredProducts = filteredProducts.filter(p => p.supplierId === supplierId);
-                        }
+                        if(supplierId) filteredProducts = filteredProducts.filter(p => p.supplierId === supplierId);
                         let newOptions = `<option value="">সিলেক্ট করুন</option>`;
                         filteredProducts.forEach(p => {
                             newOptions += `<option value="${p.id}" data-rate="${p.saleRate}" data-prate="${p.purchaseRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`;
@@ -2649,9 +2270,7 @@ input:checked + .slider:before { transform: translateX(22px); }
                         newOptions += `<option value="ADD_NEW" style="font-weight:bold; color:var(--primary);">➕ নতুন পণ্য যোগ করুন</option>`;
                         prodSelect.innerHTML = newOptions;
                     }
-                } else if(type === 'sales_return') {
-                    entitySelect.value = existingTxn.partyId;
-                }
+                } else if(type === 'sales_return') entitySelect.value = existingTxn.partyId;
             }
             const prodSelect = document.getElementById('q_product');
             if(prodSelect) {
@@ -2670,7 +2289,6 @@ input:checked + .slider:before { transform: translateX(22px); }
           this.value = ''; 
           document.getElementById('quickFormModal').classList.remove('open');
           openForm('product');
-          
           window.refreshQuickFormProducts = function() {
              document.getElementById('quickFormModal').classList.add('open');
              const newProductOptions = window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}" data-prate="${p.purchaseRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('') + `<option value="ADD_NEW" style="font-weight:bold; color:var(--primary);">➕ নতুন পণ্য যোগ করুন</option>`;
@@ -2685,15 +2303,12 @@ input:checked + .slider:before { transform: translateX(22px); }
       });
     }
 
-    // Supplier Filter Logic
     const supplierSelect = document.getElementById('q_supplier');
     if(supplierSelect) {
         supplierSelect.addEventListener('change', function() {
             const supplierId = this.value;
             let filteredProducts = window.db.products;
-            if(supplierId) {
-                filteredProducts = filteredProducts.filter(p => p.supplierId === supplierId);
-            }
+            if(supplierId) filteredProducts = filteredProducts.filter(p => p.supplierId === supplierId);
             const prodSelect = document.getElementById('q_product');
             let newOptions = `<option value="">সিলেক্ট করুন</option>`;
             filteredProducts.forEach(p => {
@@ -2716,7 +2331,6 @@ input:checked + .slider:before { transform: translateX(22px); }
       const rateInput = document.getElementById('q_rate');
       if(rateInput) {
           const isPurchaseType = (type === 'purchase' || type === 'purchase_return');
-          // Use purchaseRate for purchase/purchase_return, otherwise saleRate
           rateInput.value = isPurchaseType ? (prod.purchaseRate || 0) : (prod.saleRate || 0);
           calcQuickFormTotals();
       }
@@ -2725,7 +2339,6 @@ input:checked + .slider:before { transform: translateX(22px); }
   window.closeQuickForm = function() { document.getElementById('quickFormModal').classList.remove('open'); document.getElementById('quickForm').reset(); };
   window.closeActionMenu = function() { document.getElementById('actionMenuModal').classList.remove('open'); };
 
-  // Process Quick Form Data (For Non-Sales)
   function processQuickForm(type, formData, editId = null) {
     const d = Object.fromEntries(formData.entries());
     const isEdit = editId !== null;
@@ -2810,41 +2423,42 @@ input:checked + .slider:before { transform: translateX(22px); }
     }
   }
 
-  // Combined Cash Calculation
   function calculateSystemCash() {
     let inCash = 0, outCash = 0;
     window.db.approvedSales.forEach(s => { inCash += Number(s.paid || 0); });
     window.db.transactions.forEach(t => {
       if(t.type === 'sales') inCash += Number(t.paid || 0);
       if(t.type === 'due_collect' || t.type === 'cash_in' || t.type === 'purchase_return') inCash += Number(t.paid || t.amount || 0);
-      
       if(t.type === 'purchase') outCash += Number(t.paid || 0);
       if(t.type === 'due_pay' || t.type === 'expense' || t.type === 'cash_out' || t.type === 'sales_return') outCash += Number(t.paid || t.amount || 0);
     });
     return { in: inCash, out: outCash, balance: inCash - outCash };
   }
 
-  // Due & Payable Calculation (ROBUST LOGIC)
   function calculateTotalDueAndPayable() {
     let totalReceivable = 0; 
     let totalPayable = 0;    
-
-    // Sum all party dues accurately
     window.db.parties.forEach(p => {
         let due = calculatePartyDue(p);
         if(due > 0) totalReceivable += due;
     });
-
-    // Sum all supplier dues accurately
     window.db.suppliers.forEach(s => {
         let due = calculateSupplierDue(s.id);
         if(due > 0) totalPayable += due;
     });
-
     return { receivable: totalReceivable, payable: totalPayable };
   }
 
-  // UI Functions
+  function calculateTotalExpense() {
+    let total = 0;
+    window.db.transactions.forEach(t => {
+      if(t.type === 'cash_out' && t.note && t.note.includes('খরচ:')) {
+        total += Number(t.amount || 0);
+      }
+    });
+    return total;
+  }
+
   const $ = id => document.getElementById(id);
   const money = n => '৳ ' + Number(n || 0).toLocaleString('bn-BD', {minimumFractionDigits:2, maximumFractionDigits:2});
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -2858,26 +2472,42 @@ input:checked + .slider:before { transform: translateX(22px); }
     $(viewId).classList.add('active');
     sidebar.classList.remove('open'); overlay.classList.remove('open');
     
-    // Update bottom nav
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    if(viewId === 'dashboard') document.querySelectorAll('.nav-item')[0].classList.add('active');
-    if(viewId === 'products') document.querySelectorAll('.nav-item')[2].classList.add('active');
+    if(viewId === 'dashboard') {
+        document.getElementById('otherViewsContainer').style.display = 'none';
+    } else {
+        document.getElementById('otherViewsContainer').style.display = 'block';
+        if(viewId === 'invoices') renderInvoiceView('');
+        if(viewId === 'transactions') renderTransactionsList('');
+        if(viewId === 'dues') renderDuesView(); // New render logic
+    }
+  };
 
-    // Update sidebar active state
-    document.querySelectorAll('.side-menu-item').forEach(n => n.classList.remove('active-side'));
-    const menuItems = document.querySelectorAll('.side-menu-item');
-    menuItems.forEach(item => {
-        if(item.getAttribute('onclick') && item.getAttribute('onclick').includes(`'${viewId}'`)) {
-            item.classList.add('active-side');
-        }
+  window.renderDuesView = function() {
+    let recHtml = '';
+    window.db.parties.forEach(p => {
+      let due = calculatePartyDue(p);
+      if (due > 0) {
+        recHtml += `<tr onclick="openPartyProfile('${p.id}')" style="cursor:pointer;">
+          <td style="font-weight:600; color:var(--primary);">${esc(p.name)}</td>
+          <td style="color:var(--red); font-weight:600; text-align:right;">৳ ${due.toFixed(2)}</td>
+        </tr>`;
+      }
     });
+    if(!recHtml) recHtml = '<tr><td colspan="2" style="text-align:center; padding:20px; color:#999;">কোনো পাওনা নেই</td></tr>';
+    document.getElementById('receivableListBody').innerHTML = recHtml;
 
-    if(viewId === 'invoices') {
-        renderInvoiceView('');
-    }
-    if(viewId === 'transactions') {
-        renderTransactionsList('');
-    }
+    let payHtml = '';
+    window.db.suppliers.forEach(s => {
+      let due = calculateSupplierDue(s.id);
+      if (due > 0) {
+        payHtml += `<tr>
+          <td style="font-weight:600;">${esc(s.name)}</td>
+          <td style="color:var(--orange); font-weight:600; text-align:right;">৳ ${due.toFixed(2)}</td>
+        </tr>`;
+      }
+    });
+    if(!payHtml) payHtml = '<tr><td colspan="2" style="text-align:center; padding:20px; color:#999;">কোনো দেনা নেই</td></tr>';
+    document.getElementById('payableListBody').innerHTML = payHtml;
   };
 
   window.openActionMenu = function() { document.getElementById('actionMenuModal').classList.add('open'); };
@@ -2896,11 +2526,8 @@ input:checked + .slider:before { transform: translateX(22px); }
   window.testProductImage = function() {
     const url = document.getElementById('prodImageLink').value;
     const previewDiv = document.getElementById('productImagePreview');
-    if(url) {
-      previewDiv.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='❌'; alert('ছবি লোড হয়নি, লিংকটি সঠিক কিনা চেক করুন');">`;
-    } else {
-      previewDiv.innerHTML = '📦';
-    }
+    if(url) previewDiv.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='❌'; alert('ছবি লোড হয়নি');">`;
+    else previewDiv.innerHTML = '📦';
   };
 
   window.showModal = function(title, bodyHTML, handler) {
@@ -2929,67 +2556,33 @@ input:checked + .slider:before { transform: translateX(22px); }
     if(type === 'product') {
       let catOptions = Object.keys(categoryData).map(c => `<option value="${c}" ${p.category === c ? 'selected' : ''}>${c}</option>`).join('');
       let subCatOptions = p.category ? (categoryData[p.category] || []).map(s => `<option value="${s}" ${p.subCategory === s ? 'selected' : ''}>${s}</option>`).join('') : '';
-      
       let supplierOptions = window.db.suppliers.map(s => `<option value="${s.id}" ${p.supplierId === s.id ? 'selected' : ''}>${s.name}</option>`).join('');
 
       showModal(editId ? 'পণ্য এডিট' : 'পণ্য যোগ', `
         <div class="img-preview-box">
-          <div class="img-preview" id="productImagePreview">
-            ${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='❌';">` : '📦'}
-          </div>
+          <div class="img-preview" id="productImagePreview">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%; height:100%; object-fit:cover;">` : '📦'}</div>
           <div style="flex: 1;">
-            <label style="font-size: 12px; font-weight: bold; color: var(--text-muted); display:block; margin-bottom:5px;">পণ্যের ছবির লিংক</label>
+            <label style="font-size: 13px; font-weight: 500; color: var(--text); display:block; margin-bottom:5px;">পণ্যের ছবির লিংক</label>
             <div style="display:flex; gap: 5px;">
-              <input type="url" name="imageLink" id="prodImageLink" value="${p.imageUrl || ''}" placeholder="https://..." style="flex:1; padding: 8px; border-radius: 8px; border: 1px solid var(--border); background:rgba(255,255,255,.85); color:var(--text); font-size:13px;" oninput="document.getElementById('btnTestImage').style.display = this.value ? 'block' : 'none';">
-              <button type="button" id="btnTestImage" onclick="testProductImage()" style="display:${p.imageUrl ? 'block' : 'none'}; background: var(--primary-grad); color: white; padding: 0 12px; border-radius: 8px; font-size: 12px; cursor: pointer;">টেস্ট</button>
+              <input type="url" name="imageLink" id="prodImageLink" value="${p.imageUrl || ''}" placeholder="https://..." style="flex:1; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; background:white; color:var(--text); font-size:13px;" oninput="document.getElementById('btnTestImage').style.display = this.value ? 'block' : 'none';">
+              <button type="button" id="btnTestImage" onclick="testProductImage()" style="display:${p.imageUrl ? 'block' : 'none'}; background: var(--primary); color: white; padding: 0 12px; border-radius: 8px; font-size: 13px; cursor: pointer; border:none;">টেস্ট</button>
             </div>
           </div>
         </div>
-
         <div class="form-group"><label>পণ্যের নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div>
         <div class="form-group"><label>পণ্যের কোড</label><input type="text" name="code" value="${p.code || ''}" placeholder="যেমন: PRD-001"></div>
-
-        <div class="form-group">
-          <label>সাপ্লায়ার</label>
-          <select name="supplierId">
-            <option value="">সিলেক্ট করুন</option>
-            ${supplierOptions}
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label>ক্যাটাগরি</label>
-          <select name="category" id="productCategory">
-            <option value="">সিলেক্ট করুন</option>
-            ${catOptions}
-          </select>
-        </div>
-        <div class="form-group">
-          <label>সাব-ক্যাটাগরি</label>
-          <select name="subCategory" id="productSubCategory">
-            <option value="">সিলেক্ট করুন</option>
-            ${subCatOptions}
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>প্যাক সাইজ</label>
-          <input type="text" name="packSize" value="${p.packSize || ''}" placeholder="ক্লিক করে সাইজ দিন" readonly onclick="openPackModal()" style="cursor:pointer; background:rgba(230,238,250,.7);">
-        </div>
-
+        <div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId"><option value="">সিলেক্ট করুন</option>${supplierOptions}</select></div>
+        <div class="form-group"><label>ক্যাটাগরি</label><select name="category" id="productCategory"><option value="">সিলেক্ট করুন</option>${catOptions}</select></div>
+        <div class="form-group"><label>সাব-ক্যাটাগরি</label><select name="subCategory" id="productSubCategory"><option value="">সিলেক্ট করুন</option>${subCatOptions}</select></div>
+        <div class="form-group"><label>প্যাক সাইজ</label><input type="text" name="packSize" value="${p.packSize || ''}" placeholder="ক্লিক করে সাইজ দিন" readonly onclick="openPackModal()" style="cursor:pointer;"></div>
         <div style="display:flex; gap:10px;">
           <div class="form-group" style="flex:1;"><label>ক্রয় মূল্য</label><input type="number" name="purchaseRate" value="${p.purchaseRate || 0}" min="0"></div>
           <div class="form-group" style="flex:1;"><label>বিক্রয় মূল্য</label><input type="number" name="saleRate" value="${p.saleRate || 0}" min="0"></div>
         </div>
-        
         ${!editId ? `<div class="form-group"><label>বর্তমান স্টক (যোগ হবে)</label><input type="number" name="stock" value="0" min="0"></div>` : ''}
-        <div class="form-group"><label>কম স্টকের সীমা (Low Stock Alert)</label><input type="number" name="lowStockLimit" value="${p.lowStockLimit || 10}" min="0"></div>
+        <div class="form-group"><label>কম স্টকের সীমা</label><input type="number" name="lowStockLimit" value="${p.lowStockLimit || 10}" min="0"></div>
       `, (fd) => {
-        saveProductToDB(Object.fromEntries(fd.entries()), editId, () => {
-          if (window.refreshQuickFormProducts) {
-             window.refreshQuickFormProducts();
-          }
-        });
+        saveProductToDB(Object.fromEntries(fd.entries()), editId, () => { if (window.refreshQuickFormProducts) window.refreshQuickFormProducts(); });
       });
     } else if(type === 'party') {
       showModal(editId ? 'পার্টি এডিট' : 'পার্টি যোগ', `
@@ -3018,7 +2611,6 @@ input:checked + .slider:before { transform: translateX(22px); }
     window.currentProfilePartyId = id;
     const party = window.db.parties.find(p => p.id === id);
     $('pfPartyName').textContent = party.name; $('pfPartyPhone').textContent = 'ফোন: ' + (party.phone || '--');
-    
     let due = calculatePartyDue(party);
     $('pfPartyDue').textContent = money(due);
     
@@ -3031,15 +2623,13 @@ input:checked + .slider:before { transform: translateX(22px); }
     });
     history.sort((a,b) => new Date(b.date) - new Date(a.date));
 
-    if(history.length === 0) $('pfPartyHistory').innerHTML = '<div class="empty-state">কোনো লেনদেন নেই</div>';
+    if(history.length === 0) $('pfPartyHistory').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো লেনদেন নেই</div>';
     else $('pfPartyHistory').innerHTML = `<table><thead><tr><th>তারিখ</th><th>বিবরণ</th><th>টাকা</th></tr></thead><tbody>
       ${history.map(t => `<tr><td>${new Date(t.date).toLocaleDateString('bn-BD')}</td><td>${t.type}</td><td>${money(t.amount)}</td></tr>`).join('')}
     </tbody></table>`;
-    
     switchView('partyProfile');
   };
 
-  // Render All
   window.renderAll = function() {
     let cashData = calculateSystemCash();
     $('cashBalance').innerText = money(cashData.balance);
@@ -3049,11 +2639,17 @@ input:checked + .slider:before { transform: translateX(22px); }
     let dueData = calculateTotalDueAndPayable();
     $('totalDueDashboard').innerText = money(dueData.receivable);
     $('totalPayableDashboard').innerText = money(dueData.payable);
+    $('totalExpenseDashboard').innerText = money(calculateTotalExpense());
+    
+    $('totalProductsCount').innerText = window.db.products.length;
+    $('totalPartiesCount').innerText = window.db.parties.length;
+    $('totalSRCount').innerText = window.db.srs.length;
+    $('totalSuppliersCount').innerText = window.db.suppliers.length;
 
-    $('pendingCount').innerHTML = window.db.pendingSales.filter(s=>s.status === 'pending').length + ' টি <span>→</span>';
-    $('deliveryCount').innerHTML = window.db.deliveries.filter(d=>d.status !== 'delivered').length + ' টি <span>→</span>';
-    $('partyReqCount').innerHTML = window.db.partyRequests.length + ' টি <span>→</span>';
-    $('totalStock').innerHTML = window.db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস <span>→</span>';
+    $('pendingCount').innerHTML = window.db.pendingSales.filter(s=>s.status === 'pending').length + ' টি';
+    $('deliveryCount').innerHTML = window.db.deliveries.filter(d=>d.status !== 'delivered').length + ' টি';
+    $('partyReqCount').innerHTML = window.db.partyRequests.length + ' টি';
+    $('totalStock').innerHTML = window.db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস';
 
     // Products
     $('productsList').innerHTML = window.db.products.map(p => {
@@ -3063,21 +2659,21 @@ input:checked + .slider:before { transform: translateX(22px); }
         <div class="img-wrap">${p.imageUrl ? `<img src="${p.imageUrl}">` : '📦'}</div>
         <div class="info">
           <h4>${esc(p.name)}</h4>
-          <p style="font-size:11px; margin-bottom:2px;"><span style="color:var(--primary); font-weight:bold;">সাপ্লায়ার: ${esc(supName)}</span></p>
+          <p style="font-size:12px; margin-bottom:3px;"><span style="color:var(--primary); font-weight:600;">সাপ্লায়ার: ${esc(supName)}</span></p>
           <p>বিক্রয়: ৳${p.saleRate} | স্টক: ${stock}</p>
         </div>
-        <div style="display: flex; gap: 5px; align-items: center;">
-            <button class="btn-add-stock" onclick="openAddStockModal('${p.id}', '${esc(p.name)}')">+ স্টক</button>
-            <button class="btn-edit-icon" onclick="openForm('product', '${p.id}')">✏️</button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="btn-add-stock" onclick="openAddStockModal('${p.id}', '${esc(p.name)}')"><i class="fa-solid fa-plus"></i> স্টক</button>
+            <button class="btn-edit-icon" onclick="openForm('product', '${p.id}')"><i class="fa-solid fa-pen"></i></button>
         </div>
       </div>`;
-    }).join('') || '<div class="empty-state">পণ্য নেই</div>';
+    }).join('') || '<div style="text-align:center; padding:20px; color:#999;">পণ্য নেই</div>';
 
     // Parties
     $('partiesTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>বাকী</th><th>অ্যাকশন</th></tr></thead><tbody>
       ${window.db.parties.map(p => {
         let pDue = calculatePartyDue(p);
-        return `<tr><td onclick="openPartyProfile('${p.id}')" style="color:var(--primary); font-weight:bold;">${esc(p.name)}</td><td>${money(pDue)}</td><td><button onclick="openForm('party', '${p.id}')">✏️</button></td></tr>`;
+        return `<tr><td onclick="openPartyProfile('${p.id}')" style="color:var(--primary); font-weight:600;">${esc(p.name)}</td><td style="font-weight:600;">${money(pDue)}</td><td><button class="btn-edit-icon" onclick="openForm('party', '${p.id}')" style="width:28px; height:28px; font-size:12px;"><i class="fa-solid fa-pen"></i></button></td></tr>`;
       }).join('')}
     </tbody></table></div>`;
 
@@ -3085,7 +2681,7 @@ input:checked + .slider:before { transform: translateX(22px); }
     $('suppliersTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>দেনা (দিবো)</th><th>অ্যাকশন</th></tr></thead><tbody>
       ${window.db.suppliers.map(s => {
         let sDue = calculateSupplierDue(s.id);
-        return `<tr><td style="font-weight:600;">${esc(s.name)}</td><td style="color:var(--orange); font-weight:bold;">${money(sDue)}</td><td><button onclick="openForm('supplier', '${s.id}')">✏️</button></td></tr>`;
+        return `<tr><td style="font-weight:600;">${esc(s.name)}</td><td style="color:var(--orange); font-weight:600;">${money(sDue)}</td><td><button class="btn-edit-icon" onclick="openForm('supplier', '${s.id}')" style="width:28px; height:28px; font-size:12px;"><i class="fa-solid fa-pen"></i></button></td></tr>`;
       }).join('')}
     </tbody></table></div>`;
     
@@ -3097,34 +2693,29 @@ input:checked + .slider:before { transform: translateX(22px); }
     let sortedLogs = [...window.db.activityLogs].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
     $('activityLogList').innerHTML = sortedLogs.map(log => `
       <div class="log-item">
-        <div class="log-icon">${log.type.includes('বিক্রয়')?'💻':log.type.includes('ক্রয়')?'🛒':log.type.includes('বাকি')?'💵':log.type.includes('খরচ')?'🧾':log.type.includes('পণ্য')?'📦':log.type.includes('স্টক')?'📦':log.type.includes('সাপ্লায়ার')?'🏭':'📝'}</div>
+        <div class="log-icon">${log.type.includes('বিক্রয়')?'<i class="fa-solid fa-cash-register"></i>':log.type.includes('ক্রয়')?'<i class="fa-solid fa-cart-shopping"></i>':log.type.includes('বাকি')?'<i class="fa-solid fa-hand-holding-dollar"></i>':log.type.includes('খরচ')?'<i class="fa-solid fa-receipt"></i>':log.type.includes('পণ্য')?'<i class="fa-solid fa-box"></i>':log.type.includes('স্টক')?'<i class="fa-solid fa-boxes-stacked"></i>':log.type.includes('সাপ্লায়ার')?'<i class="fa-solid fa-industry"></i>':'<i class="fa-solid fa-file-lines"></i>'}</div>
         <div class="log-content">
           <div class="log-title">${log.type}</div>
           <div class="log-desc">${log.details}</div>
           <div class="log-time">${new Date(log.timestamp).toLocaleString('bn-BD')}</div>
         </div>
       </div>
-    `).join('') || '<div class="empty-state">কোনো লগ নেই</div>';
+    `).join('') || '<div style="text-align:center; padding:20px; color:#999;">কোনো লগ নেই</div>';
 
-    // Notifications
     let notiCount = window.db.partyRequests.length + window.db.pendingSales.length;
     if(notiCount > 0) { $('notiBadge').style.display = 'flex'; $('notiBadge').textContent = notiCount; } else { $('notiBadge').style.display = 'none'; }
     
-    // Update Invoices View
     renderInvoiceView(document.getElementById('invoiceViewSearchInput') ? document.getElementById('invoiceViewSearchInput').value : '');
-    
-    // Update Transactions View
     renderTransactionsList(document.getElementById('txnSearchInput') ? document.getElementById('txnSearchInput').value : '');
+    renderDuesView();
   };
 
-  // ================= Close Modal on Backdrop Click Logic =================
   document.querySelectorAll('.modal').forEach(modal => {
     modal.addEventListener('click', function(e) {
       if (e.target === this) {
         if (this.id === 'modal') window.closeModal();
         else if (this.id === 'quickFormModal') window.closeQuickForm();
         else if (this.id === 'actionMenuModal') window.closeActionMenu();
-        else if (this.id === 'packSizeModal') window.closePackModal();
         else if (this.id === 'resetModal') window.closeResetModal();
         else if (this.id === 'backupDataModal') window.closeBackupDataModal();
         else if (this.id === 'restoreDataModal') window.closeRestoreDataModal();
