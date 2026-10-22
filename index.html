@@ -167,8 +167,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .sidebar { position: fixed; top: 0; left: -300px; bottom: 0; width: 280px; background: rgba(255,255,255,.95); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); z-index: 70; transition: 0.3s ease-in-out; display: flex; flex-direction: column; box-shadow: 5px 0 20px rgba(0,0,0,0.1); }
 .sidebar.open { left: 0; }
 .side-profile { background: linear-gradient(145deg, #17449d, #2858b9); color: white; padding: 30px 20px 20px; display: flex; flex-direction: column; align-items: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;}
+.side-profile img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; border: 3px solid rgba(255,255,255,0.3); background: #fff;}
 .side-profile h3 { font-size: 18px; font-weight: 600; margin-bottom: 5px;}
 .side-profile .business-name { background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-weight: 500; font-size: 14px; display: flex; align-items: center; gap: 5px;}
+.side-profile p { font-size: 12px; margin-top: 5px; opacity: 0.8; text-align: center;}
 .side-menu { padding: 15px 0; overflow-y: auto; flex: 1; }
 .side-menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; color: var(--text); font-weight: 500; font-size: 15px; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.05);}
 .side-menu-item:active { background: rgba(0,0,0,0.03); }
@@ -577,8 +579,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="side-profile">
+      <img id="displaySrImage" src="https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png" alt="Profile">
       <h3 id="displaySrName">SR Name</h3>
       <div class="business-name" id="displaySrPhone">017xxxxxxxx</div>
+      <p id="displaySrAddress"><i class="fa-solid fa-location-dot"></i> ঠিকানা</p>
     </div>
     
     <div class="side-menu">
@@ -837,7 +841,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
 
-  // ADDED approvedSales, pendingSales, deliveries to match Admin
   window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [] };
   window.currentProfilePartyId = null;
   let currentSR = null;
@@ -900,14 +903,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   function showApp() {
     loginScreen.style.display = 'none';
     appContent.style.display = 'flex';
-    document.getElementById('displaySrName').textContent = currentSR.name;
-    document.getElementById('displaySrPhone').textContent = currentSR.phone;
     listenToData();
   }
 
   window.logoutUser = function() { if(confirm('লগআউট করবেন?')) { localStorage.removeItem('novasAgroSR'); location.reload(); } };
 
-  // Data Listeners (Exact same as Admin)
+  // Data Listeners
   function listenToData() {
     const handleSnap = (refName) => (snap) => {
       let v = snap.val() || {};
@@ -927,7 +928,24 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     database.ref('activityLogs').on('value', handleSnap('activityLogs'));
   }
 
-  // Log Activity Helper
+  // Update Sidebar Profile Info
+  function updateSRProfile() {
+    if (!currentSR) return;
+    const srData = window.db.srs.find(s => s.id === currentSR.id || s.phone === currentSR.phone);
+    if (srData) {
+        document.getElementById('displaySrName').textContent = srData.name;
+        document.getElementById('displaySrPhone').textContent = srData.phone;
+        document.getElementById('displaySrAddress').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${srData.address || 'ঠিকানা দেওয়া নেই'}`;
+        if (srData.imageUrl) {
+            document.getElementById('displaySrImage').src = srData.imageUrl;
+            document.getElementById('displaySrImage').style.display = 'block';
+        } else {
+            document.getElementById('displaySrImage').src = 'https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png';
+        }
+    }
+  }
+
+  // Log Activity
   function logActivity(type, details) {
     const logId = Date.now().toString(36);
     database.ref('activityLogs/' + logId).set({
@@ -935,7 +953,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     });
   }
 
-  // DB Actions
   window.savePartyToDB = function(data, id = null) {
     const newId = id || Date.now().toString(36);
     database.ref('parties/' + newId).update({ 
@@ -945,7 +962,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     logActivity('পার্টি', `${currentSR.name} পার্টি ${id ? 'এডিট' : 'যোগ'} করেছে: ${data.name}`);
   };
 
-  // DUE CALCULATION HELPER (Exact same as Admin)
+  // DUE CALCULATION HELPER
   function calculatePartyDue(party) {
     let due = Number(party.previousDue || 0);
     window.db.approvedSales.filter(s => s.customerName === party.name || s.partyId === party.id).forEach(s => {
@@ -975,7 +992,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     return due;
   }
 
-  // SYSTEM CASH CALCULATION (Exact same as Admin)
   function calculateSystemCash() {
     let inCash = 0, outCash = 0;
     window.db.approvedSales.forEach(s => { inCash += Number(s.paid || 0); });
@@ -1059,7 +1075,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const container = document.getElementById('invoiceListContainer');
     let sales = window.db.transactions.filter(t => t.type === 'sales');
     sales.sort((a,b) => new Date(b.date) - new Date(a.date));
-    if (searchTerm) { const lowerSearch = searchTerm.toLowerCase(); sales = sales.filter(t => { const party = window.db.parties.find(p => p.id === t.partyId); const partyName = party ? party.name.toLowerCase() : ''; const invNo = (t.invoiceNo || '').toLowerCase(); return partyName.includes(lowerSearch) || invNo.includes(lowerSearch); }); }
+    if (searchTerm) { const lower = searchTerm.toLowerCase(); sales = sales.filter(t => { const p = window.db.parties.find(x=>x.id===t.partyId); const pName = p?p.name.toLowerCase():''; const inv = (t.invoiceNo||'').toLowerCase(); return pName.includes(lower) || inv.includes(lower); }); }
     if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো ইনভয়েস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
@@ -1069,7 +1085,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if(!container) return;
     let sales = window.db.transactions.filter(t => t.type === 'sales');
     sales.sort((a,b) => new Date(b.date) - new Date(a.date));
-    if (searchTerm) { const lowerSearch = searchTerm.toLowerCase(); sales = sales.filter(t => { const party = window.db.parties.find(p => p.id === t.partyId); const partyName = party ? party.name.toLowerCase() : ''; const invNo = (t.invoiceNo || '').toLowerCase(); return partyName.includes(lowerSearch) || invNo.includes(lowerSearch); }); }
+    if (searchTerm) { const lower = searchTerm.toLowerCase(); sales = sales.filter(t => { const p = window.db.parties.find(x=>x.id===t.partyId); const pName = p?p.name.toLowerCase():''; const inv = (t.invoiceNo||'').toLowerCase(); return pName.includes(lower) || inv.includes(lower); }); }
     if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো ইনভয়েস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
@@ -1079,7 +1095,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if(!container) return;
     let sales = window.db.transactions.filter(t => t.type === 'sales');
     sales.sort((a,b) => new Date(b.date) - new Date(a.date));
-    if (searchTerm) { const lowerSearch = searchTerm.toLowerCase(); sales = sales.filter(t => { const party = window.db.parties.find(p => p.id === t.partyId); const partyName = party ? party.name.toLowerCase() : ''; const invNo = (t.invoiceNo || '').toLowerCase(); const srName = (t.srName || '').toLowerCase(); return partyName.includes(lowerSearch) || invNo.includes(lowerSearch) || srName.includes(lowerSearch); }); }
+    if (searchTerm) { const lower = searchTerm.toLowerCase(); sales = sales.filter(t => { const p = window.db.parties.find(x=>x.id===t.partyId); const pName = p?p.name.toLowerCase():''; const inv = (t.invoiceNo||'').toLowerCase(); const sr = (t.srName||'').toLowerCase(); return pName.includes(lower) || inv.includes(lower) || sr.includes(lower); }); }
     if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো সেলস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
@@ -1090,7 +1106,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const todayStr = new Date().toDateString();
     let sales = window.db.transactions.filter(t => t.type === 'sales' && new Date(t.date).toDateString() === todayStr);
     sales.sort((a,b) => new Date(b.date) - new Date(a.date));
-    if (searchTerm) { const lowerSearch = searchTerm.toLowerCase(); sales = sales.filter(t => { const party = window.db.parties.find(p => p.id === t.partyId); const partyName = party ? party.name.toLowerCase() : ''; const invNo = (t.invoiceNo || '').toLowerCase(); const srName = (t.srName || '').toLowerCase(); return partyName.includes(lowerSearch) || invNo.includes(lowerSearch) || srName.includes(lowerSearch); }); }
+    if (searchTerm) { const lower = searchTerm.toLowerCase(); sales = sales.filter(t => { const p = window.db.parties.find(x=>x.id===t.partyId); const pName = p?p.name.toLowerCase():''; const inv = (t.invoiceNo||'').toLowerCase(); const sr = (t.srName||'').toLowerCase(); return pName.includes(lower) || inv.includes(lower) || sr.includes(lower); }); }
     if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">আজকের কোনো সেলস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
@@ -1100,8 +1116,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const pName = party ? party.name : 'Unknown';
     const date = new Date(t.date).toLocaleDateString('en-GB');
     const due = t.due !== undefined ? Number(t.due) : (Number(t.total) - Number(t.paid || 0));
-    
-    // ADDED SR BADGE HERE
     let srBadge = t.srName ? `<span class="sr-badge">SR: ${esc(t.srName)}</span>` : '';
 
     return `<div class="invoice-list-item" onclick="editExistingInvoice('${t.id}')">
@@ -1156,15 +1170,15 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let txns = window.db.transactions;
     txns.sort((a,b) => new Date(b.date) - new Date(a.date));
     if (searchTerm) {
-      const lowerSearch = searchTerm.toLowerCase();
+      const lower = searchTerm.toLowerCase();
       txns = txns.filter(t => {
-        const pName = window.db.products.find(p => p.id === t.productId)?.name?.toLowerCase() || '';
-        const partyName = window.db.parties.find(p => p.id === t.partyId)?.name?.toLowerCase() || '';
-        const supplierName = window.db.suppliers.find(s => s.id === t.supplierId)?.name?.toLowerCase() || '';
-        const invNo = (t.invoiceNo || '').toLowerCase();
+        const p = window.db.products.find(x=>x.id===t.productId)?.name?.toLowerCase() || '';
+        const party = window.db.parties.find(x=>x.id===t.partyId)?.name?.toLowerCase() || '';
+        const sup = window.db.suppliers.find(x=>x.id===t.supplierId)?.name?.toLowerCase() || '';
+        const inv = (t.invoiceNo || '').toLowerCase();
         const note = (t.note || '').toLowerCase();
-        const srName = (t.srName || '').toLowerCase();
-        return pName.includes(lowerSearch) || partyName.includes(lowerSearch) || supplierName.includes(lowerSearch) || invNo.includes(lowerSearch) || note.includes(lowerSearch) || srName.includes(lowerSearch);
+        const sr = (t.srName || '').toLowerCase();
+        return p.includes(lower) || party.includes(lower) || sup.includes(lower) || inv.includes(lower) || note.includes(lower) || sr.includes(lower);
       });
     }
     if (txns.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো লেনদেন পাওয়া যায়নি</div>'; return; }
@@ -1173,16 +1187,16 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         const pName = window.db.products.find(p => p.id === t.productId)?.name || '';
         const party = window.db.parties.find(p => p.id === t.partyId);
         const supplier = window.db.suppliers.find(s => s.id === t.supplierId);
+        
         if(t.type === 'purchase') { typeStr = 'ক্রয়'; entityStr = supplier?.name || 'Unknown'; color = 'var(--secondary)'; detailsStr = `${pName} (${t.qty} পিস)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
         else if(t.type === 'sales') { typeStr = 'বিক্রয়'; entityStr = party?.name || 'Unknown'; color = 'var(--green)'; let itemsCount = t.items ? t.items.length : 0; detailsStr = `${t.invoiceNo || 'N/A'} (${itemsCount} আইটেম)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
         else if(t.type === 'sales_return') { typeStr = 'বিক্রয় রিটার্ন'; entityStr = party?.name || 'Unknown'; color = 'var(--orange)'; detailsStr = `${pName} (${t.qty} পিস)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
         else if(t.type === 'purchase_return') { typeStr = 'ক্রয় রিটার্ন'; entityStr = supplier?.name || 'Unknown'; color = 'var(--red)'; detailsStr = `${pName} (${t.qty} পিস)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
         else if(t.type === 'cash_in') { typeStr = 'নগদ প্রাপ্তি'; entityStr = party?.name || 'Unknown'; color = 'var(--primary)'; detailsStr = t.note || 'বাকি আদায়'; totalAmt = Number(t.amount || 0); dueAmt = 0; }
         else if(t.type === 'cash_out') { typeStr = t.supplierId ? 'নগদ প্রদান' : 'খরচ'; entityStr = supplier?.name || 'Unknown'; color = 'var(--red)'; detailsStr = t.note || 'বাকি পরিশোধ'; totalAmt = Number(t.amount || 0); dueAmt = 0; }
+        
         let totalHtml = `<div class="inv-list-total">৳ ${totalAmt.toFixed(2)}</div>`;
         let dueHtml = (t.type !== 'cash_in' && t.type !== 'cash_out') ? `<div class="inv-list-due" style="color:${dueAmt > 0 ? 'var(--red)' : 'var(--green)'};">বাকি: ৳ ${dueAmt.toFixed(2)}</div>` : '';
-        
-        // ADDED SR BADGE HERE
         let srInfo = t.srName ? `<span class="sr-badge">SR: ${esc(t.srName)}</span>` : '';
 
         return `<div class="invoice-list-item" onclick="editTransaction('${t.id}')">
@@ -1490,6 +1504,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   // Render All Data
   window.renderAll = function() {
+    updateSRProfile(); // Update sidebar image and address
+
     let cashData = calculateSystemCash();
     if(document.getElementById('cashBalance')) document.getElementById('cashBalance').innerText = money(cashData.balance);
     if(document.getElementById('cashIn')) document.getElementById('cashIn').innerText = money(cashData.in);
