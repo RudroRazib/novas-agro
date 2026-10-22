@@ -992,6 +992,13 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   const database = firebase.database();
   const auth = firebase.auth();
 
+  const categoryData = {
+    "ইনজেকশন আইটেম": ["ভ্যাকসিন", "এন্টিবায়োটিক", "ভিটামিন"],
+    "ফুড প্রিমিক্স": ["প্রিবায়োটিক", "প্রোটিন", "মিনারেল"],
+    "ওষুধ": ["ট্যাবলেট", "সিরাপ", "পাউডার"],
+    "যন্ত্রপাতি": ["সিরিঞ্জ", "নিডল", "গ্লাভস"]
+  };
+
   window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [] };
   window.currentProfilePartyId = null;
   window.backupTaken = false;
@@ -1003,120 +1010,20 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   window.currentGeneratedDataUrl = '';
   window.currentGeneratedBlob = null;
 
-  // ================= THEME & SETTINGS LOGIC =================
+  // Theme
   if(localStorage.getItem('theme') === 'dark') { 
     document.documentElement.setAttribute('data-theme', 'dark'); 
     document.getElementById('darkModeToggle').checked = true;
   }
-  
   window.toggleTheme = function() {
     if(document.getElementById('darkModeToggle').checked) {
-      document.documentElement.setAttribute('data-theme', 'dark'); 
-      localStorage.setItem('theme', 'dark'); 
+      document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('theme', 'dark'); 
     } else {
-      document.documentElement.removeAttribute('data-theme'); 
-      localStorage.setItem('theme', 'light'); 
+      document.documentElement.removeAttribute('data-theme'); localStorage.setItem('theme', 'light'); 
     }
   };
 
-  window.downloadBackup = function() {
-    try {
-        const dataStr = JSON.stringify(window.db, null, 2);
-        const blob = new Blob([dataStr], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", url);
-        downloadAnchorNode.setAttribute("download", "novas_agro_backup_" + new Date().toISOString().slice(0,10) + ".json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-        
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        window.backupTaken = true;
-        document.getElementById('btnResetApp').disabled = false;
-        alert('ব্যাকআপ ফাইল ডাউনলোড শুরু হয়েছে।');
-    } catch (e) { console.error(e); showBackupDataModal(); }
-  };
-
-  window.showBackupDataModal = function() {
-    const dataStr = JSON.stringify(window.db, null, 2);
-    document.getElementById('backupDataTextArea').value = dataStr;
-    document.getElementById('backupDataModal').classList.add('open');
-    window.backupTaken = true;
-    document.getElementById('btnResetApp').disabled = false;
-  };
-
-  window.copyBackupData = function() {
-    const textArea = document.getElementById('backupDataTextArea');
-    textArea.select();
-    textArea.setSelectionRange(0, 99999); 
-    try { document.execCommand('copy'); alert('ব্যাকআপ ডাটা কপি হয়েছে!'); } 
-    catch (err) { alert('কপি করা যায়নি। ম্যানুয়ালি সিলেক্ট করে কপি করুন।'); }
-  };
-
-  window.closeBackupDataModal = function() { document.getElementById('backupDataModal').classList.remove('open'); };
-
-  window.openRestoreDataModal = function() {
-    document.getElementById('restoreDataTextArea').value = '';
-    document.getElementById('restoreDataModal').classList.add('open');
-  };
-
-  window.closeRestoreDataModal = function() { document.getElementById('restoreDataModal').classList.remove('open'); };
-
-  window.executeRestoreData = function() {
-    const jsonStr = document.getElementById('restoreDataTextArea').value.trim();
-    if(!jsonStr) return alert('ব্যাকআপ ডাটা পেস্ট করুন!');
-    try {
-        const parsedData = JSON.parse(jsonStr);
-        if(!parsedData || typeof parsedData !== 'object') return alert('ভুল ফরম্যাট!');
-        if(!confirm("সতর্কতা! বর্তমান সব ডাটা মুছে ফেলবে এবং ব্যাকআপ ডাটা ফিরিয়ে আনবে।")) return;
-
-        const firebaseData = {};
-        for (let table in parsedData) {
-            if (Array.isArray(parsedData[table])) {
-                firebaseData[table] = {};
-                parsedData[table].forEach(row => {
-                    const rKey = row.key || row.id;
-                    if (rKey) {
-                        const cleanRow = { ...row }; delete cleanRow.key;
-                        firebaseData[table][rKey] = cleanRow;
-                    }
-                });
-            } else if (typeof parsedData[table] === 'object' && parsedData[table] !== null) {
-                firebaseData[table] = parsedData[table];
-            }
-        }
-        database.ref().set(firebaseData).then(() => {
-            alert('সফলভাবে ডাটা রিস্টোর হয়েছে!');
-            closeRestoreDataModal();
-            setTimeout(() => location.reload(), 1000);
-        }).catch(err => { alert('রিস্টোর করতে সমস্যা হয়েছে: ' + err.message); });
-    } catch (e) { alert('ডাটাটি সঠিক JSON ফরম্যাটে নেই।'); }
-  };
-
-  window.promptResetPassword = function() {
-    if(!window.backupTaken) return alert('অনুগ্রহ করে আগে ব্যাকআপ নিন!');
-    document.getElementById('resetPasswordInput').value = '';
-    document.getElementById('resetModal').classList.add('open');
-  };
-  window.closeResetModal = function() { document.getElementById('resetModal').classList.remove('open'); };
-
-  window.executeReset = function() {
-    const pass = document.getElementById('resetPasswordInput').value;
-    if(!pass) return alert('পাসওয়ার্ড দিন!');
-    const user = auth.currentUser;
-    const cred = firebase.auth.EmailAuthProvider.credential(user.email, pass);
-    user.reauthenticateWithCredential(cred).then(() => {
-      const confirmReset = confirm("সতর্কতা! আপনি কি নিশ্চিত সব ডাটা মুছে ফেলতে চান?");
-      if(confirmReset) {
-        database.ref().remove().then(() => {
-          alert('সব ডাটা মুছে ফেলা হয়েছে!'); closeResetModal(); location.reload();
-        });
-      }
-    }).catch((error) => { alert('ভুল পাসওয়ার্ড!'); });
-  };
-
-  // ================= AUTH & INIT =================
+  // Auth
   const loginScreen = document.getElementById('loginScreen'), appContent = document.getElementById('appContent');
   auth.onAuthStateChanged((user) => {
     if (user) { loginScreen.style.display = 'none'; appContent.style.display = 'flex'; listenToData(); } 
@@ -1128,6 +1035,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   });
   window.logoutUser = function() { if(confirm('লগআউট করবেন?')) auth.signOut(); };
 
+  // Listeners
   function listenToData() {
     const handleSnap = (refName) => (snap) => {
       let v = snap.val() || {};
@@ -1147,12 +1055,13 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     database.ref('activityLogs').on('value', handleSnap('activityLogs'));
   }
 
-  // ================= CALCULATION HELPERS =================
+  // Activity Log
   function logActivity(type, details) {
     const logId = Date.now().toString(36);
     database.ref('activityLogs/' + logId).set({ id: logId, type: type, details: details, timestamp: new Date().toISOString() });
   }
 
+  // DB actions
   window.savePartyToDB = function(data, id = null) {
     const newId = id || Date.now().toString(36);
     database.ref('parties/' + newId).update({ id: newId, name: data.name, phone: data.phone || '', address: data.address || '', previousDue: Number(data.previousDue) || 0 });
@@ -1164,20 +1073,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     database.ref('suppliers/' + newId).update({ id: newId, name: data.name, phone: data.phone || '', address: data.address || '' });
     logActivity('সাপ্লায়ার', `সাপ্লায়ার ${id ? 'এডিট' : 'যোগ'} করা হয়েছে: ${data.name}`);
   };
-
-  window.saveSRToDB = function(data, id = null) { 
-    const nid = id || Date.now().toString(36); 
-    database.ref('srs/' + nid).update({ id: nid, name: data.name, phone: data.phone, address: data.address || '', imageUrl: data.imageUrl || '' }); 
-    logActivity('এসআর', `এসআর ${id ? 'এডিট' : 'যোগ'} করা হয়েছে: ${data.name}`);
-  };
-
-  window.deleteSR = function(id) {
-    if(confirm('আপনি কি নিশ্চিত এই এসআর-কে ডিলিট করতে চান?')) {
-      database.ref('srs/' + id).remove();
-      logActivity('এসআর', `একটি এসআর ডিলিট করা হয়েছে।`);
-    }
-  };
-
+  
   window.saveProductToDB = function(data, id = null, callback = null) {
     const pId = id || Date.now().toString(36);
     database.ref('products/' + pId).update({ 
@@ -1193,22 +1089,118 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       if(callback) callback();
     });
   };
+  
+  window.saveSRToDB = function(data, id = null) { 
+    const nid = id || Date.now().toString(36); 
+    database.ref('srs/' + nid).update({ id: nid, name: data.name, phone: data.phone, address: data.address || '', imageUrl: data.imageUrl || '' }); 
+    logActivity('এসআর', `এসআর ${id ? 'এডিট' : 'যোগ'} করা হয়েছে: ${data.name}`);
+  };
 
+  window.deleteSR = function(id) {
+    if(confirm('আপনি কি নিশ্চিত এই এসআর-কে ডিলিট করতে চান?')) {
+      database.ref('srs/' + id).remove();
+      logActivity('এসআর', `একটি এসআর ডিলিট করা হয়েছে।`);
+    }
+  };
+
+  // Add Stock
+  window.openAddStockModal = function(id, name) {
+    if(!id) return alert('পণ্য তালিকা থেকে স্টক পরিবর্তন করুন।');
+    document.getElementById('addStockProdId').value = id;
+    document.getElementById('addStockProdName').innerText = "পণ্য: " + name;
+    document.getElementById('newStockQty').value = '';
+    document.getElementById('newStockRate').value = '';
+    document.getElementById('addStockSupplier').innerHTML = `<option value="">সিলেক্ট করুন</option>` + window.db.suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    document.getElementById('addStockModal').classList.add('open');
+  };
+  window.closeAddStockModal = function() { document.getElementById('addStockModal').classList.remove('open'); };
+  window.saveAddStock = function() {
+    const pId = document.getElementById('addStockProdId').value;
+    const supplierId = document.getElementById('addStockSupplier').value;
+    const qty = Number(document.getElementById('newStockQty').value);
+    const rate = Number(document.getElementById('newStockRate').value) || 0;
+    if(!supplierId) return alert('সাপ্লায়ার সিলেক্ট করুন!');
+    if(!qty || qty <= 0) return alert('সঠিক পরিমাণ দিন!');
+
+    let bId = Date.now().toString(36) + 's';
+    database.ref('batches/' + bId).set({ id: bId, productId: pId, qty: qty, batchNo: 'MANUAL_ADD' });
+    if(rate > 0) database.ref('products/' + pId).update({ purchaseRate: rate });
+
+    const txnId = 'TXN-' + Date.now().toString(36).toUpperCase();
+    const total = qty * rate;
+    database.ref('transactions/' + txnId).set({ id: txnId, date: new Date().toISOString(), type: 'purchase', productId: pId, qty: qty, rate: rate, total: total, paid: 0, due: total, supplierId: supplierId });
+    logActivity('স্টক যোগ', `${window.db.products.find(p => p.id === pId)?.name} - এ নতুন ${qty} পিস স্টক যোগ করা হয়েছে।`);
+    alert('সফলভাবে স্টক যোগ হয়েছে!'); closeAddStockModal();
+  };
+
+  // Backup & Restore
+  window.downloadBackup = function() {
+    try {
+        const dataStr = JSON.stringify(window.db, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = "novas_agro_backup_" + new Date().toISOString().slice(0,10) + ".json";
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        window.backupTaken = true; document.getElementById('btnResetApp').disabled = false;
+        alert('ব্যাকআপ ফাইল ডাউনলোড শুরু হয়েছে।');
+    } catch (e) { showBackupDataModal(); }
+  };
+  window.showBackupDataModal = function() {
+    document.getElementById('backupDataTextArea').value = JSON.stringify(window.db, null, 2);
+    document.getElementById('backupDataModal').classList.add('open');
+    window.backupTaken = true; document.getElementById('btnResetApp').disabled = false;
+  };
+  window.copyBackupData = function() {
+    const t = document.getElementById('backupDataTextArea'); t.select(); t.setSelectionRange(0, 99999); 
+    try { document.execCommand('copy'); alert('ব্যাকআপ ডাটা কপি হয়েছে!'); } catch (err) { alert('কপি করা যায়নি।'); }
+  };
+  window.closeBackupDataModal = function() { document.getElementById('backupDataModal').classList.remove('open'); };
+  window.openRestoreDataModal = function() { document.getElementById('restoreDataTextArea').value = ''; document.getElementById('restoreDataModal').classList.add('open'); };
+  window.closeRestoreDataModal = function() { document.getElementById('restoreDataModal').classList.remove('open'); };
+  window.executeRestoreData = function() {
+    const jsonStr = document.getElementById('restoreDataTextArea').value.trim();
+    if(!jsonStr) return alert('ব্যাকআপ ডাটা পেস্ট করুন!');
+    try {
+        const parsedData = JSON.parse(jsonStr);
+        if(!confirm("সতর্কতা! বর্তমান সব ডাটা মুছে ফেলবে এবং ব্যাকআপ ডাটা ফিরিয়ে আনবে।")) return;
+        const firebaseData = {};
+        for (let table in parsedData) {
+            if (Array.isArray(parsedData[table])) {
+                firebaseData[table] = {};
+                parsedData[table].forEach(row => { const rKey = row.key || row.id; if (rKey) { const cleanRow = { ...row }; delete cleanRow.key; firebaseData[table][rKey] = cleanRow; } });
+            } else if (typeof parsedData[table] === 'object' && parsedData[table] !== null) { firebaseData[table] = parsedData[table]; }
+        }
+        database.ref().set(firebaseData).then(() => { alert('সফলভাবে ডাটা রিস্টোর হয়েছে!'); closeRestoreDataModal(); setTimeout(() => location.reload(), 1000); });
+    } catch (e) { alert('ডাটাটি সঠিক JSON ফরম্যাটে নেই।'); }
+  };
+
+  window.promptResetPassword = function() {
+    if(!window.backupTaken) return alert('অনুগ্রহ করে আগে ব্যাকআপ নিন!');
+    document.getElementById('resetPasswordInput').value = ''; document.getElementById('resetModal').classList.add('open');
+  };
+  window.closeResetModal = function() { document.getElementById('resetModal').classList.remove('open'); };
+  window.executeReset = function() {
+    const pass = document.getElementById('resetPasswordInput').value; if(!pass) return alert('পাসওয়ার্ড দিন!');
+    const user = auth.currentUser; const cred = firebase.auth.EmailAuthProvider.credential(user.email, pass);
+    user.reauthenticateWithCredential(cred).then(() => {
+      if(confirm("সতর্কতা! আপনি কি নিশ্চিত সব ডাটা মুছে ফেলতে চান?")) { database.ref().remove().then(() => { alert('সব ডাটা মুছে ফেলা হয়েছে!'); closeResetModal(); location.reload(); }); }
+    }).catch(() => alert('ভুল পাসওয়ার্ড!'));
+  };
+
+  // Helper calculations
   function calculatePartyDue(party) {
     let due = Number(party.previousDue || 0);
     window.db.approvedSales.filter(s => s.customerName === party.name || s.partyId === party.id).forEach(s => { due += (Number(s.total || 0) - Number(s.paid || 0)); });
     window.db.transactions.filter(t => t.partyId === party.id).forEach(t => {
       let tTotal = Number(t.total || 0), tPaid = Number(t.paid || 0), tAmount = Number(t.amount || 0);
-      if (t.type === 'sales') {
-        let txnDue = (t.due !== undefined && t.due !== null) ? Number(t.due) : (tTotal - tPaid);
-        due += txnDue;
-      }
+      if (t.type === 'sales') due += ((t.due !== undefined && t.due !== null) ? Number(t.due) : (tTotal - tPaid));
       if (t.type === 'due_collect' || t.type === 'cash_in') due -= tAmount;
       if (t.type === 'sales_return') due -= (tTotal - tPaid);
     });
     return due;
   }
-
   function calculateSupplierDue(supplierId) {
     let due = 0;
     window.db.transactions.filter(t => t.supplierId === supplierId).forEach(t => {
@@ -1218,7 +1210,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     });
     return due;
   }
-
   function calculateSystemCash() {
     let inCash = 0, outCash = 0;
     window.db.approvedSales.forEach(s => { inCash += Number(s.paid || 0); });
@@ -1231,7 +1222,142 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     return { in: inCash, out: outCash, balance: inCash - outCash };
   }
 
-  // ================= RENDER LISTS =================
+  // Sale Modal
+  window.openNewSale = function() {
+    closeActionMenu();
+    window.currentSaleItems = []; window.currentSaleType = 'cash'; window.editingSaleId = null; window.editingItemIndex = null;
+    document.getElementById('nsSaveBtn').innerText = 'সেভ করুন';
+    document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> নতুন বিক্রয়`;
+    
+    let maxInvNo = 0;
+    window.db.transactions.filter(t => t.type === 'sales' && t.invoiceNo).forEach(t => { let num = parseInt(t.invoiceNo.replace('INV-', '')); if(!isNaN(num) && num > maxInvNo) maxInvNo = num; });
+    const invNo = 'INV-' + String(maxInvNo + 1).padStart(2, '0');
+    document.getElementById('nsInvoiceNo').innerText = invNo;
+    document.getElementById('nsInvoiceDate').innerText = new Date().toLocaleDateString('en-GB');
+
+    document.getElementById('nsCustomer').innerHTML = `<option value="">কাস্টমার যোগ করুন</option>` + window.db.parties.map(p => {
+        let due = calculatePartyDue(p);
+        let dueText = due > 0 ? ` - বাকি: ৳${due}` : (due < 0 ? ` - অগ্রিম: ৳${Math.abs(due)}` : '');
+        return `<option value="${p.id}">${esc(p.name)}${dueText}</option>`;
+    }).join('');
+
+    document.getElementById('nsDiscPercent').value = ''; document.getElementById('nsDiscFlat').value = ''; document.getElementById('nsDelivery').value = 0; document.getElementById('nsPaid').value = 0;
+    setSaleType('cash'); renderSaleItems(); document.getElementById('newSaleModal').classList.add('open');
+  };
+  window.closeNewSale = function() {
+    document.getElementById('newSaleModal').classList.remove('open');
+    window.editingSaleId = null; window.editingItemIndex = null;
+    document.getElementById('nsSaveBtn').innerText = 'সেভ করুন';
+    document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> নতুন বিক্রয়`;
+  };
+  window.setSaleType = function(type) {
+    window.currentSaleType = type;
+    if(type === 'cash') {
+      document.getElementById('btnCashToggle').classList.add('active'); document.getElementById('btnCreditToggle').classList.remove('active');
+      document.getElementById('nsPaid').value = Number(document.getElementById('nsGrandTotal').value);
+    } else {
+      document.getElementById('btnCashToggle').classList.remove('active'); document.getElementById('btnCreditToggle').classList.add('active');
+      document.getElementById('nsPaid').value = 0;
+    }
+    calcSaleTotals();
+  };
+  window.openAddItemModal = function() {
+    window.editingItemIndex = null;
+    document.getElementById('aiProduct').innerHTML = `<option value="">সিলেক্ট করুন</option>` + window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('');
+    document.getElementById('aiQty').value = 1; document.getElementById('aiRate').value = ''; document.getElementById('aiSubTotal').innerText = '0.00';
+    document.getElementById('addItemModal').classList.add('open');
+  };
+  window.editSaleItem = function(index) {
+    window.editingItemIndex = index;
+    const item = window.currentSaleItems[index];
+    document.getElementById('aiProduct').innerHTML = window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('');
+    document.getElementById('aiProduct').value = item.productId;
+    document.getElementById('aiQty').value = item.qty; document.getElementById('aiRate').value = item.rate;
+    updateAiTotal(); document.getElementById('addItemModal').classList.add('open');
+  };
+  window.closeAddItemModal = function() { document.getElementById('addItemModal').classList.remove('open'); window.editingItemIndex = null; };
+  window.updateAiRate = function() { const s = document.getElementById('aiProduct'); if(!s.value) return; document.getElementById('aiRate').value = s.options[s.selectedIndex].getAttribute('data-rate') || 0; updateAiTotal(); };
+  window.updateAiTotal = function() { document.getElementById('aiSubTotal').innerText = money(Number(document.getElementById('aiQty').value) * Number(document.getElementById('aiRate').value)).replace('৳ ', ''); };
+  
+  window.addItemToSale = function() {
+    const prodId = document.getElementById('aiProduct').value; const qty = Number(document.getElementById('aiQty').value); const rate = Number(document.getElementById('aiRate').value);
+    if(!prodId) return alert('পণ্য সিলেক্ট করুন!'); if(qty <= 0) return alert('সঠিক পরিমাণ দিন!');
+    const prod = window.db.products.find(p => p.id === prodId);
+    let totalStock = window.db.batches.filter(b => b.productId === prodId).reduce((a,b)=>a+Number(b.qty),0);
+    if (window.editingItemIndex !== null && window.editingItemIndex !== undefined) {
+        if (totalStock < qty) return alert(`পর্যাপ্ত স্টক নেই! স্টক: ${totalStock}`);
+        window.currentSaleItems[window.editingItemIndex].qty = qty; window.currentSaleItems[window.editingItemIndex].rate = rate;
+    } else {
+        const existing = window.currentSaleItems.find(i => i.productId === prodId && i.rate === rate);
+        if(totalStock < (qty + (existing ? existing.qty : 0))) return alert(`পর্যাপ্ত স্টক নেই! স্টক: ${totalStock}`);
+        if(existing) existing.qty += qty; else window.currentSaleItems.push({ productId: prodId, name: prod.name, qty: qty, rate: rate });
+    }
+    closeAddItemModal(); renderSaleItems();
+  };
+  window.removeItemFromSale = function(index) { window.currentSaleItems.splice(index, 1); renderSaleItems(); };
+  
+  window.renderSaleItems = function() {
+    const list = document.getElementById('nsItemsList');
+    if(window.currentSaleItems.length === 0) { list.innerHTML = `<div style="padding:20px; text-align:center; color:#999; font-size:14px;">কোনো আইটেম যুক্ত করা হয়নি</div>`; } 
+    else {
+      list.innerHTML = window.currentSaleItems.map((item, index) => `
+        <div class="ns-item-row">
+          <div class="ns-item-info"><span class="ns-item-name">${esc(item.name)}</span><span class="ns-item-details">${item.qty} x ৳${item.rate} = ৳${item.qty * item.rate}</span></div>
+          <div style="display:flex; align-items:center;">
+            <span class="ns-item-total">৳${money(item.qty * item.rate).replace('৳ ', '')}</span>
+            <span onclick="editSaleItem(${index})" style="color:var(--secondary); cursor:pointer; margin-left:10px; font-size:16px;"><i class="fa-solid fa-pen"></i></span>
+            <span class="ns-remove-item" onclick="removeItemFromSale(${index})"><i class="fa-solid fa-xmark"></i></span>
+          </div>
+        </div>
+      `).join('');
+    }
+    calcSaleTotals();
+  };
+  
+  window.calcSaleTotals = function(source = null) {
+    let subTotal = window.currentSaleItems.reduce((acc, item) => acc + (item.qty * item.rate), 0);
+    document.getElementById('nsSubTotal').value = subTotal.toFixed(2);
+    const dP = document.getElementById('nsDiscPercent'); const dF = document.getElementById('nsDiscFlat'); let disc = 0;
+    if (source === 'percent') { disc = (subTotal * (Number(dP.value)||0)) / 100; dF.value = disc > 0 ? disc.toFixed(2) : ''; } 
+    else if (source === 'flat') { disc = Number(dF.value)||0; dP.value = subTotal > 0 && disc > 0 ? ((disc / subTotal) * 100).toFixed(2) : ''; } 
+    else { if (dF.value !== '') disc = Number(dF.value); else if (dP.value !== '') disc = (subTotal * Number(dP.value)) / 100; }
+    const del = Number(document.getElementById('nsDelivery').value)||0;
+    let grand = Math.max(0, subTotal - disc + del);
+    document.getElementById('nsGrandTotal').value = grand.toFixed(2);
+    if (window.currentSaleType === 'cash' && source !== 'paid') document.getElementById('nsPaid').value = grand.toFixed(2);
+    let due = grand - (Number(document.getElementById('nsPaid').value)||0);
+    document.getElementById('nsDue').value = (due > 0 ? due : 0).toFixed(2);
+  };
+
+  function deductStock(productId, qty) {
+      let rem = qty; let bList = window.db.batches.filter(x => x.productId === productId && Number(x.qty) > 0);
+      for(let b of bList) { if(rem <= 0) break; let c = Number(b.qty); let k = b.key || b.id; if(c >= rem) { database.ref('batches/' + k).update({ qty: c - rem }); rem = 0; } else { database.ref('batches/' + k).update({ qty: 0 }); rem -= c; } }
+  }
+  function addStock(productId, qty, prefix='RETURN') { let bId = Date.now().toString(36) + Math.random().toString(36).substring(2, 5); database.ref('batches/' + bId).set({ id: bId, productId: productId, qty: Number(qty), batchNo: prefix }); }
+
+  window.saveNewSale = function() {
+    const partyId = document.getElementById('nsCustomer').value; 
+    if(!partyId) return alert('কাস্টমার সিলেক্ট করুন!'); if(window.currentSaleItems.length === 0) return alert('কমপক্ষে ১টি আইটেম যোগ করুন!');
+    for(let item of window.currentSaleItems) { let totalStock = window.db.batches.filter(x => x.productId === item.productId).reduce((a,b)=>a+Number(b.qty),0); if(totalStock < item.qty) return alert(`পণ্য "${window.db.products.find(p => p.id === item.productId)?.name}" এর পর্যাপ্ত স্টক নেই!`); }
+    
+    const invNo = document.getElementById('nsInvoiceNo').innerText; const subTotal = Number(document.getElementById('nsSubTotal').value); const discPercent = Number(document.getElementById('nsDiscPercent').value) || 0; const discFlat = Number(document.getElementById('nsDiscFlat').value) || 0; const delivery = Number(document.getElementById('nsDelivery').value) || 0; const grandTotal = Number(document.getElementById('nsGrandTotal').value); const paid = Number(document.getElementById('nsPaid').value) || 0; const due = Number(document.getElementById('nsDue').value); const paymentMethod = document.getElementById('nsPaymentMethod').value;
+    const isEdit = window.editingSaleId !== null; const txnId = isEdit ? window.editingSaleId : 'TXN-' + Date.now().toString(36).toUpperCase(); const date = isEdit ? window.db.transactions.find(t => t.id === txnId).date : new Date().toISOString(); const saleItemsCopy = [...window.currentSaleItems]; const partyObj = window.db.parties.find(p => p.id === partyId);
+    
+    if (isEdit) { const old = window.db.transactions.find(t => t.id === txnId); if (old && old.items) for(let i of old.items) addStock(i.productId, i.qty, 'EDIT_RESTORE'); }
+    for(let item of saleItemsCopy) deductStock(item.productId, item.qty);
+    
+    let txnData = { id: txnId, invoiceNo: invNo, date: date, type: 'sales', partyId: partyId, items: saleItemsCopy, subTotal: subTotal, discount: discFlat, delivery: delivery, total: grandTotal, paid: paid, due: due, paymentMethod: paymentMethod };
+    database.ref('transactions/' + txnId).set(txnData).then(() => {
+      let itemsStr = saleItemsCopy.map(i => `${i.name} (${i.qty} পিস)`).join(', ');
+      logActivity(isEdit ? 'বিক্রয় এডিট' : 'বিক্রয়', `${partyObj.name} - এর কাছে বিক্রয় ${isEdit ? 'আপডেট' : ''}: ${itemsStr}। মোট: ${money(grandTotal)}, জমা: ${money(paid)}, বাকি: ${money(due)}`);
+      showInvoicePreview(invNo, partyObj, saleItemsCopy, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod);
+      window.editingSaleId = null; document.getElementById('nsSaveBtn').innerText = 'সেভ করুন'; document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> নতুন বিক্রয়`;
+    });
+  };
+
+  // Invoice List
+  window.openInvoiceList = function() { document.getElementById('invoiceSearchInput').value = ''; renderInvoiceList(''); document.getElementById('invoiceListModal').classList.add('open'); };
+  window.closeInvoiceList = function() { document.getElementById('invoiceListModal').classList.remove('open'); };
   window.renderInvoiceList = function(searchTerm = '') {
     const container = document.getElementById('invoiceListContainer');
     let sales = window.db.transactions.filter(t => t.type === 'sales');
@@ -1240,7 +1366,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো ইনভয়েস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
-
   window.renderInvoiceView = function(searchTerm = '') {
     const container = document.getElementById('invoiceViewContainer');
     if(!container) return;
@@ -1250,7 +1375,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো ইনভয়েস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
-
   window.renderTotalSales = function(searchTerm = '') {
     const container = document.getElementById('totalSalesList');
     if(!container) return;
@@ -1260,7 +1384,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো সেলস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
-
   window.renderTodaySales = function(searchTerm = '') {
     const container = document.getElementById('todaySalesList');
     if(!container) return;
@@ -1278,7 +1401,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const date = new Date(t.date).toLocaleDateString('en-GB');
     const due = t.due !== undefined ? Number(t.due) : (Number(t.total) - Number(t.paid || 0));
     let srBadge = t.srName ? `<span class="sr-badge">SR: ${esc(t.srName)}</span>` : '';
-
     return `<div class="invoice-list-item" onclick="editExistingInvoice('${t.id}')">
         <div class="inv-list-header">
             <div>
@@ -1294,20 +1416,39 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     </div>`;
   }
 
+  window.editExistingInvoice = function(txnId) {
+    const txn = window.db.transactions.find(t => t.id === txnId);
+    if(!txn) return;
+    closeInvoiceList();
+    window.editingSaleId = txn.id; window.editingItemIndex = null;
+    document.getElementById('nsSaveBtn').innerText = 'আপডেট করুন';
+    document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> বিক্রয় এডিট`;
+    
+    document.getElementById('nsInvoiceNo').innerText = txn.invoiceNo || 'INV-EDIT';
+    document.getElementById('nsInvoiceDate').innerText = new Date(txn.date).toLocaleDateString('en-GB');
+    document.getElementById('nsCustomer').innerHTML = window.db.parties.map(p => { let due = calculatePartyDue(p); let dueText = due > 0 ? ` - বাকি: ৳${due}` : (due < 0 ? ` - অগ্রিম: ৳${Math.abs(due)}` : ''); return `<option value="${p.id}">${esc(p.name)}${dueText}</option>`; }).join('');
+    document.getElementById('nsCustomer').value = txn.partyId;
+    window.currentSaleItems = txn.items ? JSON.parse(JSON.stringify(txn.items)) : [];
+    renderSaleItems();
+    
+    document.getElementById('nsDiscPercent').value = ''; document.getElementById('nsDiscFlat').value = txn.discount || ''; document.getElementById('nsDelivery').value = txn.delivery || 0; document.getElementById('nsPaid').value = txn.paid || 0;
+    if(txn.due > 0) { window.currentSaleType = 'credit'; document.getElementById('btnCashToggle').classList.remove('active'); document.getElementById('btnCreditToggle').classList.add('active'); } 
+    else { window.currentSaleType = 'cash'; document.getElementById('btnCashToggle').classList.add('active'); document.getElementById('btnCreditToggle').classList.remove('active'); }
+    calcSaleTotals(); document.getElementById('newSaleModal').classList.add('open');
+  };
+
+  // Transactions Edit List
   window.renderTransactionsList = function(searchTerm = '') {
     const container = document.getElementById('transactionsList');
     if(!container) return;
-    let txns = window.db.transactions;
-    txns.sort((a,b) => new Date(b.date) - new Date(a.date));
+    let txns = window.db.transactions; txns.sort((a,b) => new Date(b.date) - new Date(a.date));
     if (searchTerm) {
       const lower = searchTerm.toLowerCase();
       txns = txns.filter(t => {
         const p = window.db.products.find(x=>x.id===t.productId)?.name?.toLowerCase() || '';
         const party = window.db.parties.find(x=>x.id===t.partyId)?.name?.toLowerCase() || '';
         const sup = window.db.suppliers.find(x=>x.id===t.supplierId)?.name?.toLowerCase() || '';
-        const inv = (t.invoiceNo || '').toLowerCase();
-        const note = (t.note || '').toLowerCase();
-        const sr = (t.srName || '').toLowerCase();
+        const inv = (t.invoiceNo || '').toLowerCase(); const note = (t.note || '').toLowerCase(); const sr = (t.srName || '').toLowerCase();
         return p.includes(lower) || party.includes(lower) || sup.includes(lower) || inv.includes(lower) || note.includes(lower) || sr.includes(lower);
       });
     }
@@ -1315,8 +1456,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     container.innerHTML = txns.map(t => {
         let typeStr = '', entityStr = '', color = '', detailsStr = '', totalAmt = 0, dueAmt = 0;
         const pName = window.db.products.find(p => p.id === t.productId)?.name || '';
-        const party = window.db.parties.find(p => p.id === t.partyId);
-        const supplier = window.db.suppliers.find(s => s.id === t.supplierId);
+        const party = window.db.parties.find(p => p.id === t.partyId); const supplier = window.db.suppliers.find(s => s.id === t.supplierId);
         
         if(t.type === 'purchase') { typeStr = 'ক্রয়'; entityStr = supplier?.name || 'Unknown'; color = 'var(--secondary)'; detailsStr = `${pName} (${t.qty} পিস)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
         else if(t.type === 'sales') { typeStr = 'বিক্রয়'; entityStr = party?.name || 'Unknown'; color = 'var(--green)'; let itemsCount = t.items ? t.items.length : 0; detailsStr = `${t.invoiceNo || 'N/A'} (${itemsCount} আইটেম)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
@@ -1343,8 +1483,18 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
             </div>
         </div>`;
     }).join('');
-  }
+  };
 
+  window.editTransaction = function(txnId) {
+    const txn = window.db.transactions.find(t => t.id === txnId);
+    if(!txn) return;
+    if (txn.type === 'sales') { editExistingInvoice(txnId); } 
+    else if (txn.type === 'cash_in') { openQuickForm('due_collect', txnId); } 
+    else if (txn.type === 'cash_out') { if (txn.supplierId) openQuickForm('due_pay', txnId); else openQuickForm('expense', txnId); } 
+    else { openQuickForm(txn.type, txnId); }
+  };
+
+  // Dues list
   window.renderDuesView = function() {
     let recHtml = ''; window.db.parties.forEach(p => { let due = calculatePartyDue(p); if (due > 0) { recHtml += `<tr onclick="openPartyProfile('${p.id}')" style="cursor:pointer;"><td style="font-weight:600; color:var(--primary);">${esc(p.name)}</td><td style="color:var(--red); font-weight:600; text-align:right;">৳ ${due.toFixed(2)}</td></tr>`; } });
     if(!recHtml) recHtml = '<tr><td colspan="2" style="text-align:center; padding:20px; color:#999;">কোনো পাওনা নেই</td></tr>'; document.getElementById('receivableListBody').innerHTML = recHtml;
@@ -1366,69 +1516,184 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     switchView('partyProfile');
   };
 
-  window.renderAll = function() {
-    let cashData = calculateSystemCash(); document.getElementById('cashBalance').innerText = money(cashData.balance); document.getElementById('cashIn').innerText = money(cashData.in); document.getElementById('cashOut').innerText = money(cashData.out);
-    let dueData = calculateTotalDueAndPayable(); document.getElementById('totalDueDashboard').innerText = money(dueData.receivable); document.getElementById('totalPayableDashboard').innerText = money(dueData.payable);
-    document.getElementById('totalExpenseDashboard').innerText = money(calculateTotalExpense());
-    document.getElementById('totalProductsCount').innerText = window.db.products.length; document.getElementById('totalPartiesCount').innerText = window.db.parties.length;
-    document.getElementById('totalSRCount').innerText = window.db.srs.length; document.getElementById('totalSuppliersCount').innerText = window.db.suppliers.length;
-
-    let totalSales = window.db.transactions.filter(t => t.type === 'sales'); let todayStr = new Date().toDateString(); let todaySales = totalSales.filter(t => new Date(t.date).toDateString() === todayStr);
-    if(document.getElementById('totalSalesCount')) document.getElementById('totalSalesCount').innerHTML = totalSales.length + ' টি';
-    if(document.getElementById('todaySalesCount')) document.getElementById('todaySalesCount').innerHTML = todaySales.length + ' টি';
-    
-    document.getElementById('partyReqCount').innerHTML = window.db.partyRequests.length + ' টি'; document.getElementById('totalStock').innerHTML = window.db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস';
-
-    document.getElementById('productsList').innerHTML = window.db.products.map(p => {
-      let stock = window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0); let supName = window.db.suppliers.find(s => s.id === p.supplierId)?.name || 'N/A';
-      return `<div class="product-card"><div class="img-wrap">${p.imageUrl ? `<img src="${p.imageUrl}">` : '📦'}</div><div class="info"><h4>${esc(p.name)}</h4><p style="font-size:12px; margin-bottom:3px;"><span style="color:var(--primary); font-weight:600;">সাপ্লায়ার: ${esc(supName)}</span></p><p>বিক্রয়: ৳${p.saleRate} | স্টক: ${stock}</p></div><div style="display: flex; gap: 8px; align-items: center;"><button class="btn-add-stock" onclick="openAddStockModal('${p.id}', '${esc(p.name)}')"><i class="fa-solid fa-plus"></i> স্টক</button><button class="btn-edit-icon" onclick="openForm('product', '${p.id}')"><i class="fa-solid fa-pen"></i></button></div></div>`;
-    }).join('') || '<div style="text-align:center; padding:20px; color:#999;">পণ্য নেই</div>';
-
-    document.getElementById('partiesTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>বাকী</th><th>অ্যাকশন</th></tr></thead><tbody>${window.db.parties.map(p => { let pDue = calculatePartyDue(p); return `<tr><td onclick="openPartyProfile('${p.id}')" style="color:var(--primary); font-weight:600;">${esc(p.name)}</td><td style="font-weight:600;">${money(pDue)}</td><td><button class="btn-edit-icon" onclick="openForm('party', '${p.id}')" style="width:28px; height:28px; font-size:12px;"><i class="fa-solid fa-pen"></i></button></td></tr>`; }).join('')}</tbody></table></div>`;
-
-    document.getElementById('suppliersTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>দেনা (দিবো)</th><th>অ্যাকশন</th></tr></thead><tbody>${window.db.suppliers.map(s => { let sDue = calculateSupplierDue(s.id); return `<tr><td style="font-weight:600;">${esc(s.name)}</td><td style="color:var(--orange); font-weight:600;">${money(sDue)}</td><td><button class="btn-edit-icon" onclick="openForm('supplier', '${s.id}')" style="width:28px; height:28px; font-size:12px;"><i class="fa-solid fa-pen"></i></button></td></tr>`; }).join('')}</tbody></table></div>`;
-    
-    // Updated SR Table with Image and Action Buttons
-    document.getElementById('srTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>ফোন</th><th>অ্যাকশন</th></tr></thead><tbody>${window.db.srs.map(s => `
-      <tr>
-        <td style="font-weight:600; display:flex; align-items:center; gap:8px;">
-          ${s.imageUrl ? `<img src="${s.imageUrl}" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">` : '<div style="width:30px; height:30px; border-radius:50%; background:#e2e8f0; display:flex; justify-content:center; align-items:center;"><i class="fa-solid fa-user" style="color:#94a3b8;"></i></div>'}
-          ${esc(s.name)}
-        </td>
-        <td>${esc(s.phone)}</td>
-        <td>
-          <button class="btn-edit-icon" onclick="openForm('sr', '${s.id}')" style="width:28px; height:28px; font-size:12px; display:inline-flex; margin-right:5px;"><i class="fa-solid fa-pen"></i></button>
-          <button class="btn-edit-icon" onclick="deleteSR('${s.id}')" style="width:28px; height:28px; font-size:12px; background:#fee2e2; color:#ef4444; display:inline-flex;"><i class="fa-solid fa-trash"></i></button>
-        </td>
-      </tr>`).join('')}</tbody></table></div>`;
-    
-    let sortedLogs = [...window.db.activityLogs].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-    document.getElementById('activityLogList').innerHTML = sortedLogs.map(log => {
-      let titleHtml = log.type;
-      if (log.details.includes('SR')) { titleHtml += ` <span class="sr-badge" style="font-size:9px;">SR Action</span>`; }
-      return `<div class="log-item"><div class="log-icon">${log.type.includes('বিক্রয়')?'<i class="fa-solid fa-cash-register"></i>':log.type.includes('ক্রয়')?'<i class="fa-solid fa-cart-shopping"></i>':log.type.includes('বাকি')?'<i class="fa-solid fa-hand-holding-dollar"></i>':log.type.includes('খরচ')?'<i class="fa-solid fa-receipt"></i>':log.type.includes('পণ্য')?'<i class="fa-solid fa-box"></i>':log.type.includes('স্টক')?'<i class="fa-solid fa-boxes-stacked"></i>':log.type.includes('সাপ্লায়ার')?'<i class="fa-solid fa-industry"></i>':'<i class="fa-solid fa-file-lines"></i>'}</div><div class="log-content"><div class="log-title">${titleHtml}</div><div class="log-desc">${log.details}</div><div class="log-time">${new Date(log.timestamp).toLocaleString('en-GB')}</div></div></div>`;
-    }).join('') || '<div style="text-align:center; padding:20px; color:#999;">কোনো লগ নেই</div>';
-
-    let notiCount = window.db.partyRequests.length;
-    if(notiCount > 0) { document.getElementById('notiBadge').style.display = 'flex'; document.getElementById('notiBadge').textContent = notiCount; } else { document.getElementById('notiBadge').style.display = 'none'; }
-    
-    renderInvoiceView(); renderTransactionsList(); renderDuesView(); renderTotalSales(); renderTodaySales();
+  // Quick Form
+  window.calcQuickFormTotals = function(source = null) {
+    const qty = Number(document.getElementById('q_qty').value) || 0; const rate = Number(document.getElementById('q_rate').value) || 0; const subTotal = qty * rate;
+    const dP = document.getElementById('q_discPercent'); const dF = document.getElementById('q_discFlat'); let disc = 0;
+    if (source === 'percent') { disc = (subTotal * (Number(dP.value)||0)) / 100; if(dF) dF.value = disc.toFixed(2); } 
+    else if (source === 'flat') { disc = Number(dF.value)||0; if(dP) dP.value = subTotal > 0 ? ((disc / subTotal) * 100).toFixed(2) : 0; } 
+    else { if (dF && dF.value) disc = Number(dF.value); else if (dP && dP.value) disc = (subTotal * Number(dP.value)) / 100; }
+    const del = Number(document.getElementById('q_delivery')?.value) || 0; const grand = Math.max(0, subTotal - disc + del); const paid = Number(document.getElementById('q_paid')?.value) || 0; const due = grand - paid;
+    if(document.getElementById('q_total_display')) document.getElementById('q_total_display').innerText = money(grand);
+    if(document.getElementById('q_due_display')) document.getElementById('q_due_display').innerText = money(due > 0 ? due : 0);
   };
 
-  window.calculateTotalDueAndPayable = function() {
-    let tr = 0, tp = 0;    
-    window.db.parties.forEach(p => { let due = calculatePartyDue(p); if(due > 0) tr += due; });
-    window.db.suppliers.forEach(s => { let due = calculateSupplierDue(s.id); if(due > 0) tp += due; });
-    return { receivable: tr, payable: tp };
+  window.openQuickForm = function(type, editId = null) {
+    if(type === 'sales') return openNewSale();
+    closeActionMenu();
+    const modal = document.getElementById('quickFormModal'); const title = document.getElementById('quickFormTitle'); const formFields = document.getElementById('quickFormFields'); const form = document.getElementById('quickForm'); const submitBtn = form.querySelector('.btn-submit');
+    let txn = editId ? window.db.transactions.find(t => t.id === editId) : null;
+    let qtyVal = txn ? txn.qty : 1, rateVal = txn ? txn.rate : '', paidVal = txn ? txn.paid : 0, discVal = txn ? (txn.discount||0) : 0, delVal = txn ? (txn.delivery||0) : 0;
+    const partyOpts = window.db.parties.map(p => `<option value="${p.id}">${p.name}</option>`).join(''); const supOpts = window.db.suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    let prodOpts = window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}" data-prate="${p.purchaseRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('') + `<option value="ADD_NEW" style="font-weight:bold; color:var(--primary);">➕ নতুন পণ্য যোগ করুন</option>`;
+
+    if (type === 'purchase') {
+      title.innerText = txn ? 'ক্রয় এডিট' : 'নতুন ক্রয়'; submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
+      formFields.innerHTML = `<div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId" id="q_supplier" required><option value="">সিলেক্ট করুন</option>${supOpts}</select></div><div class="form-group"><label>পণ্য</label><select name="productId" id="q_product" required><option value="">সিলেক্ট করুন</option>${prodOpts}</select></div><div style="display:flex; gap:10px; align-items:flex-end;"><div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="${qtyVal}" min="1" required oninput="calcQuickFormTotals()"></div><div class="form-group" style="flex:1.4; margin-bottom:0;"><label>ক্রয় মূল্য</label><input type="number" name="rate" id="q_rate" value="${rateVal}" required oninput="calcQuickFormTotals()"></div></div><div style="display:flex; gap:10px; margin-top:10px;"><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (%)</label><input type="number" name="discPercent" id="q_discPercent" value="0" oninput="calcQuickFormTotals('percent')"></div><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (৳)</label><input type="number" name="discFlat" id="q_discFlat" value="${discVal}" oninput="calcQuickFormTotals('flat')"></div></div><div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${delVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="form-group" style="margin-top:12px;"><label>পরিশোধ</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="q-calc-box"><span>সর্বমোট: <span id="q_total_display">৳ ${txn ? txn.total.toFixed(2) : '0.00'}</span></span><span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${txn ? txn.due.toFixed(2) : '0.00'}</span></span></div>`;
+    } else if (type === 'due_collect') {
+      title.innerText = txn ? 'বাকি আদায় এডিট' : 'বাকি আদায়'; submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
+      formFields.innerHTML = `<div class="form-group"><label>পার্টি</label><select name="partyId" required><option value="">সিলেক্ট করুন</option>${partyOpts}</select></div><div class="form-group"><label>আদায়ের পরিমাণ</label><input type="number" name="amount" value="${txn ? txn.amount : ''}" required min="1"></div><div class="form-group"><label>নোট (ঐচ্ছিক)</label><input type="text" name="note" value="${txn ? (txn.note||'').replace('বাকি আদায় - ','') : ''}"></div>`;
+    } else if (type === 'due_pay') {
+      title.innerText = txn ? 'বাকি পরিশোধ এডিট' : 'বাকি পরিশোধ'; submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
+      formFields.innerHTML = `<div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId" required><option value="">সিলেক্ট করুন</option>${supOpts}</select></div><div class="form-group"><label>পরিশোধের পরিমাণ</label><input type="number" name="amount" value="${txn ? txn.amount : ''}" required min="1"></div><div class="form-group"><label>নোট (ঐচ্ছিক)</label><input type="text" name="note" value="${txn ? (txn.note||'').replace('বাকি পরিশোধ - ','') : ''}"></div>`;
+    } else if (type === 'expense') {
+      title.innerText = txn ? 'খরচ এডিট' : 'নতুন খরচ'; submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
+      formFields.innerHTML = `<div class="form-group"><label>খরচের বিবরণ</label><input type="text" name="note" value="${txn ? (txn.note||'').replace('খরচ: ','') : ''}" required placeholder="যেমন: বিদ্যুৎ বিল"></div><div class="form-group"><label>পরিমাণ</label><input type="number" name="amount" value="${txn ? txn.amount : ''}" required min="1"></div>`;
+    } else if (type === 'sales_return' || type === 'purchase_return') {
+      title.innerText = txn ? (type === 'sales_return' ? 'বিক্রয় রিটার্ন এডিট' : 'ক্রয় রিটার্ন এডিট') : (type === 'sales_return' ? 'বিক্রি রিটার্ন' : 'ক্রয় রিটার্ন'); submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
+      let selectEntity = type === 'sales_return' ? partyOpts : supOpts; let labelEntity = type === 'sales_return' ? 'ক্রেতা (পার্টি)' : 'সাপ্লায়ার'; let nameAttr = type === 'sales_return' ? 'partyId' : 'supplierId';
+      formFields.innerHTML = `<div class="form-group"><label>${labelEntity}</label><select name="${nameAttr}" ${nameAttr === 'supplierId' ? 'id="q_supplier"' : ''} required><option value="">সিলেক্ট করুন</option>${selectEntity}</select></div><div class="form-group"><label>পণ্য</label><select name="productId" id="q_product" required><option value="">সিলেক্ট করুন</option>${prodOpts}</select></div><div style="display:flex; gap:10px; align-items:flex-end;"><div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="${qtyVal}" min="1" required oninput="calcQuickFormTotals()"></div><div class="form-group" style="flex:1.4; margin-bottom:0;"><label>মূল্য</label><input type="number" name="rate" id="q_rate" value="${rateVal}" required oninput="calcQuickFormTotals()"></div></div><div style="display:flex; gap:10px; margin-top:10px;"><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (%)</label><input type="number" name="discPercent" id="q_discPercent" value="0" oninput="calcQuickFormTotals('percent')"></div><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (৳)</label><input type="number" name="discFlat" id="q_discFlat" value="${discVal}" oninput="calcQuickFormTotals('flat')"></div></div><div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${delVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="form-group" style="margin-top:12px;"><label>টাকা ফেরত দেওয়া/নেওয়া</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="q-calc-box"><span>সর্বমোট: <span id="q_total_display">৳ ${txn ? txn.total.toFixed(2) : '0.00'}</span></span><span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${txn ? txn.due.toFixed(2) : '0.00'}</span></span></div>`;
+    } else if (type === 'cash_match') {
+      title.innerText = 'ক্যাশ মিলাই'; submitBtn.innerText = 'সেভ করুন';
+      formFields.innerHTML = `<div class="form-group"><label>আপনার কাছে থাকা বর্তমান ক্যাশ</label><input type="number" name="physicalCash" required></div><p style="font-size:14px; color:var(--text-muted); margin-top:10px;">সিস্টেম ক্যাশ: <strong id="sysCash" style="color:var(--primary)"></strong></p>`;
+      setTimeout(() => { document.getElementById('sysCash').innerText = money(calculateSystemCash().balance); }, 50);
+    }
+    modal.classList.add('open');
+    setTimeout(() => {
+        if(txn) {
+            if (type === 'due_collect') form.querySelector('select[name="partyId"]').value = txn.partyId;
+            else if (type === 'due_pay') form.querySelector('select[name="supplierId"]').value = txn.supplierId;
+            else if (type !== 'expense' && type !== 'cash_match') {
+                const ent = form.querySelector('select[name="supplierId"]') || form.querySelector('select[name="partyId"]');
+                if(ent) {
+                    if(type === 'purchase' || type === 'purchase_return') ent.value = txn.supplierId;
+                    else if(type === 'sales_return') ent.value = txn.partyId;
+                }
+                const prodSelect = document.getElementById('q_product');
+                if(prodSelect) { prodSelect.value = txn.productId; updateQuickFormRate(txn.productId, type); }
+                calcQuickFormTotals();
+            }
+        }
+    }, 50);
+    
+    const prodSelect = document.getElementById('q_product');
+    if(prodSelect) {
+      prodSelect.addEventListener('change', function() {
+        if(this.value === 'ADD_NEW') {
+          this.value = ''; document.getElementById('quickFormModal').classList.remove('open'); openForm('product');
+          window.refreshQuickFormProducts = function() {
+             document.getElementById('quickFormModal').classList.add('open');
+             const newProductOptions = window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}" data-prate="${p.purchaseRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('') + `<option value="ADD_NEW" style="font-weight:bold; color:var(--primary);">➕ নতুন পণ্য যোগ করুন</option>`;
+             document.getElementById('q_product').innerHTML = `<option value="">সিলেক্ট করুন</option>` + newProductOptions; window.refreshQuickFormProducts = null;
+          };
+          return;
+        }
+        if(this.value) updateQuickFormRate(this.value, type);
+      });
+    }
+    const supSelect = document.getElementById('q_supplier');
+    if(supSelect) {
+        supSelect.addEventListener('change', function() {
+            const sId = this.value; let filt = window.db.products; if(sId) filt = filt.filter(p => p.supplierId === sId);
+            document.getElementById('q_product').innerHTML = `<option value="">সিলেক্ট করুন</option>` + filt.map(p => `<option value="${p.id}" data-rate="${p.saleRate}" data-prate="${p.purchaseRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('') + `<option value="ADD_NEW" style="font-weight:bold; color:var(--primary);">➕ নতুন পণ্য যোগ করুন</option>`;
+            document.getElementById('q_rate').value = ''; calcQuickFormTotals();
+        });
+    }
+    form.onsubmit = (e) => { e.preventDefault(); processQuickForm(type, new FormData(form), editId); };
+  };
+  window.updateQuickFormRate = function(prodId, type) {
+      const prod = window.db.products.find(p => p.id === prodId); if(!prod) return;
+      const r = document.getElementById('q_rate'); if(r) { r.value = (type === 'purchase' || type === 'purchase_return') ? (prod.purchaseRate||0) : (prod.saleRate||0); calcQuickFormTotals(); }
+  };
+  window.closeQuickForm = function() { document.getElementById('quickFormModal').classList.remove('open'); document.getElementById('quickForm').reset(); };
+  window.closeActionMenu = function() { document.getElementById('actionMenuModal').classList.remove('open'); };
+
+  function processQuickForm(type, formData, editId = null) {
+    const d = Object.fromEntries(formData.entries()); const isEdit = editId !== null; const txnId = isEdit ? editId : 'TXN-' + Date.now().toString(36).toUpperCase(); const date = isEdit ? window.db.transactions.find(t => t.id === txnId).date : new Date().toISOString();
+
+    if (type === 'purchase' || type === 'sales_return' || type === 'purchase_return') {
+      const qty = Number(d.qty), rate = Number(d.rate), disc = Number(d.discFlat)||0, del = Number(d.delivery)||0;
+      const total = Math.max(0, (qty * rate) - disc + del); const paid = Number(d.paid)||0; const due = total - paid;
+      if (type === 'purchase') { if (isEdit) { const o = window.db.transactions.find(t => t.id === txnId); if(o && o.productId) deductStock(o.productId, o.qty); } addStock(d.productId, qty, 'PURCHASE'); } 
+      else if (type === 'sales_return') { if (isEdit) { const o = window.db.transactions.find(t => t.id === txnId); if(o && o.productId) deductStock(o.productId, o.qty); } addStock(d.productId, qty, 'RETURN'); } 
+      else if (type === 'purchase_return') { if (isEdit) { const o = window.db.transactions.find(t => t.id === txnId); if(o && o.productId) addStock(o.productId, o.qty, 'EDIT_RESTORE'); } let ts = window.db.batches.filter(x => x.productId === d.productId).reduce((a,b)=>a+Number(b.qty),0); if(ts < qty) return alert('স্টক নেই!'); deductStock(d.productId, qty); }
+
+      let txnData = { id: txnId, date: date, type: type, productId: d.productId, qty: qty, rate: rate, discount: disc, delivery: del, total: total, paid: paid, due: due };
+      if(type === 'purchase' || type === 'purchase_return') txnData.supplierId = d.supplierId; else txnData.partyId = d.partyId;
+
+      database.ref('transactions/' + txnId).set(txnData).then(() => {
+        let entity = type === 'sales_return' ? window.db.parties.find(p=>p.id === d.partyId)?.name : window.db.suppliers.find(s=>s.id === d.supplierId)?.name;
+        let pName = window.db.products.find(p=>p.id === d.productId)?.name || 'Unknown';
+        let lType = type === 'purchase' ? 'ক্রয়' : (type === 'sales_return' ? 'বিক্রয় রিটার্ন' : 'ক্রয় রিটার্ন');
+        logActivity(isEdit ? lType+' এডিট' : lType, `${entity} - এর সাথে ${pName} (${qty} পিস) ${isEdit ? 'আপডেট' : lType}। মোট: ${money(total)}, জমা: ${money(paid)}`);
+        alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm();
+      });
+    } 
+    else if (type === 'due_collect') {
+      database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_in', note: d.note ? 'বাকি আদায় - ' + d.note : 'বাকি আদায়', amount: Number(d.amount), partyId: d.partyId }).then(() => { let p = window.db.parties.find(p=>p.id === d.partyId)?.name; logActivity(isEdit ? 'বাকি আদায় এডিট' : 'বাকি আদায়', `${p} থেকে ${money(d.amount)} আদায় করা হয়েছে।`); alert('সফল!'); closeQuickForm(); });
+    } else if (type === 'due_pay') {
+      database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_out', note: d.note ? 'বাকি পরিশোধ - ' + d.note : 'বাকি পরিশোধ', amount: Number(d.amount), supplierId: d.supplierId }).then(() => { let s = window.db.suppliers.find(s=>s.id === d.supplierId)?.name; logActivity(isEdit ? 'বাকি পরিশোধ এডিট' : 'বাকি পরিশোধ', `${s} কে ${money(d.amount)} পরিশোধ করা হয়েছে।`); alert('সফল!'); closeQuickForm(); });
+    } else if (type === 'expense') {
+      database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_out', note: 'খরচ: ' + d.note, amount: Number(d.amount) }).then(() => { logActivity(isEdit ? 'খরচ এডিট' : 'খরচ', `খরচ যুক্ত হয়েছে: ${d.note} - ${money(d.amount)}`); alert('সফল!'); closeQuickForm(); });
+    } else if (type === 'cash_match') {
+      let sys = calculateSystemCash().balance; let phys = Number(d.physicalCash); let diff = phys - sys;
+      alert(`সিস্টেম ক্যাশ: ${money(sys)}\nআপনার ক্যাশ: ${money(phys)}\nপার্থক্য: ${money(diff)}`); logActivity('ক্যাশ মিলাই', `সিস্টেম ক্যাশ: ${money(sys)}, ফিজিক্যাল ক্যাশ: ${money(phys)}, পার্থক্য: ${money(diff)}`); closeQuickForm();
+    }
+  }
+
+  // Invoice Preview
+  window.showInvoicePreview = function(invNo, party, items, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod) {
+    hideGeneratedImage();
+    const dateStr = new Date().toLocaleDateString('en-GB').replace(/\//g, '-'); 
+    let dP = discPercent; if (dP === 0 && subTotal > 0 && discFlat > 0) dP = ((discFlat / subTotal) * 100).toFixed(2);
+    const itemRows = items.map((item, index) => { const code = window.db.products.find(p => p.id === item.productId)?.code || 'N/A'; return `<tr><td class="text-center">${index + 1}</td><td>${esc(code)}</td><td>${esc(item.name)}</td><td class="text-right">৳ ${Number(item.rate).toFixed(2)}</td><td class="text-center">${item.qty}</td><td class="text-right">৳ ${(item.qty * item.rate).toFixed(2)}</td></tr>`; }).join('');
+    const html = `
+      <div class="xin-inv-header"><div class="xin-inv-left"><div class="xin-logo-box">Novas</div><div class="xin-company-info"><h3>Novas Agro</h3><p>123, Krishi Market, Dhaka<br>Bangladesh</p><p>Phone: 017XX-XXXXXX | Email: info@novasagro.com<br>Website: www.novasagro.com</p></div></div><div class="xin-inv-right"><div><strong>Reg No:</strong> N/A</div><div><strong>Code:</strong> ${invNo}</div><div><strong>Currency Code:</strong> BDT</div></div></div>
+      <div class="xin-title-row"><h2>Invoice</h2></div>
+      <div class="xin-bill-to"><div class="xin-bill-box" style="width: 100%;"><h4>Bill To:</h4><strong>${esc(party.name)}</strong><br>${esc(party.address || 'N/A')}<br>Phone: ${esc(party.phone || 'N/A')}</div></div>
+      <table class="xin-meta-table"><tr><th>Date</th><td>${dateStr}</td><th>Order No.</th><td>${invNo}</td><th>Payment Terms</th><td>${paymentMethod}</td></tr><tr><th>Shipping Date</th><td>${dateStr}</td><th>Shipping Terms</th><td>N/A</td><th>Sales Person</th><td>Admin</td></tr></table>
+      <table class="xin-items-table"><thead><tr><th width="5%">No.</th><th width="20%">Item Code</th><th width="35%">Description</th><th width="15%">Unit Price</th><th width="10%">Qty</th><th width="15%">Amount</th></tr></thead><tbody>${itemRows}</tbody></table>
+      <div class="xin-footer-section"><div class="xin-footer-left"><p>Amount in words: <strong>Taka ${numberToWords(grandTotal)} Only</strong></p><br><h4>Note:</h4><p>Thanks for your business!<br>This invoice is generated using Novas Agro Admin.</p></div><div class="xin-footer-right"><div class="xin-sum-row"><span>Sub Total:</span> <span>৳ ${Number(subTotal).toFixed(2)}</span></div><div class="xin-sum-row"><span>Discount ${dP > 0 ? `(${dP}%)` : ''}:</span> <span>৳ ${Number(discFlat).toFixed(2)}</span></div><div class="xin-sum-row"><span>Add. Discount:</span> <span>৳ 0.00</span></div><div class="xin-sum-row"><span>Shipping:</span> <span>৳ ${Number(delivery).toFixed(2)}</span></div><div class="xin-sum-row"><span>Tax:</span> <span>৳ 0.00</span></div><div class="xin-sum-row bold"><span>Total:</span> <span>৳ ${Number(grandTotal).toFixed(2)}</span></div><div class="xin-sum-row"><span>Total Paid:</span> <span>৳ ${Number(paid).toFixed(2)}</span></div><div class="xin-sum-row total-due"><span>Amt Due:</span> <span>৳ ${Number(due).toFixed(2)}</span></div></div></div>
+      <div class="xin-sign-area"><div>Authorized Signature,<div class="xin-sign-line" style="font-family: 'Brush Script MT', cursive; font-size: 24px; border-top: none;">Novas</div><div class="xin-sign-line"></div></div></div>
+      <div class="xin-page-no">Page : 1 / 1</div>`;
+    document.getElementById('invoicePrintArea').innerHTML = html;
+    document.getElementById('invoiceModal').classList.add('open');
   };
 
-  window.calculateTotalExpense = function() {
-    let total = 0;
-    window.db.transactions.forEach(t => { if(t.type === 'cash_out' && t.note && t.note.includes('খরচ:')) total += Number(t.amount || 0); });
-    return total;
+  function numberToWords(num) { if(num === 0) return 'Zero'; const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen ']; const b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety']; let nStr = num.toString().split('.')[0]; if(nStr.length > 9) return 'Amount too large'; let n = ('000000000' + nStr).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/); if (!n) return ''; let str = ''; str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'Crore ' : ''; str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'Lakh ' : ''; str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'Thousand ' : ''; str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'Hundred ' : ''; str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : ''; return str.trim() || 'Zero'; }
+
+  window.closeInvoiceModal = function() { document.getElementById('invoiceModal').classList.remove('open'); hideGeneratedImage(); closeNewSale(); window.currentSaleItems = []; switchView('dashboard'); };
+  window.hideGeneratedImage = function() { document.getElementById('generatedInvoiceImg').src = ''; document.getElementById('invoiceImageContainer').style.display = 'none'; document.getElementById('invoicePrintArea').style.display = 'block'; document.getElementById('invoiceActionHeader').style.display = 'flex'; };
+  window.printInvoice = function() { window.print(); };
+  window.downloadInvoiceImage = function() {
+    const el = document.getElementById('invoicePrintArea'); const btn = document.getElementById('btnDownloadInvoice'); const txt = btn.innerHTML;
+    btn.innerHTML = '⏳...'; btn.disabled = true;
+    const orig = el.getAttribute('style') || ''; el.style.width = '794px'; el.style.maxWidth = '794px'; el.style.padding = '40px'; el.style.background = '#ffffff';
+    setTimeout(() => {
+        html2canvas(el, { scale: 4, useCORS: true, backgroundColor: '#ffffff', logging: false }).then(canvas => {
+            window.currentGeneratedDataUrl = canvas.toDataURL('image/jpeg', 0.95); canvas.toBlob((b) => { if(b) window.currentGeneratedBlob = b; }, 'image/jpeg', 0.95);
+            el.setAttribute('style', orig);
+            document.getElementById('generatedInvoiceImg').src = window.currentGeneratedDataUrl; document.getElementById('invoicePrintArea').style.display = 'none'; document.getElementById('invoiceImageContainer').style.display = 'block'; document.getElementById('invoiceActionHeader').style.display = 'none';
+            btn.innerHTML = txt; btn.disabled = false;
+        }).catch(err => { alert('ইনভয়েস তৈরি করতে সমস্যা হয়েছে।'); el.setAttribute('style', orig); btn.innerHTML = txt; btn.disabled = false; });
+    }, 100); 
+  };
+  window.forceDownloadImage = function() {
+    if(!window.currentGeneratedDataUrl) return;
+    try {
+        if (window.currentGeneratedBlob) { const u = URL.createObjectURL(window.currentGeneratedBlob); const l = document.createElement('a'); l.href = u; l.download = `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`; document.body.appendChild(l); l.click(); document.body.removeChild(l); URL.revokeObjectURL(u); } 
+        else { const l = document.createElement('a'); l.href = window.currentGeneratedDataUrl; l.download = `Invoice_${document.getElementById('nsInvoiceNo').innerText || 'Export'}.jpg`; document.body.appendChild(l); l.click(); document.body.removeChild(l); }
+    } catch (e) { alert('সরাসরি ডাউনলোড ব্যর্থ হয়েছে। ছবিটি চেপে ধরে সেভ করার চেষ্টা করুন।'); }
+  };
+  window.shareGeneratedImage = function() {
+    if(!window.currentGeneratedDataUrl) return;
+    if (navigator.share && navigator.canShare) {
+        try { fetch(window.currentGeneratedDataUrl).then(res => res.blob()).then(blob => { const f = new File([blob], `Invoice.jpg`, { type: 'image/jpeg' }); if (navigator.canShare({ files: [f] })) navigator.share({ files: [f], title: 'Invoice', text: 'Here is your invoice.' }).catch(() => window.forceDownloadImage()); else window.forceDownloadImage(); }).catch(() => window.forceDownloadImage()); } 
+        catch(e) { window.forceDownloadImage(); }
+    } else { window.forceDownloadImage(); }
   };
 
-  // ... [Standard functions like switchView, openForm, etc. remain unchanged] ...
+  // View rendering and routing
   window.switchView = function(viewId) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
@@ -1448,73 +1713,84 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     document.getElementById('modalTitle').textContent = title; document.getElementById('formFields').innerHTML = bodyHTML;
     document.getElementById('dataForm').onsubmit = (e) => { e.preventDefault(); handler(new FormData(document.getElementById('dataForm'))); closeModal(); };
     document.getElementById('modal').classList.add('open');
+    if (title.includes('পণ্য')) {
+      const c = document.querySelector('select[name="category"]'), s = document.querySelector('select[name="subCategory"]');
+      if(c && s) c.addEventListener('change', function() { s.innerHTML = '<option value="">সিলেক্ট করুন</option>' + (categoryData[this.value]||[]).map(x => `<option value="${x}">${x}</option>`).join(''); });
+    }
   };
   window.closeModal = function() { document.getElementById('modal').classList.remove('open'); document.getElementById('dataForm').reset(); };
 
   window.openForm = function(type, editId = null) {
-    let collection = type === 'party' ? 'parties' : type + 's';
-    let p = editId ? window.db[collection].find(x => x.id === editId) || {} : {};
-    
+    let coll = type === 'party' ? 'parties' : type + 's'; let p = editId ? window.db[coll].find(x => x.id === editId) || {} : {};
     if(type === 'product') {
-      let catOptions = Object.keys(categoryData).map(c => `<option value="${c}" ${p.category === c ? 'selected' : ''}>${c}</option>`).join('');
-      let subCatOptions = p.category ? (categoryData[p.category] || []).map(s => `<option value="${s}" ${p.subCategory === s ? 'selected' : ''}>${s}</option>`).join('') : '';
-      let supplierOptions = window.db.suppliers.map(s => `<option value="${s.id}" ${p.supplierId === s.id ? 'selected' : ''}>${s.name}</option>`).join('');
-
-      showModal(editId ? 'পণ্য এডিট' : 'পণ্য যোগ', `
-        <div class="img-preview-box">
-          <div class="img-preview" id="productImagePreview">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%; height:100%; object-fit:cover;">` : '📦'}</div>
-          <div style="flex: 1;">
-            <label style="font-size: 13px; font-weight: 500; color: var(--text); display:block; margin-bottom:5px;">পণ্যের ছবির লিংক</label>
-            <div style="display:flex; gap: 5px;">
-              <input type="url" name="imageLink" id="prodImageLink" value="${p.imageUrl || ''}" placeholder="https://..." style="flex:1; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; background:white; color:var(--text); font-size:13px;" oninput="document.getElementById('btnTestImage').style.display = this.value ? 'block' : 'none';">
-              <button type="button" id="btnTestImage" onclick="testProductImage()" style="display:${p.imageUrl ? 'block' : 'none'}; background: var(--primary); color: white; padding: 0 12px; border-radius: 8px; font-size: 13px; cursor: pointer; border:none;">টেস্ট</button>
-            </div>
-          </div>
-        </div>
-        <div class="form-group"><label>পণ্যের নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div>
-        <div class="form-group"><label>পণ্যের কোড</label><input type="text" name="code" value="${p.code || ''}" placeholder="যেমন: PRD-001"></div>
-        <div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId"><option value="">সিলেক্ট করুন</option>${supplierOptions}</select></div>
-        <div class="form-group"><label>ক্যাটাগরি</label><select name="category" id="productCategory"><option value="">সিলেক্ট করুন</option>${catOptions}</select></div>
-        <div class="form-group"><label>সাব-ক্যাটাগরি</label><select name="subCategory" id="productSubCategory"><option value="">সিলেক্ট করুন</option>${subCatOptions}</select></div>
-        <div class="form-group"><label>প্যাক সাইজ</label><input type="text" name="packSize" value="${p.packSize || ''}" placeholder="ক্লিক করে সাইজ দিন" readonly onclick="openPackModal()" style="cursor:pointer;"></div>
-        <div style="display:flex; gap:10px;">
-          <div class="form-group" style="flex:1;"><label>ক্রয় মূল্য</label><input type="number" name="purchaseRate" value="${p.purchaseRate || 0}" min="0"></div>
-          <div class="form-group" style="flex:1;"><label>বিক্রয় মূল্য</label><input type="number" name="saleRate" value="${p.saleRate || 0}" min="0"></div>
-        </div>
-        ${!editId ? `<div class="form-group"><label>বর্তমান স্টক (যোগ হবে)</label><input type="number" name="stock" value="0" min="0"></div>` : ''}
-        <div class="form-group"><label>কম স্টকের সীমা</label><input type="number" name="lowStockLimit" value="${p.lowStockLimit || 10}" min="0"></div>
-      `, (fd) => {
-        saveProductToDB(Object.fromEntries(fd.entries()), editId, () => { if (window.refreshQuickFormProducts) window.refreshQuickFormProducts(); });
-      });
+      let cO = Object.keys(categoryData).map(c => `<option value="${c}" ${p.category === c ? 'selected' : ''}>${c}</option>`).join(''); let sO = p.category ? (categoryData[p.category]||[]).map(s => `<option value="${s}" ${p.subCategory === s ? 'selected' : ''}>${s}</option>`).join('') : ''; let supO = window.db.suppliers.map(s => `<option value="${s.id}" ${p.supplierId === s.id ? 'selected' : ''}>${s.name}</option>`).join('');
+      showModal(editId ? 'পণ্য এডিট' : 'পণ্য যোগ', `<div class="img-preview-box"><div class="img-preview" id="productImagePreview">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%; height:100%; object-fit:cover;">` : '📦'}</div><div style="flex: 1;"><label style="font-size: 13px; font-weight: 500; color: var(--text); display:block; margin-bottom:5px;">পণ্যের ছবির লিংক</label><div style="display:flex; gap: 5px;"><input type="url" name="imageLink" id="prodImageLink" value="${p.imageUrl || ''}" placeholder="https://..." style="flex:1; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; background:white; color:var(--text); font-size:13px;" oninput="document.getElementById('btnTestImage').style.display = this.value ? 'block' : 'none';"><button type="button" id="btnTestImage" onclick="testProductImage()" style="display:${p.imageUrl ? 'block' : 'none'}; background: var(--primary); color: white; padding: 0 12px; border-radius: 8px; font-size: 13px; cursor: pointer; border:none;">টেস্ট</button></div></div></div><div class="form-group"><label>পণ্যের নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div><div class="form-group"><label>পণ্যের কোড</label><input type="text" name="code" value="${p.code || ''}" placeholder="যেমন: PRD-001"></div><div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId"><option value="">সিলেক্ট করুন</option>${supO}</select></div><div class="form-group"><label>ক্যাটাগরি</label><select name="category" id="productCategory"><option value="">সিলেক্ট করুন</option>${cO}</select></div><div class="form-group"><label>সাব-ক্যাটাগরি</label><select name="subCategory" id="productSubCategory"><option value="">সিলেক্ট করুন</option>${sO}</select></div><div class="form-group"><label>প্যাক সাইজ</label><input type="text" name="packSize" value="${p.packSize || ''}" placeholder="ক্লিক করে সাইজ দিন" readonly onclick="openPackModal()" style="cursor:pointer;"></div><div style="display:flex; gap:10px;"><div class="form-group" style="flex:1;"><label>ক্রয় মূল্য</label><input type="number" name="purchaseRate" value="${p.purchaseRate || 0}" min="0"></div><div class="form-group" style="flex:1;"><label>বিক্রয় মূল্য</label><input type="number" name="saleRate" value="${p.saleRate || 0}" min="0"></div></div>${!editId ? `<div class="form-group"><label>বর্তমান স্টক (যোগ হবে)</label><input type="number" name="stock" value="0" min="0"></div>` : ''}<div class="form-group"><label>কম স্টকের সীমা</label><input type="number" name="lowStockLimit" value="${p.lowStockLimit || 10}" min="0"></div>`, (fd) => { saveProductToDB(Object.fromEntries(fd.entries()), editId, () => { if (window.refreshQuickFormProducts) window.refreshQuickFormProducts(); }); });
     } else if(type === 'party') {
-      showModal(editId ? 'পার্টি এডিট' : 'পার্টি যোগ', `
-        <div class="form-group"><label>পার্টির নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div>
-        <div class="form-group"><label>ফোন</label><input type="text" name="phone" value="${p.phone || ''}"></div>
-        <div class="form-group"><label>ঠিকানা</label><input type="text" name="address" value="${p.address || ''}"></div>
-        <div class="form-group"><label>পূর্বের বাকী</label><input type="number" name="previousDue" value="${p.previousDue || 0}"></div>
-      `, (fd) => savePartyToDB(Object.fromEntries(fd.entries()), editId));
+      showModal(editId ? 'পার্টি এডিট' : 'পার্টি যোগ', `<div class="form-group"><label>পার্টির নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div><div class="form-group"><label>ফোন</label><input type="text" name="phone" value="${p.phone || ''}"></div><div class="form-group"><label>ঠিকানা</label><input type="text" name="address" value="${p.address || ''}"></div><div class="form-group"><label>পূর্বের বাকী</label><input type="number" name="previousDue" value="${p.previousDue || 0}"></div>`, (fd) => savePartyToDB(Object.fromEntries(fd.entries()), editId));
     } else if(type === 'supplier') {
-      showModal(editId ? 'সাপ্লায়ার এডিট' : 'সাপ্লায়ার যোগ', `
-        <div class="form-group"><label>সাপ্লায়ারের নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div>
-        <div class="form-group"><label>ফোন</label><input type="text" name="phone" value="${p.phone || ''}"></div>
-        <div class="form-group"><label>ঠিকানা</label><input type="text" name="address" value="${p.address || ''}"></div>
-      `, (fd) => saveSupplierToDB(Object.fromEntries(fd.entries()), editId));
+      showModal(editId ? 'সাপ্লায়ার এডিট' : 'সাপ্লায়ার যোগ', `<div class="form-group"><label>সাপ্লায়ারের নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div><div class="form-group"><label>ফোন</label><input type="text" name="phone" value="${p.phone || ''}"></div><div class="form-group"><label>ঠিকানা</label><input type="text" name="address" value="${p.address || ''}"></div>`, (fd) => saveSupplierToDB(Object.fromEntries(fd.entries()), editId));
     } else if(type === 'sr') {
-      showModal(editId ? 'এসআর (SR) এডিট' : 'নতুন এসআর (SR)', `
-        <div class="img-preview-box">
-          <div class="img-preview" id="srImagePreview">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%; height:100%; object-fit:cover;">` : '🧑‍💼'}</div>
-          <div style="flex: 1;">
-            <label style="font-size: 13px; font-weight: 500; color: var(--text); display:block; margin-bottom:5px;">এসআর ছবির লিংক</label>
-            <input type="url" name="imageUrl" value="${p.imageUrl || ''}" placeholder="https://..." style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; background:white; color:var(--text); font-size:13px;" oninput="document.getElementById('srImagePreview').innerHTML = this.value ? '<img src=\\''+this.value+'\\' style=\\'width:100%; height:100%; object-fit:cover;\\'>' : '🧑‍💼';">
-          </div>
-        </div>
-        <div class="form-group"><label>নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div>
-        <div class="form-group"><label>মোবাইল *</label><input type="text" name="phone" value="${p.phone || ''}" required></div>
-        <div class="form-group"><label>ঠিকানা</label><input type="text" name="address" value="${p.address || ''}"></div>
-      `, (fd) => saveSRToDB(Object.fromEntries(fd.entries()), editId));
+      showModal(editId ? 'এসআর (SR) এডিট' : 'নতুন এসআর (SR)', `<div class="img-preview-box"><div class="img-preview" id="srImagePreview">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%; height:100%; object-fit:cover;">` : '🧑‍💼'}</div><div style="flex: 1;"><label style="font-size: 13px; font-weight: 500; color: var(--text); display:block; margin-bottom:5px;">এসআর ছবির লিংক</label><input type="url" name="imageUrl" value="${p.imageUrl || ''}" placeholder="https://..." style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; background:white; color:var(--text); font-size:13px;" oninput="document.getElementById('srImagePreview').innerHTML = this.value ? '<img src=\\''+this.value+'\\' style=\\'width:100%; height:100%; object-fit:cover;\\'>' : '🧑‍💼';"></div></div><div class="form-group"><label>নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div><div class="form-group"><label>মোবাইল *</label><input type="text" name="phone" value="${p.phone || ''}" required></div><div class="form-group"><label>ঠিকানা</label><input type="text" name="address" value="${p.address || ''}"></div>`, (fd) => saveSRToDB(Object.fromEntries(fd.entries()), editId));
     }
   };
 
+  window.testProductImage = function() { const u = document.getElementById('prodImageLink').value; const p = document.getElementById('productImagePreview'); if(u) p.innerHTML = `<img src="${u}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='❌'; alert('ছবি লোড হয়নি');">`; else p.innerHTML = '📦'; };
+  
+  window.openPackModal = function() { document.getElementById('packSizeModal').classList.add('open'); };
+  window.closePackModal = function() { document.getElementById('packSizeModal').classList.remove('open'); };
+  window.savePackSize = function() { const u = document.getElementById('packUnit').value; const s = document.getElementById('packSizeInput').value; if(!s) return alert('সাইজের পরিমাণ দিন!'); document.querySelector('input[name="packSize"]').value = s + ' ' + u; closePackModal(); };
+
+  // Render All
+  window.renderAll = function() {
+    let c = calculateSystemCash(); document.getElementById('cashBalance').innerText = money(c.balance); document.getElementById('cashIn').innerText = money(c.in); document.getElementById('cashOut').innerText = money(c.out);
+    let d = calculateTotalDueAndPayable(); document.getElementById('totalDueDashboard').innerText = money(d.receivable); document.getElementById('totalPayableDashboard').innerText = money(d.payable);
+    document.getElementById('totalExpenseDashboard').innerText = money(calculateTotalExpense());
+    document.getElementById('totalProductsCount').innerText = window.db.products.length; document.getElementById('totalPartiesCount').innerText = window.db.parties.length;
+    document.getElementById('totalSRCount').innerText = window.db.srs.length; document.getElementById('totalSuppliersCount').innerText = window.db.suppliers.length;
+
+    let tS = window.db.transactions.filter(t => t.type === 'sales'); let tStr = new Date().toDateString(); let tdS = tS.filter(t => new Date(t.date).toDateString() === tStr);
+    if(document.getElementById('totalSalesCount')) document.getElementById('totalSalesCount').innerHTML = tS.length + ' টি';
+    if(document.getElementById('todaySalesCount')) document.getElementById('todaySalesCount').innerHTML = tdS.length + ' টি';
+    
+    document.getElementById('partyReqCount').innerHTML = window.db.partyRequests.length + ' টি'; document.getElementById('totalStock').innerHTML = window.db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস';
+
+    document.getElementById('productsList').innerHTML = window.db.products.map(p => {
+      let st = window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0); let sn = window.db.suppliers.find(s => s.id === p.supplierId)?.name || 'N/A';
+      return `<div class="product-card"><div class="img-wrap">${p.imageUrl ? `<img src="${p.imageUrl}">` : '📦'}</div><div class="info"><h4>${esc(p.name)}</h4><p style="font-size:12px; margin-bottom:3px;"><span style="color:var(--primary); font-weight:600;">সাপ্লায়ার: ${esc(sn)}</span></p><p>বিক্রয়: ৳${p.saleRate} | স্টক: ${st}</p></div><div style="display: flex; gap: 8px; align-items: center;"><button class="btn-add-stock" onclick="openAddStockModal('${p.id}', '${esc(p.name)}')"><i class="fa-solid fa-plus"></i> স্টক</button><button class="btn-edit-icon" onclick="openForm('product', '${p.id}')"><i class="fa-solid fa-pen"></i></button></div></div>`;
+    }).join('') || '<div style="text-align:center; padding:20px; color:#999;">পণ্য নেই</div>';
+
+    document.getElementById('partiesTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>বাকী</th><th>অ্যাকশন</th></tr></thead><tbody>${window.db.parties.map(p => { let pd = calculatePartyDue(p); return `<tr><td onclick="openPartyProfile('${p.id}')" style="color:var(--primary); font-weight:600;">${esc(p.name)}</td><td style="font-weight:600;">${money(pd)}</td><td><button class="btn-edit-icon" onclick="openForm('party', '${p.id}')" style="width:28px; height:28px; font-size:12px;"><i class="fa-solid fa-pen"></i></button></td></tr>`; }).join('')}</tbody></table></div>`;
+
+    document.getElementById('suppliersTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>দেনা (দিবো)</th><th>অ্যাকশন</th></tr></thead><tbody>${window.db.suppliers.map(s => { let sd = calculateSupplierDue(s.id); return `<tr><td style="font-weight:600;">${esc(s.name)}</td><td style="color:var(--orange); font-weight:600;">${money(sd)}</td><td><button class="btn-edit-icon" onclick="openForm('supplier', '${s.id}')" style="width:28px; height:28px; font-size:12px;"><i class="fa-solid fa-pen"></i></button></td></tr>`; }).join('')}</tbody></table></div>`;
+    
+    document.getElementById('srTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>ফোন</th><th>অ্যাকশন</th></tr></thead><tbody>${window.db.srs.map(s => `
+      <tr>
+        <td style="font-weight:600; display:flex; align-items:center; gap:8px;">
+          ${s.imageUrl ? `<img src="${s.imageUrl}" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">` : '<div style="width:30px; height:30px; border-radius:50%; background:#e2e8f0; display:flex; justify-content:center; align-items:center;"><i class="fa-solid fa-user" style="color:#94a3b8;"></i></div>'}
+          ${esc(s.name)}
+        </td>
+        <td>${esc(s.phone)}</td>
+        <td>
+          <button class="btn-edit-icon" onclick="openForm('sr', '${s.id}')" style="width:28px; height:28px; font-size:12px; display:inline-flex; margin-right:5px;"><i class="fa-solid fa-pen"></i></button>
+          <button class="btn-edit-icon" onclick="deleteSR('${s.id}')" style="width:28px; height:28px; font-size:12px; background:#fee2e2; color:#ef4444; display:inline-flex;"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>`).join('')}</tbody></table></div>`;
+    
+    let sl = [...window.db.activityLogs].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    document.getElementById('activityLogList').innerHTML = sl.map(log => {
+      let tH = log.type;
+      if (log.details.includes('SR')) { tH += ` <span class="sr-badge" style="font-size:9px;">SR Action</span>`; }
+      return `<div class="log-item"><div class="log-icon">${log.type.includes('বিক্রয়')?'<i class="fa-solid fa-cash-register"></i>':log.type.includes('ক্রয়')?'<i class="fa-solid fa-cart-shopping"></i>':log.type.includes('বাকি')?'<i class="fa-solid fa-hand-holding-dollar"></i>':log.type.includes('খরচ')?'<i class="fa-solid fa-receipt"></i>':log.type.includes('পণ্য')?'<i class="fa-solid fa-box"></i>':log.type.includes('স্টক')?'<i class="fa-solid fa-boxes-stacked"></i>':log.type.includes('সাপ্লায়ার')?'<i class="fa-solid fa-industry"></i>':'<i class="fa-solid fa-file-lines"></i>'}</div><div class="log-content"><div class="log-title">${tH}</div><div class="log-desc">${log.details}</div><div class="log-time">${new Date(log.timestamp).toLocaleString('en-GB')}</div></div></div>`;
+    }).join('') || '<div style="text-align:center; padding:20px; color:#999;">কোনো লগ নেই</div>';
+
+    let nC = window.db.partyRequests.length;
+    if(nC > 0) { document.getElementById('notiBadge').style.display = 'flex'; document.getElementById('notiBadge').textContent = nC; } else { document.getElementById('notiBadge').style.display = 'none'; }
+    renderInvoiceView(); renderTransactionsList(); renderDuesView(); renderTotalSales(); renderTodaySales();
+  };
+
+  window.calculateTotalDueAndPayable = function() { let tr = 0, tp = 0; window.db.parties.forEach(p => { let d = calculatePartyDue(p); if(d > 0) tr += d; }); window.db.suppliers.forEach(s => { let d = calculateSupplierDue(s.id); if(d > 0) tp += d; }); return { receivable: tr, payable: tp }; };
+  window.calculateTotalExpense = function() { let t = 0; window.db.transactions.forEach(tx => { if(tx.type === 'cash_out' && tx.note && tx.note.includes('খরচ:')) t += Number(tx.amount || 0); }); return t; };
+  
   window.openActionMenu = function() { document.getElementById('actionMenuModal').classList.add('open'); };
   window.toggleNotifications = function() { document.getElementById('notiDropdown').classList.toggle('open'); };
   
@@ -1533,15 +1809,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       }
     });
   });
-
-  // SR Image preview helper
-  window.testSRImage = function() {
-    const url = document.getElementById('srImageLink').value;
-    const previewDiv = document.getElementById('srImagePreview');
-    if(url) previewDiv.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.parentElement.innerHTML='❌'; alert('ছবি লোড হয়নি');">`;
-    else previewDiv.innerHTML = '🧑‍💼';
-  };
-
 </script>
 </body>
 </html>
