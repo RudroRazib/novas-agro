@@ -87,7 +87,7 @@ body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: v
 }
 
 /* ================= Dashboard UI ================= */
-.dash-top-panel { padding: 10px 12px; margin-top: -5px; text-align: center; }
+.dash-top-panel { padding: 15px 12px 10px; margin-top: 5px; text-align: center; }
 .dash-top-title { font-size: 11px; color: #475569; margin-bottom: 2px; font-weight: 500;}
 .dash-top-amount { font-size: 22px; font-weight: 700; color: #1647a7; margin-bottom: 8px; }
 .dash-split-box { background: rgba(255,255,255,0.6); border-radius: 12px; padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; border: 1px solid rgba(255,255,255,0.9); }
@@ -843,7 +843,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
 
-  window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [], companyDetails: {} };
+  window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [], companyDetails: {}, dashboardOverrides: {} };
   window.currentProfilePartyId = null;
   let currentSR = null;
   
@@ -933,6 +933,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     // Company Details Listener
     database.ref('companyDetails').on('value', snap => {
         window.db.companyDetails = snap.val() || {};
+    });
+
+    // Dashboard Overrides Listener
+    database.ref('dashboardOverrides').on('value', snap => {
+        window.db.dashboardOverrides = snap.val() || {};
+        renderAll();
     });
   }
 
@@ -1126,7 +1132,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const pName = party ? party.name : 'Unknown';
     const date = new Date(t.date).toLocaleDateString('en-GB');
     const due = t.due !== undefined ? Number(t.due) : (Number(t.total) - Number(t.paid || 0));
-    let srBadge = t.srName ? `<span class="sr-badge">SR: ${esc(t.srName)}</span>` : '';
+    
+    // Show creator name for all
+    let creatorDisplay = t.srName ? `SR: ${t.srName}` : (t.creatorName ? `By: ${t.creatorName}` : (t.createdBy ? `By: ${t.createdBy.split('@')[0]}` : 'By: Admin'));
+    let srBadge = `<span class="sr-badge" style="background:#E0F2FE; color:#0369A1;">${esc(creatorDisplay)}</span>`;
 
     return `<div class="invoice-list-item" onclick="viewExistingInvoice('${t.id}')">
         <div class="inv-list-header">
@@ -1598,15 +1607,20 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     updateSRProfile(); // Update sidebar image and address
 
     let cashData = calculateSystemCash();
-    if(document.getElementById('cashBalance')) document.getElementById('cashBalance').innerText = money(cashData.balance);
-    if(document.getElementById('cashIn')) document.getElementById('cashIn').innerText = money(cashData.in);
-    if(document.getElementById('cashOut')) document.getElementById('cashOut').innerText = money(cashData.out);
-    
-    // Global dues
-    let totalReceivable = 0; window.db.parties.forEach(p => { let due = calculatePartyDue(p); if(due > 0) totalReceivable += due; });
-    if(document.getElementById('totalDueDashboard')) document.getElementById('totalDueDashboard').innerText = money(totalReceivable);
-    let totalPayable = 0; window.db.suppliers.forEach(s => { let due = calculateSupplierDue(s.id); if(due > 0) totalPayable += due; });
-    if(document.getElementById('totalPayableDashboard')) document.getElementById('totalPayableDashboard').innerText = money(totalPayable);
+    let d = calculateTotalDueAndPayable();
+
+    // Apply Overrides if exist
+    let dispBal = window.db.dashboardOverrides?.cashBalance !== undefined && window.db.dashboardOverrides?.cashBalance !== null ? Number(window.db.dashboardOverrides.cashBalance) : cashData.balance;
+    let dispIn = window.db.dashboardOverrides?.cashIn !== undefined && window.db.dashboardOverrides?.cashIn !== null ? Number(window.db.dashboardOverrides.cashIn) : cashData.in;
+    let dispOut = window.db.dashboardOverrides?.cashOut !== undefined && window.db.dashboardOverrides?.cashOut !== null ? Number(window.db.dashboardOverrides.cashOut) : cashData.out;
+    let dispDue = window.db.dashboardOverrides?.totalDueDashboard !== undefined && window.db.dashboardOverrides?.totalDueDashboard !== null ? Number(window.db.dashboardOverrides.totalDueDashboard) : d.receivable;
+    let dispPayable = window.db.dashboardOverrides?.totalPayableDashboard !== undefined && window.db.dashboardOverrides?.totalPayableDashboard !== null ? Number(window.db.dashboardOverrides.totalPayableDashboard) : d.payable;
+
+    if(document.getElementById('cashBalance')) document.getElementById('cashBalance').innerText = money(dispBal);
+    if(document.getElementById('cashIn')) document.getElementById('cashIn').innerText = money(dispIn);
+    if(document.getElementById('cashOut')) document.getElementById('cashOut').innerText = money(dispOut);
+    if(document.getElementById('totalDueDashboard')) document.getElementById('totalDueDashboard').innerText = money(dispDue);
+    if(document.getElementById('totalPayableDashboard')) document.getElementById('totalPayableDashboard').innerText = money(dispPayable);
     
     let totalExpense = 0; window.db.transactions.forEach(t => { if(t.type === 'cash_out' && t.note && t.note.includes('খরচ:')) totalExpense += Number(t.amount || 0); });
     if(document.getElementById('totalExpenseDashboard')) document.getElementById('totalExpenseDashboard').innerText = money(totalExpense);
