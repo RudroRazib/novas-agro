@@ -87,7 +87,7 @@ body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: v
 }
 
 /* ================= Dashboard UI ================= */
-.dash-top-panel { padding: 15px 12px 10px; margin-top: 5px; text-align: center; }
+.dash-top-panel { padding: 10px 12px; margin-top: -5px; text-align: center; }
 .dash-top-title { font-size: 11px; color: #475569; margin-bottom: 2px; font-weight: 500;}
 .dash-top-amount { font-size: 22px; font-weight: 700; color: #1647a7; margin-bottom: 8px; }
 .dash-split-box { background: rgba(255,255,255,0.6); border-radius: 12px; padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; border: 1px solid rgba(255,255,255,0.9); }
@@ -223,12 +223,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .login-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; border: none;}
 
 /* ================= NEW SALE MODAL STYLES ================= */
-#newSaleModal { background: #F8FAFC; padding: 0; display: none; flex-direction: column; z-index: 95; align-items: stretch; width: 100%; }
+#newSaleModal { background: #F8FAFC; padding: 0; display: none; flex-direction: column; z-index: 95; align-items: stretch; }
 #newSaleModal.open { display: flex; }
-.ns-header { background: linear-gradient(145deg, #17449d, #2858b9); color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; width: 100%; box-sizing: border-box;}
+.ns-header { background: linear-gradient(145deg, #17449d, #2858b9); color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;}
 .ns-header-left { display: flex; align-items: center; gap: 15px; font-size: 18px; font-weight: 600; }
 .ns-back { font-size: 20px; cursor: pointer;}
-.ns-toggle { display: flex; background: rgba(255,255,255,0.2); border-radius: 20px; overflow: hidden; flex-shrink: 0; }
+.ns-toggle { display: flex; background: rgba(255,255,255,0.2); border-radius: 20px; overflow: hidden; }
 .ns-toggle button { padding: 6px 16px; font-size: 14px; font-weight: 600; color: white; background: none; cursor:pointer; border:none;}
 .ns-toggle button.active { background: white; color: var(--primary); }
 
@@ -271,8 +271,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .ns-save-btn { width: 100%; background: var(--primary); color: white; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; border: none; }
 
 /* Item Add Modal */
-#addItemModal, #invoiceListModal { z-index: 110 !important; align-items: center; justify-content: center; }
-#addItemModal .modal-box, #invoiceListModal .modal-box { border-radius: 24px; width: 90%; max-width: 400px; max-height: 80vh; animation: popIn 0.3s ease; padding:20px;}
+#addItemModal { align-items: center; justify-content: center; z-index: 110; }
+#addItemModal .modal-box { border-radius: 24px; width: 90%; max-width: 400px; max-height: 80vh; animation: popIn 0.3s ease; padding:20px;}
 @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 /* ================= INVOICE LIST & TRANSACTIONS STYLES ================= */
@@ -297,7 +297,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 /* ================= INVOICE STYLES (Xin Style) ================= */
 #invoiceModal { z-index: 120; align-items: center; justify-content: center; padding: 10px; }
 #invoiceModal .modal-box { border-radius: 16px; width: 100%; max-width: 800px; max-height: 95vh; padding: 0; background: white; }
-.inv-header-action { background: #F8FAFC; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px;}
+.inv-header-action { background: #F8FAFC; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
 .inv-header-action h3 { margin: 0; color: var(--text); font-size: 18px; font-weight: 700;}
 .btn-print { background: var(--primary); color: white; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px; border:none;}
 .btn-close-inv { background: #FEE2E2; color: var(--red); padding: 10px 15px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px; border:none;}
@@ -305,7 +305,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 #invoicePrintArea { padding: 20px; background: white; color: black; font-family: Arial, Helvetica, sans-serif; font-size: 11px; width: 100%; box-sizing: border-box; }
 .xin-inv-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; border-bottom: 2px solid black; padding-bottom: 10px; }
 .xin-inv-left { display: flex; flex-direction: row; gap: 10px; align-items: center; }
-.xin-logo-box { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; font-style: italic; flex-shrink: 0; object-fit: contain;}
+.xin-logo-box { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; font-style: italic; flex-shrink: 0;}
 .xin-company-info { font-size: 11px; line-height: 1.4; }
 .xin-company-info h3 { font-size: 15px; margin-bottom: 3px; font-weight: bold; }
 .xin-inv-right { text-align: left; font-size: 11px; line-height: 1.6; }
@@ -417,7 +417,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
           </div>
           <div class="circle-item" onclick="switchView('suppliers')">
             <div class="circle" style="background: linear-gradient(145deg, #F59E0B, #FBBF24);"><i class="fa-solid fa-industry"></i></div>
-            <div class="circle-label">সাপ্লায়ার</div>
+            <div class="circle-label">সাপ্লায়ার</div>
             <div style="font-size:11px; font-weight:700; color:#F59E0B; margin-top:-2px;" id="totalSuppliersCount">0</div>
           </div>
           <div class="circle-item" onclick="switchView('products')">
@@ -579,11 +579,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="side-profile">
-      <img id="displaySrImage" src="https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png" alt="Profile" style="width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 3px solid rgba(255,255,255,0.8); margin-bottom: 10px; background: white;">
-      <div style="font-size: 18px; font-weight: 700; color: white; text-align: center; line-height: 1.2;" id="displaySrName">SR Name</div>
-      <div style="font-size: 12px; font-weight: 600; opacity: 0.9; color: white; background: rgba(0,0,0,0.2); padding: 3px 12px; border-radius: 12px; margin-top: 8px;">(SR)</div>
-      <p id="displaySrPhone" style="font-size: 12px; margin-top: 8px; opacity: 0.9;">017xxxxxxxx</p>
-      <p id="displaySrAddress" style="font-size: 11px; margin-top: 2px; opacity: 0.8;"><i class="fa-solid fa-location-dot"></i> ঠিকানা</p>
+      <img id="displaySrImage" src="https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png" alt="Profile">
+      <h3 id="displaySrName">SR Name</h3>
+      <div class="business-name" id="displaySrPhone">017xxxxxxxx</div>
+      <p id="displaySrAddress"><i class="fa-solid fa-location-dot"></i> ঠিকানা</p>
     </div>
     
     <div class="side-menu">
@@ -806,7 +805,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     <div class="inv-header-action" id="invoiceActionHeader">
       <h3>ইনভয়েস</h3>
       <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
-        <button class="btn-print" id="btnEditFromPreview" style="background: var(--orange); display: none;" onclick="triggerEditFromPreview()"><i class="fa-solid fa-pen"></i> এডিট করুন</button>
         <button class="btn-print" style="background: var(--green);" onclick="printInvoice()"><i class="fa-solid fa-print"></i> প্রিন্ট (A4)</button>
         <button class="btn-print" id="btnDownloadInvoice" onclick="downloadInvoiceImage()"><i class="fa-solid fa-camera"></i> ছবি</button>
         <button class="btn-close-inv" onclick="closeInvoiceModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -819,7 +817,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         <div id="invoiceImageContainer" style="display:none; text-align:center; padding: 20px;">
             <div style="background: #F0FDF4; border: 1px solid #22C55E; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
                 <p style="font-weight: bold; color: #15803D; font-size: 15px; margin: 0;">
-                    ✅ ছবি তৈরি হয়েছে। সেভ করতে নিচের বাটনে ক্লিক করুন।
+                    ✅ ছবি তৈরি হয়েছে। সেভ করতে নিচের বাটনে ক্লিক করুন।
                 </p>
             </div>
             
@@ -843,33 +841,53 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
 
-  window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [], companyDetails: {}, dashboardOverrides: {} };
+  // ===== DB state (with dashboardOverrides) =====
+  window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [], dashboardOverrides: {} };
   window.currentProfilePartyId = null;
-  window.currentBusinessId = null;
   let currentSR = null;
-  
+
+  // ===== Business-scoped DB reference (CORE FIX) =====
+  function srDbRef(path) {
+    if (currentSR && currentSR.businessId && currentSR.businessId !== 'root') {
+      return database.ref('businesses/' + currentSR.businessId + '/' + path);
+    }
+    return database.ref(path);
+  }
+  window.srDbRef = srDbRef;
+
   // New Sale State
   window.currentSaleItems = [];
   window.currentSaleType = 'cash';
   window.editingSaleId = null; 
   window.editingItemIndex = null;
-  window.currentPreviewTxnId = null; // Global variable for preview edit
   window.currentGeneratedDataUrl = '';
   window.currentGeneratedBlob = null;
 
   // Auth
   const loginScreen = document.getElementById('loginScreen'), appContent = document.getElementById('appContent');
-  
-  document.addEventListener("DOMContentLoaded", () => {
+
+  // Restore saved session (with businessId recovery for old sessions)
+  document.addEventListener("DOMContentLoaded", async () => {
     const savedSR = localStorage.getItem('novasAgroSR');
-    if(savedSR) { 
-        const parsed = JSON.parse(savedSR);
-        currentSR = parsed; 
-        window.currentBusinessId = parsed.businessId || 'root';
-        showApp(); 
+    if(!savedSR) return;
+    let sr = JSON.parse(savedSR);
+    if (!sr.businessId) {
+      try {
+        const dirSnap = await database.ref('srDirectory/' + sr.phone).once('value');
+        if (dirSnap.exists()) {
+          sr.businessId = dirSnap.val().businessId || 'root';
+          sr.id = dirSnap.val().srId || sr.id;
+        } else {
+          sr.businessId = 'root';
+        }
+        localStorage.setItem('novasAgroSR', JSON.stringify(sr));
+      } catch(e) { sr.businessId = 'root'; }
     }
+    currentSR = sr;
+    showApp();
   });
 
+  // ===== Login Handler (business-aware) =====
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const phone = document.getElementById('loginPhone').value.trim();
@@ -881,52 +899,58 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     loginBtn.textContent = 'চেক করা হচ্ছে...'; loginBtn.disabled = true; loginError.style.display = 'none';
 
     try {
-      let businessId = 'root';
-      let srId = null;
-      let userData = null;
+      // Step 1: srDirectory থেকে businessId + srId বের করুন
+      let businessId = null, srId = null, userData = null;
 
-      // Try finding in global directory first (For Multi-Tenant)
       const dirSnap = await database.ref('srDirectory/' + phone).once('value');
       if (dirSnap.exists()) {
-          businessId = dirSnap.val().businessId;
-          srId = dirSnap.val().srId;
-          const path = businessId === 'root' ? 'srs/' + srId : 'businesses/' + businessId + '/srs/' + srId;
-          const srSnap = await database.ref(path).once('value');
-          if(srSnap.exists()) userData = srSnap.val();
+        businessId = dirSnap.val().businessId || 'root';
+        srId = dirSnap.val().srId;
+        const srPath = businessId === 'root' ? 'srs/' + srId : 'businesses/' + businessId + '/srs/' + srId;
+        const srSnap = await database.ref(srPath).once('value');
+        if (srSnap.exists()) userData = srSnap.val();
       }
 
-      // Fallback for old SRs if not found in directory
+      // Fallback: পুরনো (root) srs টেবিল
       if (!userData) {
-          const snapshot = await database.ref('srs').orderByChild('phone').equalTo(phone).once('value');
-          if (snapshot.exists()) {
-              snapshot.forEach(child => { userData = child.val(); srId = child.key; });
-              businessId = 'root';
-          }
+        const legacySnap = await database.ref('srs').orderByChild('phone').equalTo(phone).once('value');
+        if (legacySnap.exists()) {
+          legacySnap.forEach(child => {
+            businessId = 'root';
+            srId = child.key;
+            userData = child.val();
+          });
+        }
       }
 
       if (!userData) {
-        loginError.style.display = 'block'; loginError.textContent = 'এই নম্বরে কোনো এসআর নেই। এডমিনের সাথে যোগাযোগ করুন।';
-        loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false; return;
+        loginError.style.display = 'block';
+        loginError.textContent = 'এই নম্বরে কোনো এসআর নেই। এডমিনের সাথে যোগাযোগ করুন।';
+        loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false;
+        return;
       }
 
+      // Step 2: PIN verify / set
+      const srPath = businessId === 'root' ? 'srs/' + srId : 'businesses/' + businessId + '/srs/' + srId;
       if (userData.pin) {
         if (userData.pin !== pin) {
-          loginError.style.display = 'block'; loginError.textContent = 'পিন ভুল হয়েছে। আবার চেষ্টা করুন।';
-          loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false; return;
+          loginError.style.display = 'block';
+          loginError.textContent = 'পিন ভুল হয়েছে। আবার চেষ্টা করুন।';
+          loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false;
+          return;
         }
       } else {
-        const path = businessId === 'root' ? 'srs/' + srId : 'businesses/' + businessId + '/srs/' + srId;
-        await database.ref(path).update({ pin: pin });
+        await database.ref(srPath).update({ pin: pin });
         userData.pin = pin;
       }
 
-      window.currentBusinessId = businessId;
       currentSR = { id: srId, name: userData.name, phone: userData.phone, businessId: businessId };
       localStorage.setItem('novasAgroSR', JSON.stringify(currentSR));
       showApp();
 
     } catch(err) {
-      loginError.style.display = 'block'; loginError.textContent = 'ইন্টারনেট বা সিস্টেম এরর: ' + err.message;
+      loginError.style.display = 'block';
+      loginError.textContent = 'ইন্টারনেট বা সিস্টেম এরর: ' + err.message;
       loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false;
     }
   });
@@ -939,42 +963,34 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   window.logoutUser = function() { if(confirm('লগআউট করবেন?')) { localStorage.removeItem('novasAgroSR'); location.reload(); } };
 
-  // Multi-Tenant DB Reference Wrapper
-  const dbRef = (path) => {
-      if (!window.currentBusinessId || window.currentBusinessId === 'root') {
-          return database.ref(path);
-      }
-      return database.ref('businesses/' + window.currentBusinessId + '/' + path);
-  };
-
-  // Data Listeners
+  // ===== Data Listeners (business-scoped) =====
   function listenToData() {
     const handleSnap = (refName) => (snap) => {
       let v = snap.val() || {};
       window.db[refName] = Object.keys(v).map(k => ({ ...v[k], key: k }));
       renderAll();
     };
-    dbRef('products').on('value', handleSnap('products'));
-    dbRef('batches').on('value', handleSnap('batches'));
-    dbRef('srs').on('value', handleSnap('srs'));
-    dbRef('parties').on('value', handleSnap('parties'));
-    dbRef('suppliers').on('value', handleSnap('suppliers'));
-    dbRef('transactions').on('value', handleSnap('transactions'));
-    dbRef('partyRequests').on('value', handleSnap('partyRequests'));
-    dbRef('pendingSales').on('value', handleSnap('pendingSales'));
-    dbRef('approvedSales').on('value', handleSnap('approvedSales'));
-    dbRef('deliveries').on('value', handleSnap('deliveries'));
-    dbRef('activityLogs').on('value', handleSnap('activityLogs'));
-    
-    // Company Details Listener
-    dbRef('companyDetails').on('value', snap => {
-        window.db.companyDetails = snap.val() || {};
-    });
 
-    // Dashboard Overrides Listener
-    dbRef('dashboardOverrides').on('value', snap => {
-        window.db.dashboardOverrides = snap.val() || {};
-        renderAll();
+    // Detach old listeners
+    ['products','batches','srs','parties','suppliers','transactions','partyRequests','pendingSales','approvedSales','deliveries','activityLogs'].forEach(r => srDbRef(r).off());
+    srDbRef('dashboardOverrides').off();
+
+    srDbRef('products').on('value', handleSnap('products'));
+    srDbRef('batches').on('value', handleSnap('batches'));
+    srDbRef('srs').on('value', handleSnap('srs'));
+    srDbRef('parties').on('value', handleSnap('parties'));
+    srDbRef('suppliers').on('value', handleSnap('suppliers'));
+    srDbRef('transactions').on('value', handleSnap('transactions'));
+    srDbRef('partyRequests').on('value', handleSnap('partyRequests'));
+    srDbRef('pendingSales').on('value', handleSnap('pendingSales'));
+    srDbRef('approvedSales').on('value', handleSnap('approvedSales'));
+    srDbRef('deliveries').on('value', handleSnap('deliveries'));
+    srDbRef('activityLogs').on('value', handleSnap('activityLogs'));
+
+    // 🔑 Admin-controlled dashboard overrides
+    srDbRef('dashboardOverrides').on('value', snap => {
+      window.db.dashboardOverrides = snap.val() || {};
+      renderAll();
     });
   }
 
@@ -985,7 +1001,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if (srData) {
         document.getElementById('displaySrName').textContent = srData.name;
         document.getElementById('displaySrPhone').textContent = srData.phone;
-        document.getElementById('displaySrAddress').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${srData.address || 'ঠিকানা দেওয়া নেই'}`;
+        document.getElementById('displaySrAddress').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${srData.address || 'ঠিকানা দেওয়া নেই'}`;
         if (srData.imageUrl) {
             document.getElementById('displaySrImage').src = srData.imageUrl;
             document.getElementById('displaySrImage').style.display = 'block';
@@ -995,18 +1011,18 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     }
   }
 
-  // Log Activity (Updated with User Name)
+  // Log Activity (business-scoped)
   function logActivity(type, details) {
     const logId = Date.now().toString(36);
-    dbRef('activityLogs/' + logId).set({
+    srDbRef('activityLogs/' + logId).set({
       id: logId, type: type, details: details, timestamp: new Date().toISOString(),
-      user: currentSR.name, userName: currentSR.name
+      userName: currentSR.name, user: currentSR.phone
     });
   }
 
   window.savePartyToDB = function(data, id = null) {
     const newId = id || Date.now().toString(36);
-    dbRef('parties/' + newId).update({ 
+    srDbRef('parties/' + newId).update({ 
       id: newId, name: data.name, phone: data.phone || '', address: data.address || '', 
       previousDue: Number(data.previousDue) || 0
     });
@@ -1062,7 +1078,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     window.currentSaleType = 'cash';
     window.editingSaleId = null;
     window.editingItemIndex = null;
-    window.currentPreviewTxnId = null;
     document.getElementById('nsSaveBtn').innerText = 'সেভ করুন';
     document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> নতুন বিক্রয়`;
     
@@ -1128,7 +1143,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let sales = window.db.transactions.filter(t => t.type === 'sales');
     sales.sort((a,b) => new Date(b.date) - new Date(a.date));
     if (searchTerm) { const lower = searchTerm.toLowerCase(); sales = sales.filter(t => { const p = window.db.parties.find(x=>x.id===t.partyId); const pName = p?p.name.toLowerCase():''; const inv = (t.invoiceNo||'').toLowerCase(); return pName.includes(lower) || inv.includes(lower); }); }
-    if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো ইনভয়েস পাওয়া যায়নি</div>'; return; }
+    if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো ইনভয়েস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
 
@@ -1138,7 +1153,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let sales = window.db.transactions.filter(t => t.type === 'sales');
     sales.sort((a,b) => new Date(b.date) - new Date(a.date));
     if (searchTerm) { const lower = searchTerm.toLowerCase(); sales = sales.filter(t => { const p = window.db.parties.find(x=>x.id===t.partyId); const pName = p?p.name.toLowerCase():''; const inv = (t.invoiceNo||'').toLowerCase(); return pName.includes(lower) || inv.includes(lower); }); }
-    if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো ইনভয়েস পাওয়া যায়নি</div>'; return; }
+    if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো ইনভয়েস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
 
@@ -1148,7 +1163,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let sales = window.db.transactions.filter(t => t.type === 'sales');
     sales.sort((a,b) => new Date(b.date) - new Date(a.date));
     if (searchTerm) { const lower = searchTerm.toLowerCase(); sales = sales.filter(t => { const p = window.db.parties.find(x=>x.id===t.partyId); const pName = p?p.name.toLowerCase():''; const inv = (t.invoiceNo||'').toLowerCase(); const sr = (t.srName||'').toLowerCase(); return pName.includes(lower) || inv.includes(lower) || sr.includes(lower); }); }
-    if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো সেলস পাওয়া যায়নি</div>'; return; }
+    if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো সেলস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
 
@@ -1159,7 +1174,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let sales = window.db.transactions.filter(t => t.type === 'sales' && new Date(t.date).toDateString() === todayStr);
     sales.sort((a,b) => new Date(b.date) - new Date(a.date));
     if (searchTerm) { const lower = searchTerm.toLowerCase(); sales = sales.filter(t => { const p = window.db.parties.find(x=>x.id===t.partyId); const pName = p?p.name.toLowerCase():''; const inv = (t.invoiceNo||'').toLowerCase(); const sr = (t.srName||'').toLowerCase(); return pName.includes(lower) || inv.includes(lower) || sr.includes(lower); }); }
-    if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">আজকের কোনো সেলস পাওয়া যায়নি</div>'; return; }
+    if (sales.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">আজকের কোনো সেলস পাওয়া যায়নি</div>'; return; }
     container.innerHTML = sales.map(t => getInvoiceListItemHTML(t)).join('');
   };
 
@@ -1168,12 +1183,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const pName = party ? party.name : 'Unknown';
     const date = new Date(t.date).toLocaleDateString('en-GB');
     const due = t.due !== undefined ? Number(t.due) : (Number(t.total) - Number(t.paid || 0));
-    
-    // Show creator name for all
-    let creatorDisplay = t.srName ? `SR: ${t.srName}` : (t.creatorName ? `By: ${t.creatorName}` : (t.createdBy ? `By: ${t.createdBy.split('@')[0]}` : 'By: Admin'));
-    let srBadge = `<span class="sr-badge" style="background:#E0F2FE; color:#0369A1;">${esc(creatorDisplay)}</span>`;
+    let srBadge = t.srName ? `<span class="sr-badge">SR: ${esc(t.srName)}</span>` : '';
 
-    return `<div class="invoice-list-item" onclick="viewExistingInvoice('${t.id}')">
+    return `<div class="invoice-list-item" onclick="editExistingInvoice('${t.id}')">
         <div class="inv-list-header">
             <div>
                 <div class="inv-list-inv">${t.invoiceNo || 'N/A'} ${srBadge}</div>
@@ -1187,34 +1199,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </div>
     </div>`;
   }
-
-  // NEW: View Existing Invoice directly
-  window.viewExistingInvoice = function(txnId) {
-    const txn = window.db.transactions.find(t => t.id === txnId);
-    if(!txn) return;
-
-    window.currentPreviewTxnId = txnId;
-    const party = window.db.parties.find(p => p.id === txn.partyId);
-    let dP = 0; if(txn.subTotal > 0 && txn.discount > 0) dP = ((txn.discount / txn.subTotal) * 100).toFixed(2);
-    
-    showInvoicePreview(txn.invoiceNo || 'N/A', party, txn.items, txn.subTotal, dP, txn.discount, txn.delivery, txn.total, txn.paid, txn.due, txn.paymentMethod);
-
-    const btnEdit = document.getElementById('btnEditFromPreview');
-    if (txn.srPhone === currentSR.phone || txn.srId === currentSR.id) {
-        btnEdit.style.display = 'flex';
-    } else {
-        btnEdit.style.display = 'none';
-    }
-  };
-
-  // NEW: Trigger Edit from Preview Modal
-  window.triggerEditFromPreview = function() {
-    if(!window.currentPreviewTxnId) return;
-    const id = window.currentPreviewTxnId;
-    document.getElementById('invoiceModal').classList.remove('open'); // Just hide, don't wipe state entirely
-    hideGeneratedImage();
-    editExistingInvoice(id);
-  };
 
   window.editExistingInvoice = function(txnId) {
     const txn = window.db.transactions.find(t => t.id === txnId);
@@ -1264,7 +1248,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         return p.includes(lower) || party.includes(lower) || sup.includes(lower) || inv.includes(lower) || note.includes(lower) || sr.includes(lower);
       });
     }
-    if (txns.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো লেনদেন পাওয়া যায়নি</div>'; return; }
+    if (txns.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো লেনদেন পাওয়া যায়নি</div>'; return; }
     container.innerHTML = txns.map(t => {
         let typeStr = '', entityStr = '', color = '', detailsStr = '', totalAmt = 0, dueAmt = 0;
         const pName = window.db.products.find(p => p.id === t.productId)?.name || '';
@@ -1303,7 +1287,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if(!txn) return;
 
     // PERMISSION CHECK: SR can only edit their own transactions
-    if (txn.srPhone !== currentSR.phone && txn.srId !== currentSR.id) {
+    if (txn.srPhone !== currentSR.phone && txn.srId !== currentSR.id && txn.createdBy !== currentSR.phone) {
         return alert('দুঃখিত! এটি আপনার করা লেনদেন নয়। আপনি শুধুমাত্র নিজের করা লেনদেন এডিট করতে পারবেন।');
     }
 
@@ -1356,7 +1340,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   window.renderSaleItems = function() {
     const list = document.getElementById('nsItemsList');
-    if(window.currentSaleItems.length === 0) { list.innerHTML = `<div style="padding:20px; text-align:center; color:#999; font-size:14px;">কোনো আইটেম যুক্ত করা হয়নি</div>`; } 
+    if(window.currentSaleItems.length === 0) { list.innerHTML = `<div style="padding:20px; text-align:center; color:#999; font-size:14px;">কোনো আইটেম যুক্ত করা হয়নি</div>`; } 
     else {
       list.innerHTML = window.currentSaleItems.map((item, index) => `
         <div class="ns-item-row">
@@ -1395,45 +1379,20 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   function deductStock(productId, qty) {
       let remaining = qty;
       let bList = window.db.batches.filter(x => x.productId === productId && Number(x.qty) > 0);
-      for(let b of bList) { if(remaining <= 0) break; let cQty = Number(b.qty); let targetKey = b.key || b.id; if(cQty >= remaining) { dbRef('batches/' + targetKey).update({ qty: cQty - remaining }); remaining = 0; } else { dbRef('batches/' + targetKey).update({ qty: 0 }); remaining -= cQty; } }
+      for(let b of bList) { if(remaining <= 0) break; let cQty = Number(b.qty); let targetKey = b.key || b.id; if(cQty >= remaining) { srDbRef('batches/' + targetKey).update({ qty: cQty - remaining }); remaining = 0; } else { srDbRef('batches/' + targetKey).update({ qty: 0 }); remaining -= cQty; } }
   }
 
-  function addStock(productId, qty, prefix='RETURN') { let bId = Date.now().toString(36) + Math.random().toString(36).substring(2, 5); dbRef('batches/' + bId).set({ id: bId, productId: productId, qty: Number(qty), batchNo: prefix }); }
+  function addStock(productId, qty, prefix='RETURN') { let bId = Date.now().toString(36) + Math.random().toString(36).substring(2, 5); srDbRef('batches/' + bId).set({ id: bId, productId: productId, qty: Number(qty), batchNo: prefix }); }
 
   window.saveNewSale = function() {
-    const partyId = document.getElementById('nsCustomer').value; 
-    if(!partyId) return alert('কাস্টমার সিলেক্ট করুন!'); 
-    if(window.currentSaleItems.length === 0) return alert('কমপক্ষে ১টি আইটেম যোগ করুন!');
-
-    const isEdit = window.editingSaleId !== null; 
-    const txnId = isEdit ? window.editingSaleId : 'TXN-' + Date.now().toString(36).toUpperCase(); 
-
-    // Fix stock validation when editing
-    let stockAdjustment = {};
-    if (isEdit) {
-        const oldTxn = window.db.transactions.find(t => t.id === txnId);
-        if (oldTxn && oldTxn.items) {
-            oldTxn.items.forEach(item => {
-                stockAdjustment[item.productId] = (stockAdjustment[item.productId] || 0) + Number(item.qty);
-            });
-        }
-    }
-
-    for(let item of window.currentSaleItems) { 
-        let totalStock = window.db.batches.filter(x => x.productId === item.productId).reduce((a,b)=>a+Number(b.qty),0); 
-        let oldQty = stockAdjustment[item.productId] || 0;
-        if((totalStock + oldQty) < item.qty) return alert(`পণ্য "${window.db.products.find(p => p.id === item.productId)?.name}" এর পর্যাপ্ত স্টক নেই!`); 
-    }
-    
+    const partyId = document.getElementById('nsCustomer').value; if(!partyId) return alert('কাস্টমার সিলেক্ট করুন!'); if(window.currentSaleItems.length === 0) return alert('কমপক্ষে ১টি আইটেম যোগ করুন!');
+    for(let item of window.currentSaleItems) { let totalStock = window.db.batches.filter(x => x.productId === item.productId).reduce((a,b)=>a+Number(b.qty),0); if(totalStock < item.qty) return alert(`পণ্য "${window.db.products.find(p => p.id === item.productId)?.name}" এর পর্যাপ্ত স্টক নেই!`); }
     const invNo = document.getElementById('nsInvoiceNo').innerText; const subTotal = Number(document.getElementById('nsSubTotal').value); const discPercent = Number(document.getElementById('nsDiscPercent').value) || 0; const discFlat = Number(document.getElementById('nsDiscFlat').value) || 0; const delivery = Number(document.getElementById('nsDelivery').value) || 0; const grandTotal = Number(document.getElementById('nsGrandTotal').value); const paid = Number(document.getElementById('nsPaid').value) || 0; const due = Number(document.getElementById('nsDue').value); const paymentMethod = document.getElementById('nsPaymentMethod').value;
-    const date = isEdit ? window.db.transactions.find(t => t.id === txnId).date : new Date().toISOString(); const saleItemsCopy = [...window.currentSaleItems]; const partyObj = window.db.parties.find(p => p.id === partyId);
-    
+    const isEdit = window.editingSaleId !== null; const txnId = isEdit ? window.editingSaleId : 'TXN-' + Date.now().toString(36).toUpperCase(); const date = isEdit ? window.db.transactions.find(t => t.id === txnId).date : new Date().toISOString(); const saleItemsCopy = [...window.currentSaleItems]; const partyObj = window.db.parties.find(p => p.id === partyId);
     if (isEdit) { const oldTxn = window.db.transactions.find(t => t.id === txnId); if (oldTxn && oldTxn.items) for(let item of oldTxn.items) addStock(item.productId, item.qty, 'EDIT_RESTORE'); }
     for(let item of saleItemsCopy) deductStock(item.productId, item.qty);
-    
-    let txnData = { id: txnId, invoiceNo: invNo, date: date, type: 'sales', partyId: partyId, items: saleItemsCopy, subTotal: subTotal, discount: discFlat, delivery: delivery, total: grandTotal, paid: paid, due: due, paymentMethod: paymentMethod, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone };
-    
-    dbRef('transactions/' + txnId).set(txnData).then(() => {
+    let txnData = { id: txnId, invoiceNo: invNo, date: date, type: 'sales', partyId: partyId, items: saleItemsCopy, subTotal: subTotal, discount: discFlat, delivery: delivery, total: grandTotal, paid: paid, due: due, paymentMethod: paymentMethod, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.phone, creatorName: currentSR.name };
+    srDbRef('transactions/' + txnId).set(txnData).then(() => {
       let itemsStr = saleItemsCopy.map(i => `${i.name} (${i.qty} পিস)`).join(', ');
       logActivity(isEdit ? 'বিক্রয় এডিট' : 'বিক্রয়', `${currentSR.name} ${partyObj.name} - এর কাছে বিক্রয় ${isEdit ? 'আপডেট' : ''}: ${itemsStr}। মোট: ${money(grandTotal)}, জমা: ${money(paid)}, বাকি: ${money(due)}`);
       showInvoicePreview(invNo, partyObj, saleItemsCopy, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod);
@@ -1447,42 +1406,14 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let displayPercent = discPercent;
     if (displayPercent === 0 && subTotal > 0 && discFlat > 0) displayPercent = ((discFlat / subTotal) * 100).toFixed(2);
     const itemRows = items.map((item, index) => { const prodCode = window.db.products.find(p => p.id === item.productId)?.code || 'N/A'; return `<tr><td class="text-center">${index + 1}</td><td>${esc(prodCode)}</td><td>${esc(item.name)}</td><td class="text-right">৳ ${Number(item.rate).toFixed(2)}</td><td class="text-center">${item.qty}</td><td class="text-right">৳ ${(item.qty * item.rate).toFixed(2)}</td></tr>`; }).join('');
-    
-    // Fetch Dynamic Company Data
-    const comp = window.db.companyDetails || {};
-    const cName = comp.name || 'Novas Agro';
-    const cAddr = comp.address ? esc(comp.address).replace(/\n/g, '<br>') : '123, Krishi Market, Dhaka<br>Bangladesh';
-    const cPhone = comp.phone || '017XX-XXXXXX';
-    const cEmail = comp.email || 'info@novasagro.com';
-    const cWeb = comp.website || 'www.novasagro.com';
-    const cLogo = comp.logo || '';
-
-    const logoHtml = cLogo 
-        ? `<img src="${esc(cLogo)}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 50%; border: 1px solid #ccc;">` 
-        : `<div class="xin-logo-box">${esc(cName).substring(0, 3).toUpperCase()}</div>`;
-
     const invoiceHTML = `
-      <div class="xin-inv-header">
-        <div class="xin-inv-left">
-          ${logoHtml}
-          <div class="xin-company-info">
-            <h3>${esc(cName)}</h3>
-            <p>${cAddr}</p>
-            <p>Phone: ${esc(cPhone)} | Email: ${esc(cEmail)}<br>Web: ${esc(cWeb)}</p>
-          </div>
-        </div>
-        <div class="xin-inv-right">
-          <div><strong>Reg No:</strong> N/A</div>
-          <div><strong>Code:</strong> ${invNo}</div>
-          <div><strong>Currency Code:</strong> BDT</div>
-        </div>
-      </div>
+      <div class="xin-inv-header"><div class="xin-inv-left"><div class="xin-logo-box">Novas</div><div class="xin-company-info"><h3>Novas Agro</h3><p>123, Krishi Market, Dhaka<br>Bangladesh</p><p>Phone: 017XX-XXXXXX | Email: info@novasagro.com<br>Website: www.novasagro.com</p></div></div><div class="xin-inv-right"><div><strong>Reg No:</strong> N/A</div><div><strong>Code:</strong> ${invNo}</div><div><strong>Currency Code:</strong> BDT</div></div></div>
       <div class="xin-title-row"><h2>Invoice</h2></div>
       <div class="xin-bill-to"><div class="xin-bill-box" style="width: 100%;"><h4>Bill To:</h4><strong>${esc(party.name)}</strong><br>${esc(party.address || 'N/A')}<br>Phone: ${esc(party.phone || 'N/A')}</div></div>
       <table class="xin-meta-table"><tr><th>Date</th><td>${dateStr}</td><th>Order No.</th><td>${invNo}</td><th>Payment Terms</th><td>${paymentMethod}</td></tr><tr><th>Shipping Date</th><td>${dateStr}</td><th>Shipping Terms</th><td>N/A</td><th>Sales Person</th><td>${esc(currentSR.name)}</td></tr></table>
       <table class="xin-items-table"><thead><tr><th width="5%">No.</th><th width="20%">Item Code</th><th width="35%">Description</th><th width="15%">Unit Price</th><th width="10%">Qty</th><th width="15%">Amount</th></tr></thead><tbody>${itemRows}</tbody></table>
       <div class="xin-footer-section"><div class="xin-footer-left"><p>Amount in words: <strong>Taka ${numberToWords(grandTotal)} Only</strong></p><br><h4>Note:</h4><p>Thanks for your business!<br>This invoice is generated using Novas Agro.</p></div><div class="xin-footer-right"><div class="xin-sum-row"><span>Sub Total:</span> <span>৳ ${Number(subTotal).toFixed(2)}</span></div><div class="xin-sum-row"><span>Discount ${displayPercent > 0 ? `(${displayPercent}%)` : ''}:</span> <span>৳ ${Number(discFlat).toFixed(2)}</span></div><div class="xin-sum-row"><span>Add. Discount:</span> <span>৳ 0.00</span></div><div class="xin-sum-row"><span>Shipping:</span> <span>৳ ${Number(delivery).toFixed(2)}</span></div><div class="xin-sum-row"><span>Tax:</span> <span>৳ 0.00</span></div><div class="xin-sum-row bold"><span>Total:</span> <span>৳ ${Number(grandTotal).toFixed(2)}</span></div><div class="xin-sum-row"><span>Total Paid:</span> <span>৳ ${Number(paid).toFixed(2)}</span></div><div class="xin-sum-row total-due"><span>Amt Due:</span> <span>৳ ${Number(due).toFixed(2)}</span></div></div></div>
-      <div class="xin-sign-area"><div>Authorized Signature,<div class="xin-sign-line" style="font-family: 'Brush Script MT', cursive; font-size: 24px; border-top: none;">${esc(cName)}</div><div class="xin-sign-line"></div></div></div>
+      <div class="xin-sign-area"><div>Authorized Signature,<div class="xin-sign-line" style="font-family: 'Brush Script MT', cursive; font-size: 24px; border-top: none;">${esc(currentSR.name)}</div><div class="xin-sign-line"></div></div></div>
       <div class="xin-page-no">Page : 1 / 1</div>
     `;
     document.getElementById('invoicePrintArea').innerHTML = invoiceHTML;
@@ -1506,7 +1437,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       return str.trim() || 'Zero';
   }
 
-  window.closeInvoiceModal = function() { document.getElementById('invoiceModal').classList.remove('open'); hideGeneratedImage(); closeNewSale(); window.currentSaleItems = []; window.currentPreviewTxnId = null; switchView('dashboard'); };
+  window.closeInvoiceModal = function() { document.getElementById('invoiceModal').classList.remove('open'); hideGeneratedImage(); closeNewSale(); window.currentSaleItems = []; switchView('dashboard'); };
   window.hideGeneratedImage = function() { document.getElementById('generatedInvoiceImg').src = ''; document.getElementById('invoiceImageContainer').style.display = 'none'; document.getElementById('invoicePrintArea').style.display = 'block'; document.getElementById('invoiceActionHeader').style.display = 'flex'; };
   window.printInvoice = function() { window.print(); };
 
@@ -1575,10 +1506,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     form.onsubmit = (e) => { 
       e.preventDefault(); const d = Object.fromEntries(new FormData(form).entries()); const txnId = existingTxn ? existingTxn.id : 'TXN-' + Date.now().toString(36).toUpperCase(); const date = existingTxn ? existingTxn.date : new Date().toISOString();
       if(type === 'due_collect') {
-        dbRef('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_in', note: d.note ? 'বাকি আদায় - ' + d.note : 'বাকি আদায়', amount: Number(d.amount), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
+        srDbRef('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_in', note: d.note ? 'বাকি আদায় - ' + d.note : 'বাকি আদায়', amount: Number(d.amount), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.phone, creatorName: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
       } else if(type === 'sales_return') {
         const pName = window.db.products.find(p => p.id === d.productId)?.name || '';
-        dbRef('transactions/' + txnId).set({ id: txnId, date: date, type: 'sales_return', productId: d.productId, qty: Number(d.qty), rate: Number(d.rate), total: Number(d.qty)*Number(d.rate), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
+        srDbRef('transactions/' + txnId).set({ id: txnId, date: date, type: 'sales_return', productId: d.productId, qty: Number(d.qty), rate: Number(d.rate), total: Number(d.qty)*Number(d.rate), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.phone, creatorName: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
       }
     };
   };
@@ -1638,25 +1569,29 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     }
   };
 
-  // Render All Data
+  // Render All Data (with Admin dashboard overrides)
   window.renderAll = function() {
-    updateSRProfile(); // Update sidebar image and address
+    updateSRProfile();
 
     let cashData = calculateSystemCash();
-    let d = calculateTotalDueAndPayable();
+    let ov = window.db.dashboardOverrides || {};
 
-    // Apply Overrides if exist
-    let overrides = window.db.dashboardOverrides || {};
-    let dispBal = (overrides.cashBalance !== undefined && overrides.cashBalance !== null) ? Number(overrides.cashBalance) : cashData.balance;
-    let dispIn = (overrides.cashIn !== undefined && overrides.cashIn !== null) ? Number(overrides.cashIn) : cashData.in;
-    let dispOut = (overrides.cashOut !== undefined && overrides.cashOut !== null) ? Number(overrides.cashOut) : cashData.out;
-    let dispDue = (overrides.totalDueDashboard !== undefined && overrides.totalDueDashboard !== null) ? Number(overrides.totalDueDashboard) : d.receivable;
-    let dispPayable = (overrides.totalPayableDashboard !== undefined && overrides.totalPayableDashboard !== null) ? Number(overrides.totalPayableDashboard) : d.payable;
+    // 🔑 Admin-এর সেট করা মান থাকলে সেটাই দেখান, নইলে আসল হিসাব
+    let dispBal = (ov.cashBalance != null) ? Number(ov.cashBalance) : cashData.balance;
+    let dispIn  = (ov.cashIn      != null) ? Number(ov.cashIn)      : cashData.in;
+    let dispOut = (ov.cashOut     != null) ? Number(ov.cashOut)     : cashData.out;
 
     if(document.getElementById('cashBalance')) document.getElementById('cashBalance').innerText = money(dispBal);
-    if(document.getElementById('cashIn')) document.getElementById('cashIn').innerText = money(dispIn);
-    if(document.getElementById('cashOut')) document.getElementById('cashOut').innerText = money(dispOut);
+    if(document.getElementById('cashIn'))      document.getElementById('cashIn').innerText      = money(dispIn);
+    if(document.getElementById('cashOut'))     document.getElementById('cashOut').innerText     = money(dispOut);
+
+    // Global dues
+    let totalReceivable = 0; window.db.parties.forEach(p => { let due = calculatePartyDue(p); if(due > 0) totalReceivable += due; });
+    let dispDue = (ov.totalDueDashboard != null) ? Number(ov.totalDueDashboard) : totalReceivable;
     if(document.getElementById('totalDueDashboard')) document.getElementById('totalDueDashboard').innerText = money(dispDue);
+
+    let totalPayable = 0; window.db.suppliers.forEach(s => { let due = calculateSupplierDue(s.id); if(due > 0) totalPayable += due; });
+    let dispPayable = (ov.totalPayableDashboard != null) ? Number(ov.totalPayableDashboard) : totalPayable;
     if(document.getElementById('totalPayableDashboard')) document.getElementById('totalPayableDashboard').innerText = money(dispPayable);
     
     let totalExpense = 0; window.db.transactions.forEach(t => { if(t.type === 'cash_out' && t.note && t.note.includes('খরচ:')) totalExpense += Number(t.amount || 0); });
