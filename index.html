@@ -104,7 +104,7 @@ body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: v
 .circle-label { font-size: 11px; font-weight: 600; color: #1E293B; text-align: center;}
 
 /* Wide Panel */
-.wide-panel { margin-top: 5px; padding: 15px; display: flex; align-items: center; justify-content: space-around; border: 2px dashed rgba(255,255,255,.9); border-radius: 25px; background: rgba(255,255,255,.58); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); cursor: pointer; }
+.wide-panel { margin-top: 5px; padding: 15px; display: flex; align-items: center; justify-content: space-around; border: 2px dashed rgba(255,255,255,.9); border-radius: 25px; background: rgba(255,255,255,.58); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
 .inner-block { width: 46%; height: 55px; border-radius: 18px; background: linear-gradient(135deg, #2149a9, #315fc4); box-shadow: 0 5px 15px rgba(28,66,152,.18); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
 .inner-block span { font-size: 10px; opacity: 0.8; }
 .inner-block strong { font-size: 14px; font-weight: 700; margin-top: 2px; }
@@ -138,7 +138,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .product-card { display: flex; align-items: center; gap: 12px; background: white; border-radius: 16px; padding: 12px; margin-bottom: 10px; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
 .product-card .img-wrap { width: 50px; height: 50px; border-radius: 12px; background: #F1F5F9; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 22px; }
 .product-card .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.product-card .info { flex: 1; }
+.product-card .info { flex: 1; min-width: 0; }
 .product-card .info h4 { font-size: 15px; margin-bottom: 2px; font-weight: 600; color: #1E293B;}
 .product-card .info p { font-size: 12px; color: var(--text-muted); }
 .btn-edit-icon { width: 34px; height: 34px; border-radius: 50%; background: #F1F5F9; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; border: none;}
@@ -286,7 +286,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .inv-list-total { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .inv-list-due { font-size: 12px; font-weight: 600; }
 
-#invoiceSearchInput, #invoiceViewSearchInput, #txnSearchInput, #totalSalesSearchInput, #todaySalesSearchInput { width: 100%; padding: 14px 15px; border-radius: 14px; border: 1px solid #e2e8f0; font-size: 14px; background: white; color: var(--text); margin-bottom: 15px; outline: none;}
+/* সব সার্চ ইনপুটে একই স্টাইল */
+#invoiceSearchInput, #invoiceViewSearchInput, #txnSearchInput, #totalSalesSearchInput, #todaySalesSearchInput, #productSearchInput, #partySearchInput { width: 100%; padding: 14px 15px; border-radius: 14px; border: 1px solid #e2e8f0; font-size: 14px; background: white; color: var(--text); margin-bottom: 15px; outline: none;}
 
 .q-calc-box { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 15px; margin-top: 15px; background: #EFF6FF; padding: 15px; border-radius: 12px; color: var(--primary); }
 .breakdown-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #eee; }
@@ -433,12 +434,13 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </div>
       </div>
 
-      <div class="wide-panel" onclick="switchView('activityLog')" style="padding: 12px; border-radius: 20px;">
-        <div class="inner-block" style="height: 50px;">
+      <!-- Wide panel: two separate clickable blocks -->
+      <div class="wide-panel" style="padding: 12px; border-radius: 20px;">
+        <div class="inner-block" style="height: 50px; cursor: pointer;" onclick="switchView('expenses')">
           <span>মোট ব্যয়/খরচ</span>
           <strong id="totalExpenseDashboard">৳ 0.00</strong>
         </div>
-        <div class="inner-block" style="background: linear-gradient(135deg, #475569, #64748B); height: 50px;">
+        <div class="inner-block" style="background: linear-gradient(135deg, #475569, #64748B); height: 50px; cursor: pointer;" onclick="switchView('activityLog')">
           <span>অ্যাক্টিভিটি লগ</span>
           <strong>দেখুন <i class="fa-solid fa-arrow-right" style="font-size:11px;"></i></strong>
         </div>
@@ -506,6 +508,22 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         <div id="activityLogList"></div>
       </section>
 
+      <!-- ====== নতুন: শুধু ব্যয়/খরচ দেখানোর ভিউ ====== -->
+      <section id="expenses" class="view">
+        <div class="section-title">ব্যয়/খরচ <button class="btn-add" onclick="switchView('dashboard')" style="background:#F1F5F9; color:#475569; box-shadow:none;">← ফিরে যান</button></div>
+        
+        <div class="panel" style="background: linear-gradient(135deg, #FEF2F2, #FEE2E2); border: 1px solid #FECACA; margin-bottom: 15px; text-align: center;">
+          <div style="padding: 8px;">
+            <div style="font-size: 13px; color: #991B1B; font-weight: 600; margin-bottom: 6px;">
+              <i class="fa-solid fa-receipt"></i> মোট ব্যয়/খরচ
+            </div>
+            <div style="font-size: 28px; font-weight: 800; color: var(--red); line-height:1;" id="expenseTotalView">৳ 0.00</div>
+          </div>
+        </div>
+
+        <div id="expenseList"></div>
+      </section>
+
       <section id="partyProfile" class="view">
         <span class="back-btn" onclick="switchView('parties')"><i class="fa-solid fa-arrow-left"></i> পার্টি লিস্টে ফিরে যান</span>
         <div class="profile-header">
@@ -554,9 +572,22 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </div>
       </section>
 
-      <section id="parties" class="view"><div class="section-title">পার্টি লিস্ট <button class="btn-add" onclick="openForm('party')">+ নতুন</button></div><div id="partiesTable"></div></section>
+      <!-- ====== পার্টি লিস্ট + সার্চ ====== -->
+      <section id="parties" class="view">
+        <div class="section-title">পার্টি লিস্ট <button class="btn-add" onclick="openForm('party')">+ নতুন</button></div>
+        <input type="text" id="partySearchInput" placeholder="🔍 পার্টির নাম, ফোন বা ঠিকানা দিয়ে সার্চ করুন..." oninput="renderParties(this.value)">
+        <div id="partiesTable"></div>
+      </section>
+
       <section id="suppliers" class="view"><div class="section-title">সাপ্লায়ার লিস্ট</div><div id="suppliersTable"></div></section>
-      <section id="products" class="view"><div class="section-title">পণ্য ও স্টক</div><div id="productsList"></div></section>
+
+      <!-- ====== পণ্য + সার্চ ====== -->
+      <section id="products" class="view">
+        <div class="section-title">পণ্য ও স্টক</div>
+        <input type="text" id="productSearchInput" placeholder="🔍 পণ্যের নাম, কোড বা সাপ্লায়ার সার্চ করুন..." oninput="renderProducts(this.value)">
+        <div id="productsList"></div>
+      </section>
+
       <section id="users" class="view"><div class="section-title">ইউজার (SR)</div><div id="srTable"></div></section>
     </div>
   </main>
@@ -598,7 +629,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       <div class="side-menu-item" onclick="switchView('dues')">
         <div class="side-menu-left"><i class="fa-solid fa-file-invoice-dollar"></i> দেনা-পাওনা</div>
       </div>
-      <div class="side-menu-item" onclick="switchView('activityLog')">
+      <!-- ব্যয়/খরচ এখন শুধু খরচের ভিউতে নিয়ে যাবে -->
+      <div class="side-menu-item" onclick="switchView('expenses')">
         <div class="side-menu-left"><i class="fa-solid fa-money-bill-trend-up"></i> ব্যয়/খরচ</div>
       </div>
       <div class="side-menu-item" onclick="switchView('products')">
@@ -617,7 +649,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         <div class="side-menu-left"><i class="fa-solid fa-right-from-bracket" style="color:var(--red)"></i> লগআউট</div>
       </div>
     </div>
-    <div class="version-text">Novas Agro SR | ভার্সন: ২.৮.০</div>
+    <div class="version-text">Novas Agro SR | ভার্সন: ২.৮.১</div>
   </aside>
 
   <!-- Modals -->
@@ -846,7 +878,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   window.currentProfilePartyId = null;
   let currentSR = null;
 
-  // ===== Business-scoped DB reference (CORE FIX) =====
+  // ===== Business-scoped DB reference =====
   function srDbRef(path) {
     if (currentSR && currentSR.businessId && currentSR.businessId !== 'root') {
       return database.ref('businesses/' + currentSR.businessId + '/' + path);
@@ -866,7 +898,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   // Auth
   const loginScreen = document.getElementById('loginScreen'), appContent = document.getElementById('appContent');
 
-  // Restore saved session (with businessId recovery for old sessions)
+  // Restore saved session
   document.addEventListener("DOMContentLoaded", async () => {
     const savedSR = localStorage.getItem('novasAgroSR');
     if(!savedSR) return;
@@ -899,7 +931,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     loginBtn.textContent = 'চেক করা হচ্ছে...'; loginBtn.disabled = true; loginError.style.display = 'none';
 
     try {
-      // Step 1: srDirectory থেকে businessId + srId বের করুন
       let businessId = null, srId = null, userData = null;
 
       const dirSnap = await database.ref('srDirectory/' + phone).once('value');
@@ -911,15 +942,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         if (srSnap.exists()) userData = srSnap.val();
       }
 
-      // Fallback: পুরনো (root) srs টেবিল
       if (!userData) {
         const legacySnap = await database.ref('srs').orderByChild('phone').equalTo(phone).once('value');
         if (legacySnap.exists()) {
-          legacySnap.forEach(child => {
-            businessId = 'root';
-            srId = child.key;
-            userData = child.val();
-          });
+          legacySnap.forEach(child => { businessId = 'root'; srId = child.key; userData = child.val(); });
         }
       }
 
@@ -930,7 +956,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         return;
       }
 
-      // Step 2: PIN verify / set
       const srPath = businessId === 'root' ? 'srs/' + srId : 'businesses/' + businessId + '/srs/' + srId;
       if (userData.pin) {
         if (userData.pin !== pin) {
@@ -971,7 +996,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       renderAll();
     };
 
-    // Detach old listeners
     ['products','batches','srs','parties','suppliers','transactions','partyRequests','pendingSales','approvedSales','deliveries','activityLogs'].forEach(r => srDbRef(r).off());
     srDbRef('dashboardOverrides').off();
 
@@ -987,7 +1011,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     srDbRef('deliveries').on('value', handleSnap('deliveries'));
     srDbRef('activityLogs').on('value', handleSnap('activityLogs'));
 
-    // 🔑 Admin-controlled dashboard overrides
     srDbRef('dashboardOverrides').on('value', snap => {
       window.db.dashboardOverrides = snap.val() || {};
       renderAll();
@@ -1011,7 +1034,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     }
   }
 
-  // Log Activity (business-scoped)
+  // Log Activity
   function logActivity(type, details) {
     const logId = Date.now().toString(36);
     srDbRef('activityLogs/' + logId).set({
@@ -1070,6 +1093,129 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     });
     return { in: inCash, out: outCash, balance: inCash - outCash };
   }
+
+  // Helper: মোট খরচ বের করা
+  function calculateTotalExpense() {
+    let total = 0;
+    window.db.transactions.forEach(t => {
+      if(t.type === 'cash_out' && t.note && t.note.includes('খরচ:')) total += Number(t.amount || 0);
+    });
+    return total;
+  }
+
+  // ============================================================
+  // === নতুন: PRODUCTS LIST — সার্চ + বড় স্টক ব্যাজ ===
+  // ============================================================
+  window.renderProducts = function(searchTerm = '') {
+    const container = document.getElementById('productsList');
+    if(!container) return;
+
+    let prods = [...window.db.products];
+    if(searchTerm) {
+      const lower = searchTerm.toLowerCase();
+      prods = prods.filter(p => {
+        const name = (p.name || '').toLowerCase();
+        const code = (p.code || '').toLowerCase();
+        const cat = (p.category || '').toLowerCase();
+        const subCat = (p.subCategory || '').toLowerCase();
+        const supName = (window.db.suppliers.find(s => s.id === p.supplierId)?.name || '').toLowerCase();
+        return name.includes(lower) || code.includes(lower) || cat.includes(lower) || subCat.includes(lower) || supName.includes(lower);
+      });
+    }
+
+    if(prods.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো পণ্য পাওয়া যায়নি</div>';
+      return;
+    }
+
+    container.innerHTML = prods.map(p => {
+      let stock = window.db.batches.filter(b => b.productId === p.id).reduce((a,b) => a + Number(b.qty), 0);
+      let supName = window.db.suppliers.find(s => s.id === p.supplierId)?.name || 'N/A';
+      let stockColor = stock <= 0 ? 'var(--red)' : (stock < 10 ? 'var(--orange)' : 'var(--green)');
+      let stockBg = stock <= 0 ? '#FEE2E2' : (stock < 10 ? '#FEF3C7' : '#D1FAE5');
+      let stockLabel = stock <= 0 ? 'স্টক শেষ' : (stock < 10 ? 'কম স্টক' : 'স্টকে আছে');
+      return `<div class="product-card">
+        <div class="img-wrap">${p.imageUrl ? `<img src="${p.imageUrl}">` : '📦'}</div>
+        <div class="info">
+          <h4>${esc(p.name)}</h4>
+          <p style="font-size:12px; margin-bottom:6px;"><span style="color:var(--primary); font-weight:600;">সাপ্লায়ার: ${esc(supName)}</span></p>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-size:13px; color:var(--text-muted); font-weight:600; white-space:nowrap;">বিক্রয়: ৳${p.saleRate}</span>
+            <div style="background:${stockBg}; border:1.5px solid ${stockColor}; padding:5px 12px; border-radius:20px; display:flex; align-items:center; gap:6px; white-space:nowrap;">
+              <i class="fa-solid fa-cubes" style="font-size:12px; color:${stockColor};"></i>
+              <span style="font-size:11px; color:${stockColor}; font-weight:700;">${stockLabel}</span>
+              <span style="font-size:20px; font-weight:800; color:${stockColor}; line-height:1;">${stock}</span>
+              <span style="font-size:10px; color:${stockColor}; font-weight:600;">পিস</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  };
+
+  // ============================================================
+  // === নতুন: PARTIES LIST — সার্চ ===
+  // ============================================================
+  window.renderParties = function(searchTerm = '') {
+    const container = document.getElementById('partiesTable');
+    if(!container) return;
+
+    let parties = [...window.db.parties];
+    if(searchTerm) {
+      const lower = searchTerm.toLowerCase();
+      parties = parties.filter(p => {
+        const name = (p.name || '').toLowerCase();
+        const phone = (p.phone || '').toLowerCase();
+        const addr = (p.address || '').toLowerCase();
+        return name.includes(lower) || phone.includes(lower) || addr.includes(lower);
+      });
+    }
+
+    const rowsHtml = parties.map(p => {
+      let pDue = calculatePartyDue(p);
+      return `<tr><td onclick="openPartyProfile('${p.id}')" style="color:var(--primary); font-weight:600; cursor:pointer;">${esc(p.name)}</td><td style="font-weight:600;">${money(pDue)}</td></tr>`;
+    }).join('') || '<tr><td colspan="2" style="text-align:center; padding:20px; color:#999;">কোনো পার্টি পাওয়া যায়নি</td></tr>';
+
+    container.innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>বাকী</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
+  };
+
+  // ============================================================
+  // === নতুন: EXPENSES ONLY VIEW ===
+  // ============================================================
+  window.renderExpenses = function() {
+    const container = document.getElementById('expenseList');
+    const totalEl = document.getElementById('expenseTotalView');
+    if(!container) return;
+
+    let expenses = window.db.transactions.filter(t => t.type === 'cash_out' && t.note && t.note.includes('খরচ:'));
+    expenses.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    let total = expenses.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+    if(totalEl) totalEl.innerText = money(total);
+
+    if(expenses.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো খরচ পাওয়া যায়নি</div>';
+      return;
+    }
+
+    container.innerHTML = expenses.map(t => {
+      let note = (t.note || '').replace('খরচ: ', '');
+      let date = new Date(t.date).toLocaleDateString('en-GB');
+      let time = new Date(t.date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      return `<div class="invoice-list-item" style="cursor:default;">
+        <div class="inv-list-header">
+          <div>
+            <div class="inv-list-inv" style="color:var(--red);"><i class="fa-solid fa-receipt"></i> খরচ</div>
+            <div class="inv-list-cust">${esc(note)}</div>
+            <div class="inv-list-date">${date} • ${time}</div>
+          </div>
+          <div class="inv-list-amounts">
+            <div class="inv-list-total" style="color:var(--red);">৳ ${Number(t.amount || 0).toFixed(2)}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  };
 
   // NEW SALE LOGIC
   window.openNewSale = function() {
@@ -1203,8 +1349,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   window.editExistingInvoice = function(txnId) {
     const txn = window.db.transactions.find(t => t.id === txnId);
     if(!txn) return;
-
-    // PERMISSION CHECK: SR can only edit their own sales
     if (txn.srPhone !== currentSR.phone && txn.srId !== currentSR.id) {
         return alert('দুঃখিত! এটি আপনার করা বিক্রয় নয়। আপনি শুধুমাত্র নিজের করা বিক্রয় এডিট করতে পারবেন।');
     }
@@ -1285,8 +1429,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   window.editTransaction = function(txnId) {
     const txn = window.db.transactions.find(t => t.id === txnId);
     if(!txn) return;
-
-    // PERMISSION CHECK: SR can only edit their own transactions
     if (txn.srPhone !== currentSR.phone && txn.srId !== currentSR.id && txn.createdBy !== currentSR.phone) {
         return alert('দুঃখিত! এটি আপনার করা লেনদেন নয়। আপনি শুধুমাত্র নিজের করা লেনদেন এডিট করতে পারবেন।');
     }
@@ -1531,6 +1673,17 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         if(viewId === 'dues') renderDuesView();
         if(viewId === 'totalSales') renderTotalSales('');
         if(viewId === 'todaySales') renderTodaySales('');
+        if(viewId === 'products') {
+          const pi = document.getElementById('productSearchInput');
+          if(pi) pi.value = '';
+          renderProducts('');
+        }
+        if(viewId === 'parties') {
+          const pi = document.getElementById('partySearchInput');
+          if(pi) pi.value = '';
+          renderParties('');
+        }
+        if(viewId === 'expenses') renderExpenses();
     }
   };
 
@@ -1576,7 +1729,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let cashData = calculateSystemCash();
     let ov = window.db.dashboardOverrides || {};
 
-    // 🔑 Admin-এর সেট করা মান থাকলে সেটাই দেখান, নইলে আসল হিসাব
     let dispBal = (ov.cashBalance != null) ? Number(ov.cashBalance) : cashData.balance;
     let dispIn  = (ov.cashIn      != null) ? Number(ov.cashIn)      : cashData.in;
     let dispOut = (ov.cashOut     != null) ? Number(ov.cashOut)     : cashData.out;
@@ -1585,7 +1737,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if(document.getElementById('cashIn'))      document.getElementById('cashIn').innerText      = money(dispIn);
     if(document.getElementById('cashOut'))     document.getElementById('cashOut').innerText     = money(dispOut);
 
-    // Global dues
     let totalReceivable = 0; window.db.parties.forEach(p => { let due = calculatePartyDue(p); if(due > 0) totalReceivable += due; });
     let dispDue = (ov.totalDueDashboard != null) ? Number(ov.totalDueDashboard) : totalReceivable;
     if(document.getElementById('totalDueDashboard')) document.getElementById('totalDueDashboard').innerText = money(dispDue);
@@ -1594,7 +1745,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let dispPayable = (ov.totalPayableDashboard != null) ? Number(ov.totalPayableDashboard) : totalPayable;
     if(document.getElementById('totalPayableDashboard')) document.getElementById('totalPayableDashboard').innerText = money(dispPayable);
     
-    let totalExpense = 0; window.db.transactions.forEach(t => { if(t.type === 'cash_out' && t.note && t.note.includes('খরচ:')) totalExpense += Number(t.amount || 0); });
+    let totalExpense = calculateTotalExpense();
     if(document.getElementById('totalExpenseDashboard')) document.getElementById('totalExpenseDashboard').innerText = money(totalExpense);
 
     if(document.getElementById('totalProductsCount')) document.getElementById('totalProductsCount').innerText = window.db.products.length;
@@ -1612,18 +1763,16 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if(document.getElementById('partyReqCount')) document.getElementById('partyReqCount').innerHTML = window.db.parties.length + ' টি';
     if(document.getElementById('totalStock')) document.getElementById('totalStock').innerHTML = window.db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস';
 
-    // Products (View Only for SR)
-    if(document.getElementById('productsList')) {
-      document.getElementById('productsList').innerHTML = window.db.products.map(p => {
-        let stock = window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0); let supName = window.db.suppliers.find(s => s.id === p.supplierId)?.name || 'N/A';
-        return `<div class="product-card"><div class="img-wrap">${p.imageUrl ? `<img src="${p.imageUrl}">` : '📦'}</div><div class="info"><h4>${esc(p.name)}</h4><p style="font-size:12px; margin-bottom:3px;"><span style="color:var(--primary); font-weight:600;">সাপ্লায়ার: ${esc(supName)}</span></p><p>বিক্রয়: ৳${p.saleRate} | স্টক: ${stock}</p></div></div>`;
-      }).join('') || '<div style="text-align:center; padding:20px; color:#999;">পণ্য নেই</div>';
-    }
+    // Products — সার্চ-সহ
+    const prodSearchEl = document.getElementById('productSearchInput');
+    renderProducts(prodSearchEl ? prodSearchEl.value : '');
 
-    // Parties
-    if(document.getElementById('partiesTable')) {
-      document.getElementById('partiesTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>বাকী</th></tr></thead><tbody>${window.db.parties.map(p => { let pDue = calculatePartyDue(p); return `<tr><td onclick="openPartyProfile('${p.id}')" style="color:var(--primary); font-weight:600;">${esc(p.name)}</td><td style="font-weight:600;">${money(pDue)}</td></tr>`; }).join('')}</tbody></table></div>`;
-    }
+    // Parties — সার্চ-সহ
+    const partySearchEl = document.getElementById('partySearchInput');
+    renderParties(partySearchEl ? partySearchEl.value : '');
+
+    // Expenses (শুধু খরচ)
+    renderExpenses();
 
     // Suppliers
     if(document.getElementById('suppliersTable')) {
