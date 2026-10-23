@@ -1012,7 +1012,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if(!isRegisterMode) document.getElementById('loginPasswordConfirm').value = '';
   };
 
-  // Auth Flow
+  // Auth Flow (Fixed Logic)
   const loginScreen = document.getElementById('loginScreen'), appContent = document.getElementById('appContent');
   
   auth.onAuthStateChanged(async (user) => {
@@ -1024,29 +1024,25 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         // Determine Business ID
         let userSnap = await database.ref('users/' + user.uid).once('value');
         if (userSnap.exists() && userSnap.val().businessId) {
+            // Already registered user
             window.currentBusinessId = userSnap.val().businessId;
             window.currentUserRole = userSnap.val().role || 'partner';
         } else {
-            // Check for invites
+            // New Registration Flow
+            
+            // 1. Check if the email is invited
             let inviteSnap = await database.ref('invites/' + user.email.replace(/\./g, '_')).once('value');
             if (inviteSnap.exists()) {
+                // If invited, join the existing business as partner
                 window.currentBusinessId = inviteSnap.val().businessId;
                 window.currentUserRole = 'partner';
                 await database.ref('users/' + user.uid).set({ businessId: window.currentBusinessId, email: user.email, role: 'partner' });
-                await database.ref('invites/' + user.email.replace(/\./g, '_')).remove();
+                await database.ref('invites/' + user.email.replace(/\./g, '_')).remove(); // Remove invite after use
             } else {
-                // Check if legacy root data exists
-                let rootCheck = await database.ref('transactions').limitToLast(1).once('value');
-                if (rootCheck.exists() && !localStorage.getItem('usedNewSystem')) {
-                    window.currentBusinessId = 'root';
-                    window.currentUserRole = 'owner';
-                    await database.ref('users/' + user.uid).set({ businessId: 'root', email: user.email, role: 'owner' });
-                } else {
-                    // New Business
-                    window.currentBusinessId = 'BUS-' + Date.now().toString(36).toUpperCase();
-                    window.currentUserRole = 'owner';
-                    await database.ref('users/' + user.uid).set({ businessId: window.currentBusinessId, email: user.email, role: 'owner' });
-                }
+                // If not invited, create a completely NEW business
+                window.currentBusinessId = 'BUS-' + Date.now().toString(36).toUpperCase();
+                window.currentUserRole = 'owner';
+                await database.ref('users/' + user.uid).set({ businessId: window.currentBusinessId, email: user.email, role: 'owner' });
             }
         }
 
@@ -1650,9 +1646,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const txn = window.db.transactions.find(t => t.id === txnId);
     if(!txn) return;
 
-    // Permission check: Allow owner/admin, or if the txn is legacy (no createdBy)
+    // Role based access control
     if (window.currentUserRole !== 'owner' && window.currentUserRole !== 'admin') {
-        if (txn.createdBy && txn.createdBy !== currentUserEmail && txn.srName !== window.currentUserName) {
+        if (txn.createdBy !== currentUserEmail && txn.srName !== window.currentUserName) {
             return alert('দুঃখিত! আপনি শুধুমাত্র নিজের করা ইনভয়েস এডিট করতে পারবেন।');
         }
     }
@@ -1733,9 +1729,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const txn = window.db.transactions.find(t => t.id === txnId);
     if(!txn) return;
 
-    // Permission check
+    // Role based access control
     if (window.currentUserRole !== 'owner' && window.currentUserRole !== 'admin') {
-        if (txn.createdBy && txn.createdBy !== currentUserEmail && txn.srName !== window.currentUserName) {
+        if (txn.createdBy !== currentUserEmail && txn.srName !== window.currentUserName) {
             return alert('দুঃখিত! আপনি শুধুমাত্র নিজের করা লেনদেন এডিট করতে পারবেন।');
         }
     }
