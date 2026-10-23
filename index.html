@@ -223,12 +223,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .login-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; border: none;}
 
 /* ================= NEW SALE MODAL STYLES ================= */
-#newSaleModal { background: #F8FAFC; padding: 0; display: none; flex-direction: column; z-index: 95; align-items: stretch; }
+#newSaleModal { background: #F8FAFC; padding: 0; display: none; flex-direction: column; z-index: 95; align-items: stretch; width: 100%; }
 #newSaleModal.open { display: flex; }
-.ns-header { background: linear-gradient(145deg, #17449d, #2858b9); color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;}
+.ns-header { background: linear-gradient(145deg, #17449d, #2858b9); color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; width: 100%; box-sizing: border-box;}
 .ns-header-left { display: flex; align-items: center; gap: 15px; font-size: 18px; font-weight: 600; }
 .ns-back { font-size: 20px; cursor: pointer;}
-.ns-toggle { display: flex; background: rgba(255,255,255,0.2); border-radius: 20px; overflow: hidden; }
+.ns-toggle { display: flex; background: rgba(255,255,255,0.2); border-radius: 20px; overflow: hidden; flex-shrink: 0; }
 .ns-toggle button { padding: 6px 16px; font-size: 14px; font-weight: 600; color: white; background: none; cursor:pointer; border:none;}
 .ns-toggle button.active { background: white; color: var(--primary); }
 
@@ -271,8 +271,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .ns-save-btn { width: 100%; background: var(--primary); color: white; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; border: none; }
 
 /* Item Add Modal */
-#addItemModal { align-items: center; justify-content: center; z-index: 110; }
-#addItemModal .modal-box { border-radius: 24px; width: 90%; max-width: 400px; max-height: 80vh; animation: popIn 0.3s ease; padding:20px;}
+#addItemModal, #invoiceListModal { z-index: 110 !important; align-items: center; justify-content: center; }
+#addItemModal .modal-box, #invoiceListModal .modal-box { border-radius: 24px; width: 90%; max-width: 400px; max-height: 80vh; animation: popIn 0.3s ease; padding:20px;}
 @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
 /* ================= INVOICE LIST & TRANSACTIONS STYLES ================= */
@@ -305,7 +305,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 #invoicePrintArea { padding: 20px; background: white; color: black; font-family: Arial, Helvetica, sans-serif; font-size: 11px; width: 100%; box-sizing: border-box; }
 .xin-inv-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; border-bottom: 2px solid black; padding-bottom: 10px; }
 .xin-inv-left { display: flex; flex-direction: row; gap: 10px; align-items: center; }
-.xin-logo-box { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; font-style: italic; flex-shrink: 0;}
+.xin-logo-box { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; font-style: italic; flex-shrink: 0; object-fit: contain;}
 .xin-company-info { font-size: 11px; line-height: 1.4; }
 .xin-company-info h3 { font-size: 15px; margin-bottom: 3px; font-weight: bold; }
 .xin-inv-right { text-align: left; font-size: 11px; line-height: 1.6; }
@@ -579,10 +579,11 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="side-profile">
-      <img id="displaySrImage" src="https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png" alt="Profile">
-      <h3 id="displaySrName">SR Name</h3>
-      <div class="business-name" id="displaySrPhone">017xxxxxxxx</div>
-      <p id="displaySrAddress"><i class="fa-solid fa-location-dot"></i> ঠিকানা</p>
+      <img id="displaySrImage" src="https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png" alt="Profile" style="width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 3px solid rgba(255,255,255,0.8); margin-bottom: 10px; background: white;">
+      <div style="font-size: 18px; font-weight: 700; color: white; text-align: center; line-height: 1.2;" id="displaySrName">SR Name</div>
+      <div style="font-size: 12px; font-weight: 600; opacity: 0.9; color: white; background: rgba(0,0,0,0.2); padding: 3px 12px; border-radius: 12px; margin-top: 8px;">(SR)</div>
+      <p id="displaySrPhone" style="font-size: 12px; margin-top: 8px; opacity: 0.9;">017xxxxxxxx</p>
+      <p id="displaySrAddress" style="font-size: 11px; margin-top: 2px; opacity: 0.8;"><i class="fa-solid fa-location-dot"></i> ঠিকানা</p>
     </div>
     
     <div class="side-menu">
@@ -617,7 +618,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         <div class="side-menu-left"><i class="fa-solid fa-right-from-bracket" style="color:var(--red)"></i> লগআউট</div>
       </div>
     </div>
-    <div class="version-text">Novas Agro SR | ভার্সন: ২.৭.৪</div>
+    <div class="version-text">Novas Agro SR | ভার্সন: ২.৮.০</div>
   </aside>
 
   <!-- Modals -->
@@ -841,7 +842,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
 
-  window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [] };
+  window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [], companyDetails: {} };
   window.currentProfilePartyId = null;
   let currentSR = null;
   
@@ -926,6 +927,11 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     database.ref('approvedSales').on('value', handleSnap('approvedSales'));
     database.ref('deliveries').on('value', handleSnap('deliveries'));
     database.ref('activityLogs').on('value', handleSnap('activityLogs'));
+    
+    // Company Details Listener
+    database.ref('companyDetails').on('value', snap => {
+        window.db.companyDetails = snap.val() || {};
+    });
   }
 
   // Update Sidebar Profile Info
@@ -945,11 +951,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     }
   }
 
-  // Log Activity
+  // Log Activity (Updated with User Name)
   function logActivity(type, details) {
     const logId = Date.now().toString(36);
     database.ref('activityLogs/' + logId).set({
-      id: logId, type: type, details: details, timestamp: new Date().toISOString()
+      id: logId, type: type, details: details, timestamp: new Date().toISOString(),
+      user: currentSR.name, userName: currentSR.name
     });
   }
 
@@ -1339,14 +1346,42 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let displayPercent = discPercent;
     if (displayPercent === 0 && subTotal > 0 && discFlat > 0) displayPercent = ((discFlat / subTotal) * 100).toFixed(2);
     const itemRows = items.map((item, index) => { const prodCode = window.db.products.find(p => p.id === item.productId)?.code || 'N/A'; return `<tr><td class="text-center">${index + 1}</td><td>${esc(prodCode)}</td><td>${esc(item.name)}</td><td class="text-right">৳ ${Number(item.rate).toFixed(2)}</td><td class="text-center">${item.qty}</td><td class="text-right">৳ ${(item.qty * item.rate).toFixed(2)}</td></tr>`; }).join('');
+    
+    // Fetch Dynamic Company Data
+    const comp = window.db.companyDetails || {};
+    const cName = comp.name || 'Novas Agro';
+    const cAddr = comp.address ? esc(comp.address).replace(/\n/g, '<br>') : '123, Krishi Market, Dhaka<br>Bangladesh';
+    const cPhone = comp.phone || '017XX-XXXXXX';
+    const cEmail = comp.email || 'info@novasagro.com';
+    const cWeb = comp.website || 'www.novasagro.com';
+    const cLogo = comp.logo || '';
+
+    const logoHtml = cLogo 
+        ? `<img src="${esc(cLogo)}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 50%; border: 1px solid #ccc;">` 
+        : `<div class="xin-logo-box">${esc(cName).substring(0, 3).toUpperCase()}</div>`;
+
     const invoiceHTML = `
-      <div class="xin-inv-header"><div class="xin-inv-left"><div class="xin-logo-box">Novas</div><div class="xin-company-info"><h3>Novas Agro</h3><p>123, Krishi Market, Dhaka<br>Bangladesh</p><p>Phone: 017XX-XXXXXX | Email: info@novasagro.com<br>Website: www.novasagro.com</p></div></div><div class="xin-inv-right"><div><strong>Reg No:</strong> N/A</div><div><strong>Code:</strong> ${invNo}</div><div><strong>Currency Code:</strong> BDT</div></div></div>
+      <div class="xin-inv-header">
+        <div class="xin-inv-left">
+          ${logoHtml}
+          <div class="xin-company-info">
+            <h3>${esc(cName)}</h3>
+            <p>${cAddr}</p>
+            <p>Phone: ${esc(cPhone)} | Email: ${esc(cEmail)}<br>Web: ${esc(cWeb)}</p>
+          </div>
+        </div>
+        <div class="xin-inv-right">
+          <div><strong>Reg No:</strong> N/A</div>
+          <div><strong>Code:</strong> ${invNo}</div>
+          <div><strong>Currency Code:</strong> BDT</div>
+        </div>
+      </div>
       <div class="xin-title-row"><h2>Invoice</h2></div>
       <div class="xin-bill-to"><div class="xin-bill-box" style="width: 100%;"><h4>Bill To:</h4><strong>${esc(party.name)}</strong><br>${esc(party.address || 'N/A')}<br>Phone: ${esc(party.phone || 'N/A')}</div></div>
       <table class="xin-meta-table"><tr><th>Date</th><td>${dateStr}</td><th>Order No.</th><td>${invNo}</td><th>Payment Terms</th><td>${paymentMethod}</td></tr><tr><th>Shipping Date</th><td>${dateStr}</td><th>Shipping Terms</th><td>N/A</td><th>Sales Person</th><td>${esc(currentSR.name)}</td></tr></table>
       <table class="xin-items-table"><thead><tr><th width="5%">No.</th><th width="20%">Item Code</th><th width="35%">Description</th><th width="15%">Unit Price</th><th width="10%">Qty</th><th width="15%">Amount</th></tr></thead><tbody>${itemRows}</tbody></table>
       <div class="xin-footer-section"><div class="xin-footer-left"><p>Amount in words: <strong>Taka ${numberToWords(grandTotal)} Only</strong></p><br><h4>Note:</h4><p>Thanks for your business!<br>This invoice is generated using Novas Agro.</p></div><div class="xin-footer-right"><div class="xin-sum-row"><span>Sub Total:</span> <span>৳ ${Number(subTotal).toFixed(2)}</span></div><div class="xin-sum-row"><span>Discount ${displayPercent > 0 ? `(${displayPercent}%)` : ''}:</span> <span>৳ ${Number(discFlat).toFixed(2)}</span></div><div class="xin-sum-row"><span>Add. Discount:</span> <span>৳ 0.00</span></div><div class="xin-sum-row"><span>Shipping:</span> <span>৳ ${Number(delivery).toFixed(2)}</span></div><div class="xin-sum-row"><span>Tax:</span> <span>৳ 0.00</span></div><div class="xin-sum-row bold"><span>Total:</span> <span>৳ ${Number(grandTotal).toFixed(2)}</span></div><div class="xin-sum-row"><span>Total Paid:</span> <span>৳ ${Number(paid).toFixed(2)}</span></div><div class="xin-sum-row total-due"><span>Amt Due:</span> <span>৳ ${Number(due).toFixed(2)}</span></div></div></div>
-      <div class="xin-sign-area"><div>Authorized Signature,<div class="xin-sign-line" style="font-family: 'Brush Script MT', cursive; font-size: 24px; border-top: none;">${esc(currentSR.name)}</div><div class="xin-sign-line"></div></div></div>
+      <div class="xin-sign-area"><div>Authorized Signature,<div class="xin-sign-line" style="font-family: 'Brush Script MT', cursive; font-size: 24px; border-top: none;">${esc(cName)}</div><div class="xin-sign-line"></div></div></div>
       <div class="xin-page-no">Page : 1 / 1</div>
     `;
     document.getElementById('invoicePrintArea').innerHTML = invoiceHTML;
@@ -1439,10 +1474,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     form.onsubmit = (e) => { 
       e.preventDefault(); const d = Object.fromEntries(new FormData(form).entries()); const txnId = existingTxn ? existingTxn.id : 'TXN-' + Date.now().toString(36).toUpperCase(); const date = existingTxn ? existingTxn.date : new Date().toISOString();
       if(type === 'due_collect') {
-        database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_in', note: d.note ? 'বাকি আদায় - ' + d.note : 'বাকি আদায়', amount: Number(d.amount), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
+        database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_in', note: d.note ? 'বাকি আদায় - ' + d.note : 'বাকি আদায়', amount: Number(d.amount), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
       } else if(type === 'sales_return') {
         const pName = window.db.products.find(p => p.id === d.productId)?.name || '';
-        database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'sales_return', productId: d.productId, qty: Number(d.qty), rate: Number(d.rate), total: Number(d.qty)*Number(d.rate), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
+        database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'sales_return', productId: d.productId, qty: Number(d.qty), rate: Number(d.rate), total: Number(d.qty)*Number(d.rate), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
       }
     };
   };
