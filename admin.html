@@ -1310,6 +1310,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   window.saveSRToDB = function(data, id = null) { 
     const nid = id || Date.now().toString(36); 
     dbRef('srs/' + nid).update({ id: nid, name: data.name, phone: data.phone, address: data.address || '', imageUrl: data.imageUrl || '' }); 
+    // Add to global SR directory so SR app can find it
+    database.ref('srDirectory/' + data.phone).set({ businessId: window.currentBusinessId, srId: nid });
     logActivity('এসআর', `এসআর ${id ? 'এডিট' : 'যোগ'} করা হয়েছে: ${data.name}`);
   };
 
