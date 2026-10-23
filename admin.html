@@ -86,7 +86,7 @@ body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: v
 .circle-item:active .circle { transform: scale(0.9); }
 .circle-label { font-size: 11px; font-weight: 600; color: #1E293B; text-align: center;}
 
-.wide-panel { margin-top: 5px; padding: 15px; display: flex; align-items: center; justify-content: space-around; border: 2px dashed rgba(255,255,255,.9); border-radius: 25px; background: rgba(255,255,255,.58); cursor: pointer; }
+.wide-panel { margin-top: 5px; padding: 15px; display: flex; align-items: center; justify-content: space-around; border: 2px dashed rgba(255,255,255,.9); border-radius: 25px; background: rgba(255,255,255,.58); }
 .inner-block { width: 46%; height: 55px; border-radius: 18px; background: linear-gradient(135deg, #2149a9, #315fc4); box-shadow: 0 5px 15px rgba(28,66,152,.18); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
 .inner-block span { font-size: 10px; opacity: 0.8; }
 .inner-block strong { font-size: 14px; font-weight: 700; margin-top: 2px; }
@@ -252,7 +252,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .inv-list-amounts { text-align: right; }
 .inv-list-total { font-size: 16px; font-weight: 700; }
 .inv-list-due { font-size: 12px; font-weight: 600; }
-#invoiceSearchInput, #invoiceViewSearchInput, #txnSearchInput, #totalSalesSearchInput, #todaySalesSearchInput, #activityLogSearchInput, #productSearchInput { width: 100%; padding: 14px 15px; border-radius: 14px; border: 1px solid #e2e8f0; font-size: 14px; margin-bottom: 15px; outline: none;}
+
+/* সব সার্চ ইনপুটে একই স্টাইল */
+#invoiceSearchInput, #invoiceViewSearchInput, #txnSearchInput, #totalSalesSearchInput, #todaySalesSearchInput, #activityLogSearchInput, #productSearchInput, #partySearchInput { width: 100%; padding: 14px 15px; border-radius: 14px; border: 1px solid #e2e8f0; font-size: 14px; margin-bottom: 15px; outline: none;}
 
 .q-calc-box { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 15px; margin-top: 15px; background: #EFF6FF; padding: 15px; border-radius: 12px; color: var(--primary); }
 .breakdown-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #eee; }
@@ -387,12 +389,13 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </div>
       </div>
 
-      <div class="wide-panel" onclick="switchView('activityLog')" style="padding: 12px; border-radius: 20px;">
-        <div class="inner-block" style="height: 50px;">
+      <!-- আলাদা ক্লিকযোগ্য ব্লক: খরচ এবং অ্যাক্টিভিটি লগ -->
+      <div class="wide-panel" style="padding: 12px; border-radius: 20px;">
+        <div class="inner-block" style="height: 50px; cursor: pointer;" onclick="switchView('expenses')">
           <span>মোট ব্যয়/খরচ</span>
           <strong id="totalExpenseDashboard">৳ 0.00</strong>
         </div>
-        <div class="inner-block" style="background: linear-gradient(135deg, #475569, #64748B); height: 50px;">
+        <div class="inner-block" style="background: linear-gradient(135deg, #475569, #64748B); height: 50px; cursor: pointer;" onclick="switchView('activityLog')">
           <span>অ্যাক্টিভিটি লগ</span>
           <strong>দেখুন <i class="fa-solid fa-arrow-right" style="font-size:11px;"></i></strong>
         </div>
@@ -458,6 +461,22 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         <div class="section-title">অ্যাক্টিভিটি লগ <button class="btn-add" onclick="switchView('dashboard')" style="background:#F1F5F9; color:#475569; box-shadow:none;">← ফিরে যান</button></div>
         <input type="text" id="activityLogSearchInput" placeholder="🔍 কাজের ধরন, মালিক বা এসআর এর নাম/ইমেইল দিয়ে সার্চ করুন..." oninput="renderActivityLog(this.value)">
         <div id="activityLogList"></div>
+      </section>
+
+      <!-- ====== নতুন: শুধু ব্যয়/খরচ দেখানোর ভিউ ====== -->
+      <section id="expenses" class="view">
+        <div class="section-title">ব্যয়/খরচ <button class="btn-add" onclick="switchView('dashboard')" style="background:#F1F5F9; color:#475569; box-shadow:none;">← ফিরে যান</button></div>
+        
+        <div class="panel" style="background: linear-gradient(135deg, #FEF2F2, #FEE2E2); border: 1px solid #FECACA; margin-bottom: 15px; text-align: center;">
+          <div style="padding: 8px;">
+            <div style="font-size: 13px; color: #991B1B; font-weight: 600; margin-bottom: 6px;">
+              <i class="fa-solid fa-receipt"></i> মোট ব্যয়/খরচ
+            </div>
+            <div style="font-size: 28px; font-weight: 800; color: var(--red); line-height:1;" id="expenseTotalView">৳ 0.00</div>
+          </div>
+        </div>
+
+        <div id="expenseList"></div>
       </section>
 
       <section id="settings" class="view">
@@ -606,12 +625,18 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </div>
       </section>
 
-      <section id="parties" class="view"><div class="section-title">পার্টি লিস্ট <button class="btn-add" onclick="openForm('party')">+ নতুন</button></div><div id="partiesTable"></div></section>
+      <!-- ====== পার্টি লিস্ট + সার্চ ====== -->
+      <section id="parties" class="view">
+        <div class="section-title">পার্টি লিস্ট <button class="btn-add" onclick="openForm('party')">+ নতুন</button></div>
+        <input type="text" id="partySearchInput" placeholder="🔍 পার্টির নাম, ফোন বা ঠিকানা দিয়ে সার্চ করুন..." oninput="renderParties(this.value)">
+        <div id="partiesTable"></div>
+      </section>
+
       <section id="suppliers" class="view"><div class="section-title">সাপ্লায়ার লিস্ট <button class="btn-add" onclick="openForm('supplier')">+ নতুন</button></div><div id="suppliersTable"></div></section>
       <section id="approvals" class="view"><div class="section-title">বিক্রয়ের আবেদন (SR)</div><div id="approvalsList"></div></section>
       <section id="delivery" class="view"><div class="section-title">ডেলিভারি কনফার্ম</div><div class="table-wrap"><table><thead><tr><th>ক্রেতা</th><th>স্ট্যাটাস</th><th>অ্যাকশন</th></tr></thead><tbody id="deliveryTableBody"></tbody></table></div></section>
       
-      <!-- Search input added here -->
+      <!-- ====== পণ্য + সার্চ (আগেই ছিল) ====== -->
       <section id="products" class="view">
         <div class="section-title">পণ্য ও স্টক <button class="btn-add" onclick="openForm('product')">+ পণ্য</button></div>
         <input type="text" id="productSearchInput" placeholder="🔍 পণ্যের নাম, কোড বা সাপ্লায়ার সার্চ করুন..." oninput="renderProducts(this.value)">
@@ -658,7 +683,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       <div class="side-menu-item" onclick="switchView('dues')">
         <div class="side-menu-left"><i class="fa-solid fa-file-invoice-dollar"></i> দেনা-পাওনা</div>
       </div>
-      <div class="side-menu-item" onclick="switchView('activityLog')">
+      <!-- ব্যয়/খরচ এখন শুধু খরচের ভিউতে নিয়ে যাবে -->
+      <div class="side-menu-item" onclick="switchView('expenses')">
         <div class="side-menu-left"><i class="fa-solid fa-money-bill-trend-up"></i> ব্যয়/খরচ</div>
       </div>
       <div class="side-menu-item" onclick="openQuickForm('cash_match')">
@@ -683,7 +709,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         <div class="side-menu-left"><i class="fa-solid fa-right-from-bracket" style="color:var(--red)"></i> লগআউট</div>
       </div>
     </div>
-    <div class="version-text">Novas Agro | ভার্সন: ২.৮.০</div>
+    <div class="version-text">Novas Agro | ভার্সন: ২.৮.১</div>
   </aside>
 
   <!-- Modals -->
@@ -2141,6 +2167,71 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     } else { window.forceDownloadImage(); }
   };
 
+  // ============================================================
+  // === নতুন: EXPENSES ONLY VIEW ===
+  // ============================================================
+  window.renderExpenses = function() {
+    const container = document.getElementById('expenseList');
+    const totalEl = document.getElementById('expenseTotalView');
+    if(!container) return;
+
+    let expenses = window.db.transactions.filter(t => t.type === 'cash_out' && t.note && t.note.includes('খরচ:'));
+    expenses.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+    let total = expenses.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+    if(totalEl) totalEl.innerText = money(total);
+
+    if(expenses.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো খরচ পাওয়া যায়নি</div>';
+      return;
+    }
+
+    container.innerHTML = expenses.map(t => {
+      let note = (t.note || '').replace('খরচ: ', '');
+      let date = new Date(t.date).toLocaleDateString('en-GB');
+      let time = new Date(t.date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+      let creatorInfo = t.creatorName ? `<span style="font-size:11px; color:#64748B; margin-left:5px;">(By: ${esc(t.creatorName)})</span>` : '';
+      return `<div class="invoice-list-item" style="cursor:pointer;" onclick="editTransaction('${t.id}')">
+        <div class="inv-list-header">
+          <div>
+            <div class="inv-list-inv" style="color:var(--red);"><i class="fa-solid fa-receipt"></i> খরচ ${creatorInfo}</div>
+            <div class="inv-list-cust">${esc(note)}</div>
+            <div class="inv-list-date">${date} • ${time}</div>
+          </div>
+          <div class="inv-list-amounts">
+            <div class="inv-list-total" style="color:var(--red);">৳ ${Number(t.amount || 0).toFixed(2)}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  };
+
+  // ============================================================
+  // === নতুন: PARTIES LIST — সার্চ ===
+  // ============================================================
+  window.renderParties = function(searchTerm = '') {
+    const container = document.getElementById('partiesTable');
+    if(!container) return;
+
+    let parties = [...window.db.parties];
+    if(searchTerm) {
+      const lower = searchTerm.toLowerCase();
+      parties = parties.filter(p => {
+        const name = (p.name || '').toLowerCase();
+        const phone = (p.phone || '').toLowerCase();
+        const addr = (p.address || '').toLowerCase();
+        return name.includes(lower) || phone.includes(lower) || addr.includes(lower);
+      });
+    }
+
+    const rowsHtml = parties.map(p => {
+      let pd = calculatePartyDue(p);
+      return `<tr><td onclick="openPartyProfile('${p.id}')" style="color:var(--primary); font-weight:600; cursor:pointer;">${esc(p.name)}</td><td style="font-weight:600;">${money(pd)}</td><td><button class="btn-edit-icon" onclick="openForm('party', '${p.id}')" style="width:28px; height:28px; font-size:12px;"><i class="fa-solid fa-pen"></i></button></td></tr>`;
+    }).join('') || '<tr><td colspan="3" style="text-align:center; padding:20px; color:#999;">কোনো পার্টি পাওয়া যায়নি</td></tr>';
+
+    container.innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>বাকী</th><th>অ্যাকশন</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
+  };
+
   // View rendering and routing
   window.switchView = function(viewId) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -2162,6 +2253,13 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         if(viewId === 'products') {
             document.getElementById('productSearchInput').value = '';
             renderProducts('');
+        }
+        if(viewId === 'parties') {
+            document.getElementById('partySearchInput').value = '';
+            renderParties('');
+        }
+        if(viewId === 'expenses') {
+            renderExpenses();
         }
     }
   };
@@ -2197,7 +2295,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   window.closePackModal = function() { document.getElementById('packSizeModal').classList.remove('open'); };
   window.savePackSize = function() { const u = document.getElementById('packUnit').value; const s = document.getElementById('packSizeInput').value; if(!s) return alert('সাইজের পরিমাণ দিন!'); document.querySelector('input[name="packSize"]').value = s + ' ' + u; closePackModal(); };
 
-  // Render Products List with Search
+  // ============================================================
+  // === নতুন: PRODUCTS LIST — সার্চ + বড় স্টক ব্যাজ ===
+  // ============================================================
   window.renderProducts = function(searchTerm = '') {
     const container = document.getElementById('productsList');
     if(!container) return;
@@ -2219,19 +2319,30 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     container.innerHTML = prods.map(p => {
       let st = window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0); 
       let sn = window.db.suppliers.find(s => s.id === p.supplierId)?.name || 'N/A';
+      let stockColor = st <= 0 ? 'var(--red)' : (st < 10 ? 'var(--orange)' : 'var(--green)');
+      let stockBg = st <= 0 ? '#FEE2E2' : (st < 10 ? '#FEF3C7' : '#D1FAE5');
+      let stockLabel = st <= 0 ? 'স্টক শেষ' : (st < 10 ? 'কম স্টক' : 'স্টকে আছে');
       return `<div class="product-card">
           <div class="img-wrap">${p.imageUrl ? `<img src="${p.imageUrl}">` : '📦'}</div>
           <div class="info">
               <h4>${esc(p.name)}</h4>
-              <p style="font-size:12px; margin-bottom:3px;"><span style="color:var(--primary); font-weight:600;">সাপ্লায়ার: ${esc(sn)}</span></p>
-              <p>বিক্রয়: ৳${p.saleRate} | স্টক: ${st}</p>
+              <p style="font-size:12px; margin-bottom:6px;"><span style="color:var(--primary); font-weight:600;">সাপ্লায়ার: ${esc(sn)}</span></p>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                  <span style="font-size:13px; color:var(--text-muted); font-weight:600; white-space:nowrap;">বিক্রয়: ৳${p.saleRate}</span>
+                  <div style="background:${stockBg}; border:1.5px solid ${stockColor}; padding:5px 12px; border-radius:20px; display:flex; align-items:center; gap:6px; white-space:nowrap;">
+                      <i class="fa-solid fa-cubes" style="font-size:12px; color:${stockColor};"></i>
+                      <span style="font-size:11px; color:${stockColor}; font-weight:700;">${stockLabel}</span>
+                      <span style="font-size:20px; font-weight:800; color:${stockColor}; line-height:1;">${st}</span>
+                      <span style="font-size:10px; color:${stockColor}; font-weight:600;">পিস</span>
+                  </div>
+              </div>
           </div>
-          <div style="display: flex; gap: 6px; align-items: center;">
+          <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;">
               <button class="btn-add-stock" onclick="openAddStockModal('${p.id}', '${esc(p.name)}')"><i class="fa-solid fa-plus"></i> স্টক</button>
               <button class="btn-edit-icon" onclick="openForm('product', '${p.id}')"><i class="fa-solid fa-pen"></i></button>
           </div>
       </div>`;
-    }).join('') || '<div style="text-align:center; padding:20px; color:#999;">কোনো পণ্য পাওয়া যায়নি</div>';
+    }).join('') || '<div style="text-align:center; padding:20px; color:#999;">কোনো পণ্য পাওয়া যায়নি</div>';
   };
 
   // Render All
@@ -2263,11 +2374,16 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     
     document.getElementById('partyReqCount').innerHTML = window.db.partyRequests.length + ' টি'; document.getElementById('totalStock').innerHTML = window.db.batches.reduce((a,b)=>a+Number(b.qty),0) + ' পিস';
 
-    // Call the extracted renderProducts function
-    let searchVal = document.getElementById('productSearchInput') ? document.getElementById('productSearchInput').value : '';
-    renderProducts(searchVal);
+    // Products — সার্চ-সহ
+    let prodSearchVal = document.getElementById('productSearchInput') ? document.getElementById('productSearchInput').value : '';
+    renderProducts(prodSearchVal);
 
-    document.getElementById('partiesTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>বাকী</th><th>অ্যাকশন</th></tr></thead><tbody>${window.db.parties.map(p => { let pd = calculatePartyDue(p); return `<tr><td onclick="openPartyProfile('${p.id}')" style="color:var(--primary); font-weight:600;">${esc(p.name)}</td><td style="font-weight:600;">${money(pd)}</td><td><button class="btn-edit-icon" onclick="openForm('party', '${p.id}')" style="width:28px; height:28px; font-size:12px;"><i class="fa-solid fa-pen"></i></button></td></tr>`; }).join('')}</tbody></table></div>`;
+    // Parties — সার্চ-সহ
+    let partySearchVal = document.getElementById('partySearchInput') ? document.getElementById('partySearchInput').value : '';
+    renderParties(partySearchVal);
+
+    // Expenses (শুধু খরচ)
+    renderExpenses();
 
     document.getElementById('suppliersTable').innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>দেনা (দিবো)</th><th>অ্যাকশন</th></tr></thead><tbody>${window.db.suppliers.map(s => { let sd = calculateSupplierDue(s.id); return `<tr><td style="font-weight:600;">${esc(s.name)}</td><td style="color:var(--orange); font-weight:600;">${money(sd)}</td><td><button class="btn-edit-icon" onclick="openForm('supplier', '${s.id}')" style="width:28px; height:28px; font-size:12px;"><i class="fa-solid fa-pen"></i></button></td></tr>`; }).join('')}</tbody></table></div>`;
     
