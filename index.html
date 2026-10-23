@@ -1610,11 +1610,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let d = calculateTotalDueAndPayable();
 
     // Apply Overrides if exist
-    let dispBal = window.db.dashboardOverrides?.cashBalance !== undefined && window.db.dashboardOverrides?.cashBalance !== null ? Number(window.db.dashboardOverrides.cashBalance) : cashData.balance;
-    let dispIn = window.db.dashboardOverrides?.cashIn !== undefined && window.db.dashboardOverrides?.cashIn !== null ? Number(window.db.dashboardOverrides.cashIn) : cashData.in;
-    let dispOut = window.db.dashboardOverrides?.cashOut !== undefined && window.db.dashboardOverrides?.cashOut !== null ? Number(window.db.dashboardOverrides.cashOut) : cashData.out;
-    let dispDue = window.db.dashboardOverrides?.totalDueDashboard !== undefined && window.db.dashboardOverrides?.totalDueDashboard !== null ? Number(window.db.dashboardOverrides.totalDueDashboard) : d.receivable;
-    let dispPayable = window.db.dashboardOverrides?.totalPayableDashboard !== undefined && window.db.dashboardOverrides?.totalPayableDashboard !== null ? Number(window.db.dashboardOverrides.totalPayableDashboard) : d.payable;
+    let overrides = window.db.dashboardOverrides || {};
+    let dispBal = (overrides.cashBalance !== undefined && overrides.cashBalance !== null) ? Number(overrides.cashBalance) : cashData.balance;
+    let dispIn = (overrides.cashIn !== undefined && overrides.cashIn !== null) ? Number(overrides.cashIn) : cashData.in;
+    let dispOut = (overrides.cashOut !== undefined && overrides.cashOut !== null) ? Number(overrides.cashOut) : cashData.out;
+    let dispDue = (overrides.totalDueDashboard !== undefined && overrides.totalDueDashboard !== null) ? Number(overrides.totalDueDashboard) : d.receivable;
+    let dispPayable = (overrides.totalPayableDashboard !== undefined && overrides.totalPayableDashboard !== null) ? Number(overrides.totalPayableDashboard) : d.payable;
 
     if(document.getElementById('cashBalance')) document.getElementById('cashBalance').innerText = money(dispBal);
     if(document.getElementById('cashIn')) document.getElementById('cashIn').innerText = money(dispIn);
