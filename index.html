@@ -250,6 +250,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       <div class="app-title">Novas Agro SR</div>
     </div>
     <div class="header-right">
+      <i class="fa-solid fa-filter" onclick="handleHeaderFilter()"></i>
       <div style="position: relative;">
         <i class="fa-regular fa-bell" onclick="toggleNotifications()"></i>
         <div class="badge" id="notiBadge" style="display:none;">0</div>
@@ -429,6 +430,34 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   <div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h3 id="modalTitle">তথ্য দিন</h3><button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button></div><form id="dataForm" autocomplete="off"><div id="formFields"></div><div class="form-actions"><button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button><button type="submit" class="btn-submit" id="submitBtn">সংরক্ষণ</button></div></form></div></div>
 
+  <!-- Filter Modal -->
+  <div class="modal" id="productFilterModal">
+    <div class="modal-box">
+      <div class="modal-head"><h3>পণ্য ফিল্টার</h3><button class="close-btn" onclick="closeProductFilterModal()"><i class="fa-solid fa-xmark"></i></button></div>
+      <div class="form-group">
+        <label>সাপ্লায়ার</label>
+        <select id="prodFilterSupplier"><option value="">সব সাপ্লায়ার</option></select>
+      </div>
+      <div class="form-group">
+        <label>ক্যাটাগরি</label>
+        <select id="prodFilterCategory"><option value="">সব ক্যাটাগরি</option></select>
+      </div>
+      <div class="form-group">
+        <label>স্টক অবস্থা</label>
+        <select id="prodFilterStock">
+          <option value="">সব স্টক</option>
+          <option value="in_stock">স্টকে আছে</option>
+          <option value="low_stock">কম স্টক</option>
+          <option value="out_of_stock">স্টক শেষ</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" onclick="resetProductFilters()">রিসেট</button>
+        <button type="button" class="btn-submit" onclick="applyProductFilters()">ফিল্টার করুন</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal" id="actionMenuModal"><div class="modal-box" style="max-height: 85vh;"><div class="modal-head"><h3 style="color:var(--primary)">কুইক মেনু</h3><button class="close-btn" onclick="closeActionMenu()"><i class="fa-solid fa-xmark"></i></button></div><div class="action-menu-grid"><div class="action-menu-category">বিক্রয়</div><div class="action-item" onclick="openNewSale()"><div class="a-icon"><i class="fa-solid fa-cash-register"></i></div><div class="a-text">বিক্রয়</div></div><div class="action-item" onclick="openQuickForm('sales_return')"><div class="a-icon"><i class="fa-solid fa-rotate-left"></i></div><div class="a-text">বিক্রি রিটার্ন</div></div><div class="action-item" onclick="openQuickForm('due_collect')"><div class="a-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div><div class="a-text">বাকি আদায়</div></div><div class="action-menu-category">অন্যান্য</div><div class="action-item" onclick="openForm('party')"><div class="a-icon"><i class="fa-solid fa-user-plus"></i></div><div class="a-text">নতুন পার্টি</div></div></div></div></div>
 
   <div class="modal" id="quickFormModal"><div class="modal-box"><div class="modal-head"><h3 id="quickFormTitle">ফর্ম</h3><button class="close-btn" onclick="closeQuickForm()"><i class="fa-solid fa-xmark"></i></button></div><form id="quickForm" autocomplete="off"><div id="quickFormFields"></div><div class="form-actions"><button type="button" class="btn-cancel" onclick="closeQuickForm()">বাতিল</button><button type="submit" class="btn-submit">সেভ করুন</button></div></form></div></div>
@@ -504,6 +533,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [], dashboardOverrides: {} };
   window.currentProfilePartyId = null;
   let currentSR = null;
+
+  // Product Filters State
+  window.activeProductFilters = { supplierId: '', category: '', stockStatus: '' };
 
   function srDbRef(path) {
     if (currentSR && currentSR.businessId && currentSR.businessId !== 'root') {
@@ -756,10 +788,67 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     return total;
   }
 
+  // Product Filter Logic
+  window.handleHeaderFilter = function() {
+    if (document.getElementById('products').classList.contains('active')) {
+        openProductFilterModal();
+    } else {
+        alert('এই পেজের জন্য ফিল্টার অপশন শীঘ্রই আসছে!');
+    }
+  };
+
+  window.openProductFilterModal = function() {
+    // Populate Suppliers
+    const sSelect = document.getElementById('prodFilterSupplier');
+    sSelect.innerHTML = `<option value="">সব সাপ্লায়ার</option>` + window.db.suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    
+    // Populate Categories dynamically from existing products
+    const categories = [...new Set(window.db.products.map(p => p.category).filter(Boolean))];
+    const cSelect = document.getElementById('prodFilterCategory');
+    cSelect.innerHTML = `<option value="">সব ক্যাটাগরি</option>` + categories.map(c => `<option value="${c}">${c}</option>`).join('');
+    
+    // Set current values
+    sSelect.value = window.activeProductFilters.supplierId;
+    cSelect.value = window.activeProductFilters.category;
+    document.getElementById('prodFilterStock').value = window.activeProductFilters.stockStatus;
+    
+    document.getElementById('productFilterModal').classList.add('open');
+  };
+
+  window.closeProductFilterModal = function() {
+    document.getElementById('productFilterModal').classList.remove('open');
+  };
+
+  window.applyProductFilters = function() {
+    window.activeProductFilters.supplierId = document.getElementById('prodFilterSupplier').value;
+    window.activeProductFilters.category = document.getElementById('prodFilterCategory').value;
+    window.activeProductFilters.stockStatus = document.getElementById('prodFilterStock').value;
+    
+    const searchTerm = document.getElementById('productSearchInput').value;
+    renderProducts(searchTerm);
+    closeProductFilterModal();
+  };
+
+  window.resetProductFilters = function() {
+    document.getElementById('prodFilterSupplier').value = '';
+    document.getElementById('prodFilterCategory').value = '';
+    document.getElementById('prodFilterStock').value = '';
+    
+    window.activeProductFilters.supplierId = '';
+    window.activeProductFilters.category = '';
+    window.activeProductFilters.stockStatus = '';
+    
+    const searchTerm = document.getElementById('productSearchInput').value;
+    renderProducts(searchTerm);
+    closeProductFilterModal();
+  };
+
   window.renderProducts = function(searchTerm = '') {
     const container = document.getElementById('productsList');
     if(!container) return;
     let prods = [...window.db.products];
+    
+    // Apply Text Search
     if(searchTerm) {
       const lower = searchTerm.toLowerCase();
       prods = prods.filter(p => {
@@ -769,6 +858,24 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         return name.includes(lower) || code.includes(lower) || cat.includes(lower) || subCat.includes(lower) || supName.includes(lower);
       });
     }
+
+    // Apply Active Filters
+    if (window.activeProductFilters.supplierId) {
+        prods = prods.filter(p => p.supplierId === window.activeProductFilters.supplierId);
+    }
+    if (window.activeProductFilters.category) {
+        prods = prods.filter(p => p.category === window.activeProductFilters.category);
+    }
+    if (window.activeProductFilters.stockStatus) {
+        prods = prods.filter(p => {
+            let st = window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0);
+            if (window.activeProductFilters.stockStatus === 'in_stock') return st > 0;
+            if (window.activeProductFilters.stockStatus === 'out_of_stock') return st <= 0;
+            if (window.activeProductFilters.stockStatus === 'low_stock') return st > 0 && st <= (p.lowStockLimit || 10);
+            return true;
+        });
+    }
+
     if(prods.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো পণ্য পাওয়া যায়নি</div>'; return; }
     container.innerHTML = prods.map(p => {
       let stock = window.db.batches.filter(b => b.productId === p.id).reduce((a,b) => a + Number(b.qty), 0);
@@ -779,7 +886,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       return `<div class="product-card">
         <div class="img-wrap">${p.imageUrl ? `<img src="${p.imageUrl}">` : '📦'}</div>
         <div class="info">
-          <h4>${esc(p.name)}</h4>
+          <h4>${esc(p.name)} ${p.packSize ? `<span style="font-size:12px; color:var(--text-muted); font-weight:normal;">(${esc(p.packSize)})</span>` : ''}</h4>
           <p style="font-size:12px; margin-bottom:6px;"><span style="color:var(--primary); font-weight:600;">সাপ্লায়ার: ${esc(supName)}</span></p>
           <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
             <span style="font-size:13px; color:var(--text-muted); font-weight:600; white-space:nowrap;">বিক্রয়: ৳${p.saleRate}</span>
@@ -1311,7 +1418,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   document.querySelectorAll('.modal').forEach(modal => {
     modal.addEventListener('click', function(e) {
       if (e.target === this) {
-        if (this.id === 'modal') window.closeModal(); else if (this.id === 'quickFormModal') window.closeQuickForm(); else if (this.id === 'actionMenuModal') window.closeActionMenu(); else if (this.id === 'addItemModal') window.closeAddItemModal(); else if (this.id === 'newSaleModal') window.closeNewSale(); else if (this.id === 'invoiceModal') window.closeInvoiceModal(); else if (this.id === 'invoiceListModal') window.closeInvoiceList(); else this.classList.remove('open');
+        if (this.id === 'modal') window.closeModal(); else if (this.id === 'quickFormModal') window.closeQuickForm(); else if (this.id === 'actionMenuModal') window.closeActionMenu(); else if (this.id === 'addItemModal') window.closeAddItemModal(); else if (this.id === 'newSaleModal') window.closeNewSale(); else if (this.id === 'invoiceModal') window.closeInvoiceModal(); else if (this.id === 'invoiceListModal') window.closeInvoiceList(); else if (this.id === 'productFilterModal') window.closeProductFilterModal(); else this.classList.remove('open');
       }
     });
   });
