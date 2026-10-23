@@ -845,6 +845,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [], companyDetails: {}, dashboardOverrides: {} };
   window.currentProfilePartyId = null;
+  window.currentBusinessId = null;
   let currentSR = null;
   
   // New Sale State
@@ -861,7 +862,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   
   document.addEventListener("DOMContentLoaded", () => {
     const savedSR = localStorage.getItem('novasAgroSR');
-    if(savedSR) { currentSR = JSON.parse(savedSR); showApp(); }
+    if(savedSR) { 
+        const parsed = JSON.parse(savedSR);
+        currentSR = parsed; 
+        window.currentBusinessId = parsed.businessId || 'root';
+        showApp(); 
+    }
   });
 
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -875,13 +881,33 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     loginBtn.textContent = 'চেক করা হচ্ছে...'; loginBtn.disabled = true; loginError.style.display = 'none';
 
     try {
-      const snapshot = await database.ref('srs').orderByChild('phone').equalTo(phone).once('value');
-      if (!snapshot.exists()) {
+      let businessId = 'root';
+      let srId = null;
+      let userData = null;
+
+      // Try finding in global directory first (For Multi-Tenant)
+      const dirSnap = await database.ref('srDirectory/' + phone).once('value');
+      if (dirSnap.exists()) {
+          businessId = dirSnap.val().businessId;
+          srId = dirSnap.val().srId;
+          const path = businessId === 'root' ? 'srs/' + srId : 'businesses/' + businessId + '/srs/' + srId;
+          const srSnap = await database.ref(path).once('value');
+          if(srSnap.exists()) userData = srSnap.val();
+      }
+
+      // Fallback for old SRs if not found in directory
+      if (!userData) {
+          const snapshot = await database.ref('srs').orderByChild('phone').equalTo(phone).once('value');
+          if (snapshot.exists()) {
+              snapshot.forEach(child => { userData = child.val(); srId = child.key; });
+              businessId = 'root';
+          }
+      }
+
+      if (!userData) {
         loginError.style.display = 'block'; loginError.textContent = 'এই নম্বরে কোনো এসআর নেই। এডমিনের সাথে যোগাযোগ করুন।';
         loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false; return;
       }
-      let userData = null; let userId = null;
-      snapshot.forEach(child => { userData = child.val(); userId = child.key; });
 
       if (userData.pin) {
         if (userData.pin !== pin) {
@@ -889,11 +915,13 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
           loginBtn.textContent = 'লগইন করুন'; loginBtn.disabled = false; return;
         }
       } else {
-        await database.ref('srs/' + userId).update({ pin: pin });
+        const path = businessId === 'root' ? 'srs/' + srId : 'businesses/' + businessId + '/srs/' + srId;
+        await database.ref(path).update({ pin: pin });
         userData.pin = pin;
       }
 
-      currentSR = { id: userId, name: userData.name, phone: userData.phone };
+      window.currentBusinessId = businessId;
+      currentSR = { id: srId, name: userData.name, phone: userData.phone, businessId: businessId };
       localStorage.setItem('novasAgroSR', JSON.stringify(currentSR));
       showApp();
 
@@ -911,6 +939,14 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   window.logoutUser = function() { if(confirm('লগআউট করবেন?')) { localStorage.removeItem('novasAgroSR'); location.reload(); } };
 
+  // Multi-Tenant DB Reference Wrapper
+  const dbRef = (path) => {
+      if (!window.currentBusinessId || window.currentBusinessId === 'root') {
+          return database.ref(path);
+      }
+      return database.ref('businesses/' + window.currentBusinessId + '/' + path);
+  };
+
   // Data Listeners
   function listenToData() {
     const handleSnap = (refName) => (snap) => {
@@ -918,25 +954,25 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       window.db[refName] = Object.keys(v).map(k => ({ ...v[k], key: k }));
       renderAll();
     };
-    database.ref('products').on('value', handleSnap('products'));
-    database.ref('batches').on('value', handleSnap('batches'));
-    database.ref('srs').on('value', handleSnap('srs'));
-    database.ref('parties').on('value', handleSnap('parties'));
-    database.ref('suppliers').on('value', handleSnap('suppliers'));
-    database.ref('transactions').on('value', handleSnap('transactions'));
-    database.ref('partyRequests').on('value', handleSnap('partyRequests'));
-    database.ref('pendingSales').on('value', handleSnap('pendingSales'));
-    database.ref('approvedSales').on('value', handleSnap('approvedSales'));
-    database.ref('deliveries').on('value', handleSnap('deliveries'));
-    database.ref('activityLogs').on('value', handleSnap('activityLogs'));
+    dbRef('products').on('value', handleSnap('products'));
+    dbRef('batches').on('value', handleSnap('batches'));
+    dbRef('srs').on('value', handleSnap('srs'));
+    dbRef('parties').on('value', handleSnap('parties'));
+    dbRef('suppliers').on('value', handleSnap('suppliers'));
+    dbRef('transactions').on('value', handleSnap('transactions'));
+    dbRef('partyRequests').on('value', handleSnap('partyRequests'));
+    dbRef('pendingSales').on('value', handleSnap('pendingSales'));
+    dbRef('approvedSales').on('value', handleSnap('approvedSales'));
+    dbRef('deliveries').on('value', handleSnap('deliveries'));
+    dbRef('activityLogs').on('value', handleSnap('activityLogs'));
     
     // Company Details Listener
-    database.ref('companyDetails').on('value', snap => {
+    dbRef('companyDetails').on('value', snap => {
         window.db.companyDetails = snap.val() || {};
     });
 
     // Dashboard Overrides Listener
-    database.ref('dashboardOverrides').on('value', snap => {
+    dbRef('dashboardOverrides').on('value', snap => {
         window.db.dashboardOverrides = snap.val() || {};
         renderAll();
     });
@@ -962,7 +998,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   // Log Activity (Updated with User Name)
   function logActivity(type, details) {
     const logId = Date.now().toString(36);
-    database.ref('activityLogs/' + logId).set({
+    dbRef('activityLogs/' + logId).set({
       id: logId, type: type, details: details, timestamp: new Date().toISOString(),
       user: currentSR.name, userName: currentSR.name
     });
@@ -970,7 +1006,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   window.savePartyToDB = function(data, id = null) {
     const newId = id || Date.now().toString(36);
-    database.ref('parties/' + newId).update({ 
+    dbRef('parties/' + newId).update({ 
       id: newId, name: data.name, phone: data.phone || '', address: data.address || '', 
       previousDue: Number(data.previousDue) || 0
     });
@@ -1359,10 +1395,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   function deductStock(productId, qty) {
       let remaining = qty;
       let bList = window.db.batches.filter(x => x.productId === productId && Number(x.qty) > 0);
-      for(let b of bList) { if(remaining <= 0) break; let cQty = Number(b.qty); let targetKey = b.key || b.id; if(cQty >= remaining) { database.ref('batches/' + targetKey).update({ qty: cQty - remaining }); remaining = 0; } else { database.ref('batches/' + targetKey).update({ qty: 0 }); remaining -= cQty; } }
+      for(let b of bList) { if(remaining <= 0) break; let cQty = Number(b.qty); let targetKey = b.key || b.id; if(cQty >= remaining) { dbRef('batches/' + targetKey).update({ qty: cQty - remaining }); remaining = 0; } else { dbRef('batches/' + targetKey).update({ qty: 0 }); remaining -= cQty; } }
   }
 
-  function addStock(productId, qty, prefix='RETURN') { let bId = Date.now().toString(36) + Math.random().toString(36).substring(2, 5); database.ref('batches/' + bId).set({ id: bId, productId: productId, qty: Number(qty), batchNo: prefix }); }
+  function addStock(productId, qty, prefix='RETURN') { let bId = Date.now().toString(36) + Math.random().toString(36).substring(2, 5); dbRef('batches/' + bId).set({ id: bId, productId: productId, qty: Number(qty), batchNo: prefix }); }
 
   window.saveNewSale = function() {
     const partyId = document.getElementById('nsCustomer').value; 
@@ -1397,7 +1433,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     
     let txnData = { id: txnId, invoiceNo: invNo, date: date, type: 'sales', partyId: partyId, items: saleItemsCopy, subTotal: subTotal, discount: discFlat, delivery: delivery, total: grandTotal, paid: paid, due: due, paymentMethod: paymentMethod, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone };
     
-    database.ref('transactions/' + txnId).set(txnData).then(() => {
+    dbRef('transactions/' + txnId).set(txnData).then(() => {
       let itemsStr = saleItemsCopy.map(i => `${i.name} (${i.qty} পিস)`).join(', ');
       logActivity(isEdit ? 'বিক্রয় এডিট' : 'বিক্রয়', `${currentSR.name} ${partyObj.name} - এর কাছে বিক্রয় ${isEdit ? 'আপডেট' : ''}: ${itemsStr}। মোট: ${money(grandTotal)}, জমা: ${money(paid)}, বাকি: ${money(due)}`);
       showInvoicePreview(invNo, partyObj, saleItemsCopy, subTotal, discPercent, discFlat, delivery, grandTotal, paid, due, paymentMethod);
@@ -1539,10 +1575,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     form.onsubmit = (e) => { 
       e.preventDefault(); const d = Object.fromEntries(new FormData(form).entries()); const txnId = existingTxn ? existingTxn.id : 'TXN-' + Date.now().toString(36).toUpperCase(); const date = existingTxn ? existingTxn.date : new Date().toISOString();
       if(type === 'due_collect') {
-        database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_in', note: d.note ? 'বাকি আদায় - ' + d.note : 'বাকি আদায়', amount: Number(d.amount), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
+        dbRef('transactions/' + txnId).set({ id: txnId, date: date, type: 'cash_in', note: d.note ? 'বাকি আদায় - ' + d.note : 'বাকি আদায়', amount: Number(d.amount), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
       } else if(type === 'sales_return') {
         const pName = window.db.products.find(p => p.id === d.productId)?.name || '';
-        database.ref('transactions/' + txnId).set({ id: txnId, date: date, type: 'sales_return', productId: d.productId, qty: Number(d.qty), rate: Number(d.rate), total: Number(d.qty)*Number(d.rate), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
+        dbRef('transactions/' + txnId).set({ id: txnId, date: date, type: 'sales_return', productId: d.productId, qty: Number(d.qty), rate: Number(d.rate), total: Number(d.qty)*Number(d.rate), partyId: d.partyId, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.name }).then(() => { alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm(); });
       }
     };
   };
