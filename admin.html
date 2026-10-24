@@ -751,6 +751,15 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     </div>
   </div>
 
+  <!-- Product Search Modal for Quick Forms & Sales -->
+  <div class="modal" id="productSearchModal" style="z-index: 110;">
+    <div class="modal-box" style="border-radius: 24px; max-width: 400px; margin: auto;">
+      <div class="modal-head"><h3>পণ্য সিলেক্ট করুন</h3><button class="close-btn" onclick="closeProductSearchModal()"><i class="fa-solid fa-xmark"></i></button></div>
+      <input type="text" id="productSearchInputNew" placeholder="🔍 পণ্যের নাম বা কোড সার্চ করুন..." oninput="filterProductSearchList(this.value)" style="width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 15px; background: #F8FAFC; margin-bottom: 15px; outline: none;">
+      <div id="productSearchList" style="max-height: 50vh; overflow-y: auto;"></div>
+    </div>
+  </div>
+
   <!-- Pack Size Modal -->
   <div class="modal" id="packSizeModal">
     <div class="modal-box">
@@ -988,7 +997,15 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   <div class="modal" id="addItemModal" style="z-index: 105;">
     <div class="modal-box" style="border-radius: 24px; max-width: 400px; margin: auto;">
       <div class="modal-head"><h3>আইটেম যোগ করুন</h3><button class="close-btn" onclick="closeAddItemModal()"><i class="fa-solid fa-xmark"></i></button></div>
-      <div class="form-group"><label>পণ্য</label><select id="aiProduct" onchange="updateAiRate()"><option value="">সিলেক্ট করুন</option></select></div>
+      <div class="form-group">
+        <label>পণ্য</label>
+        <div id="aiProduct_display" onclick="openProductSearchModal('aiProduct', 'aiProduct_display', 'sales')" style="padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #F8FAFC; cursor: pointer; color: var(--text);">
+          সিলেক্ট করুন
+        </div>
+        <select id="aiProduct" style="display: none;" onchange="updateAiRate(); document.getElementById('aiProduct_display').innerText = this.options[this.selectedIndex].text;">
+          <option value="">সিলেক্ট করুন</option>
+        </select>
+      </div>
       <div style="display:flex; gap:10px;">
         <div class="form-group" style="flex:1;"><label>পরিমাণ</label><input type="number" id="aiQty" value="1" min="1" oninput="updateAiTotal()"></div>
         <div class="form-group" style="flex:1;"><label>মূল্য</label><input type="number" id="aiRate" value="0" min="0" oninput="updateAiTotal()"></div>
@@ -1071,6 +1088,11 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   // Product Filters State
   window.activeProductFilters = { supplierId: '', category: '', stockStatus: '' };
+  
+  // Product Search Modal State
+  window.productSearchTargetId = null;
+  window.productSearchTargetDisplayId = null;
+  window.productSearchType = null;
 
   // Multi-Tenant DB Reference Wrapper
   const dbRef = (path) => {
@@ -1649,6 +1671,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   };
   window.openAddItemModal = function() {
     window.editingItemIndex = null;
+    document.getElementById('aiProduct_display').innerText = 'সিলেক্ট করুন';
     document.getElementById('aiProduct').innerHTML = `<option value="">সিলেক্ট করুন</option>` + window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('');
     document.getElementById('aiQty').value = 1; document.getElementById('aiRate').value = ''; document.getElementById('aiSubTotal').innerText = '0.00';
     document.getElementById('addItemModal').classList.add('open');
@@ -1658,6 +1681,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const item = window.currentSaleItems[index];
     document.getElementById('aiProduct').innerHTML = window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('');
     document.getElementById('aiProduct').value = item.productId;
+    const selectedOpt = document.getElementById('aiProduct').options[document.getElementById('aiProduct').selectedIndex];
+    if(selectedOpt) document.getElementById('aiProduct_display').innerText = selectedOpt.text;
     document.getElementById('aiQty').value = item.qty; document.getElementById('aiRate').value = item.rate;
     updateAiTotal(); document.getElementById('addItemModal').classList.add('open');
   };
@@ -2008,7 +2033,11 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
     if (type === 'purchase') {
       title.innerText = txn ? 'ক্রয় এডিট' : 'নতুন ক্রয়'; submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
-      formFields.innerHTML = `<div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId" id="q_supplier" required><option value="">সিলেক্ট করুন</option>${supOpts}</select></div><div class="form-group"><label>পণ্য</label><select name="productId" id="q_product" required><option value="">সিলেক্ট করুন</option>${prodOpts}</select></div><div style="display:flex; gap:10px; align-items:flex-end;"><div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="${qtyVal}" min="1" required oninput="calcQuickFormTotals()"></div><div class="form-group" style="flex:1.4; margin-bottom:0;"><label>ক্রয় মূল্য</label><input type="number" name="rate" id="q_rate" value="${rateVal}" required oninput="calcQuickFormTotals()"></div></div><div style="display:flex; gap:10px; margin-top:10px;"><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (%)</label><input type="number" name="discPercent" id="q_discPercent" value="0" oninput="calcQuickFormTotals('percent')"></div><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (৳)</label><input type="number" name="discFlat" id="q_discFlat" value="${discVal}" oninput="calcQuickFormTotals('flat')"></div></div><div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${delVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="form-group" style="margin-top:12px;"><label>পরিশোধ</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="q-calc-box"><span>সর্বমোট: <span id="q_total_display">৳ ${txn ? txn.total.toFixed(2) : '0.00'}</span></span><span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${txn ? txn.due.toFixed(2) : '0.00'}</span></span></div>`;
+      formFields.innerHTML = `<div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId" id="q_supplier" required><option value="">সিলেক্ট করুন</option>${supOpts}</select></div>
+      <div class="form-group"><label>পণ্য</label>
+      <div id="q_product_display" onclick="openProductSearchModal('q_product', 'q_product_display', 'purchase')" style="padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #F8FAFC; cursor: pointer; color: var(--text);">সিলেক্ট করুন</div>
+      <select name="productId" id="q_product" required style="display: none;" onchange="updateQuickFormRate(this.value, 'purchase'); document.getElementById('q_product_display').innerText = this.options[this.selectedIndex].text;"><option value="">সিলেক্ট করুন</option>${prodOpts}</select></div>
+      <div style="display:flex; gap:10px; align-items:flex-end;"><div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="${qtyVal}" min="1" required oninput="calcQuickFormTotals()"></div><div class="form-group" style="flex:1.4; margin-bottom:0;"><label>ক্রয় মূল্য</label><input type="number" name="rate" id="q_rate" value="${rateVal}" required oninput="calcQuickFormTotals()"></div></div><div style="display:flex; gap:10px; margin-top:10px;"><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (%)</label><input type="number" name="discPercent" id="q_discPercent" value="0" oninput="calcQuickFormTotals('percent')"></div><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (৳)</label><input type="number" name="discFlat" id="q_discFlat" value="${discVal}" oninput="calcQuickFormTotals('flat')"></div></div><div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${delVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="form-group" style="margin-top:12px;"><label>পরিশোধ</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="q-calc-box"><span>সর্বমোট: <span id="q_total_display">৳ ${txn ? txn.total.toFixed(2) : '0.00'}</span></span><span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${txn ? txn.due.toFixed(2) : '0.00'}</span></span></div>`;
     } else if (type === 'due_collect') {
       title.innerText = txn ? 'বাকি আদায় এডিট' : 'বাকি আদায়'; submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
       formFields.innerHTML = `<div class="form-group"><label>পার্টি</label><select name="partyId" required><option value="">সিলেক্ট করুন</option>${partyOpts}</select></div><div class="form-group"><label>আদায়ের পরিমাণ</label><input type="number" name="amount" value="${txn ? txn.amount : ''}" required min="1"></div><div class="form-group"><label>নোট (ঐচ্ছিক)</label><input type="text" name="note" value="${txn ? (txn.note||'').replace('বাকি আদায় - ','') : ''}"></div>`;
@@ -2021,7 +2050,11 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     } else if (type === 'sales_return' || type === 'purchase_return') {
       title.innerText = txn ? (type === 'sales_return' ? 'বিক্রয় রিটার্ন এডিট' : 'ক্রয় রিটার্ন এডিট') : (type === 'sales_return' ? 'বিক্রি রিটার্ন' : 'ক্রয় রিটার্ন'); submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
       let selectEntity = type === 'sales_return' ? partyOpts : supOpts; let labelEntity = type === 'sales_return' ? 'ক্রেতা (পার্টি)' : 'সাপ্লায়ার'; let nameAttr = type === 'sales_return' ? 'partyId' : 'supplierId';
-      formFields.innerHTML = `<div class="form-group"><label>${labelEntity}</label><select name="${nameAttr}" ${nameAttr === 'supplierId' ? 'id="q_supplier"' : ''} required><option value="">সিলেক্ট করুন</option>${selectEntity}</select></div><div class="form-group"><label>পণ্য</label><select name="productId" id="q_product" required><option value="">সিলেক্ট করুন</option>${prodOpts}</select></div><div style="display:flex; gap:10px; align-items:flex-end;"><div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="${qtyVal}" min="1" required oninput="calcQuickFormTotals()"></div><div class="form-group" style="flex:1.4; margin-bottom:0;"><label>মূল্য</label><input type="number" name="rate" id="q_rate" value="${rateVal}" required oninput="calcQuickFormTotals()"></div></div><div style="display:flex; gap:10px; margin-top:10px;"><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (%)</label><input type="number" name="discPercent" id="q_discPercent" value="0" oninput="calcQuickFormTotals('percent')"></div><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (৳)</label><input type="number" name="discFlat" id="q_discFlat" value="${discVal}" oninput="calcQuickFormTotals('flat')"></div></div><div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${delVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="form-group" style="margin-top:12px;"><label>টাকা ফেরত দেওয়া/নেওয়া</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="q-calc-box"><span>সর্বমোট: <span id="q_total_display">৳ ${txn ? txn.total.toFixed(2) : '0.00'}</span></span><span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${txn ? txn.due.toFixed(2) : '0.00'}</span></span></div>`;
+      formFields.innerHTML = `<div class="form-group"><label>${labelEntity}</label><select name="${nameAttr}" ${nameAttr === 'supplierId' ? 'id="q_supplier"' : ''} required><option value="">সিলেক্ট করুন</option>${selectEntity}</select></div>
+      <div class="form-group"><label>পণ্য</label>
+      <div id="q_product_display" onclick="openProductSearchModal('q_product', 'q_product_display', '${type}')" style="padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #F8FAFC; cursor: pointer; color: var(--text);">সিলেক্ট করুন</div>
+      <select name="productId" id="q_product" required style="display: none;" onchange="updateQuickFormRate(this.value, '${type}'); document.getElementById('q_product_display').innerText = this.options[this.selectedIndex].text;"><option value="">সিলেক্ট করুন</option>${prodOpts}</select></div>
+      <div style="display:flex; gap:10px; align-items:flex-end;"><div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="${qtyVal}" min="1" required oninput="calcQuickFormTotals()"></div><div class="form-group" style="flex:1.4; margin-bottom:0;"><label>মূল্য</label><input type="number" name="rate" id="q_rate" value="${rateVal}" required oninput="calcQuickFormTotals()"></div></div><div style="display:flex; gap:10px; margin-top:10px;"><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (%)</label><input type="number" name="discPercent" id="q_discPercent" value="0" oninput="calcQuickFormTotals('percent')"></div><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (৳)</label><input type="number" name="discFlat" id="q_discFlat" value="${discVal}" oninput="calcQuickFormTotals('flat')"></div></div><div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${delVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="form-group" style="margin-top:12px;"><label>টাকা ফেরত দেওয়া/নেওয়া</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="q-calc-box"><span>সর্বমোট: <span id="q_total_display">৳ ${txn ? txn.total.toFixed(2) : '0.00'}</span></span><span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${txn ? txn.due.toFixed(2) : '0.00'}</span></span></div>`;
     } else if (type === 'cash_match') {
       title.innerText = 'ক্যাশ মিলাই'; submitBtn.innerText = 'সেভ করুন';
       formFields.innerHTML = `<div class="form-group"><label>আপনার কাছে থাকা বর্তমান ক্যাশ</label><input type="number" name="physicalCash" required></div><p style="font-size:14px; color:var(--text-muted); margin-top:10px;">সিস্টেম ক্যাশ: <strong id="sysCash" style="color:var(--primary)"></strong></p>`;
@@ -2039,7 +2072,14 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
                     else if(type === 'sales_return') ent.value = txn.partyId;
                 }
                 const prodSelect = document.getElementById('q_product');
-                if(prodSelect) { prodSelect.value = txn.productId; updateQuickFormRate(txn.productId, type); }
+                if(prodSelect) { 
+                    prodSelect.value = txn.productId; 
+                    updateQuickFormRate(txn.productId, type); 
+                    if(document.getElementById('q_product_display')) {
+                        const selectedOpt = prodSelect.options[prodSelect.selectedIndex];
+                        if(selectedOpt) document.getElementById('q_product_display').innerText = selectedOpt.text;
+                    }
+                }
                 calcQuickFormTotals();
             }
         }
@@ -2624,10 +2664,66 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     closePackModal(); 
   };
 
+  // Product Search Modal Logic (For Quick Forms & Sales)
+  window.openProductSearchModal = function(targetSelectId, targetDisplayId, type) {
+      window.productSearchTargetId = targetSelectId;
+      window.productSearchTargetDisplayId = targetDisplayId;
+      window.productSearchType = type;
+      document.getElementById('productSearchInputNew').value = '';
+      filterProductSearchList('');
+      document.getElementById('productSearchModal').classList.add('open');
+  };
+
+  window.closeProductSearchModal = function() {
+      document.getElementById('productSearchModal').classList.remove('open');
+  };
+
+  window.filterProductSearchList = function(searchTerm) {
+      const listContainer = document.getElementById('productSearchList');
+      const lower = searchTerm.toLowerCase();
+      let filteredProds = window.db.products.filter(p => {
+          const name = (p.name || '').toLowerCase();
+          const code = (p.code || '').toLowerCase();
+          return name.includes(lower) || code.includes(lower);
+      });
+
+      if (filteredProds.length === 0) {
+          listContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো পণ্য পাওয়া যায়নি</div>';
+          return;
+      }
+
+      listContainer.innerHTML = filteredProds.map(p => {
+          let stock = window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0);
+          let rate = window.productSearchType === 'purchase' || window.productSearchType === 'purchase_return' ? (p.purchaseRate || 0) : (p.saleRate || 0);
+          let packInfo = p.packSize ? `(${esc(p.packSize)})` : '';
+          return `<div onclick="selectProductFromSearch('${p.id}', '${esc(p.name)}')" style="padding: 12px 15px; border-bottom: 1px solid #eee; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                  <div style="font-weight: 600; font-size: 15px; color: var(--text);">${esc(p.name)} <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">${packInfo}</span></div>
+                  <div style="font-size: 12px; color: var(--text-muted);">স্টক: ${stock} | মূল্য: ৳${rate}</div>
+              </div>
+          </div>`;
+      }).join('');
+  };
+
+  window.selectProductFromSearch = function(prodId, prodName) {
+      const selectEl = document.getElementById(window.productSearchTargetId);
+      if (selectEl) {
+          selectEl.value = prodId;
+          const event = new Event('change', { bubbles: true });
+          selectEl.dispatchEvent(event);
+      }
+      const displayEl = document.getElementById(window.productSearchTargetDisplayId);
+      if (displayEl) {
+          const selectedOpt = selectEl.options[selectEl.selectedIndex];
+          displayEl.innerText = selectedOpt ? selectedOpt.text : prodName;
+      }
+      closeProductSearchModal();
+  };
+
   document.querySelectorAll('.modal').forEach(modal => {
     modal.addEventListener('click', function(e) {
       if (e.target === this) {
-        if (this.id === 'modal') window.closeModal(); else if (this.id === 'quickFormModal') window.closeQuickForm(); else if (this.id === 'actionMenuModal') window.closeActionMenu(); else if (this.id === 'resetModal') window.closeResetModal(); else if (this.id === 'backupDataModal') window.closeBackupDataModal(); else if (this.id === 'restoreDataModal') window.closeRestoreDataModal(); else if (this.id === 'addItemModal') window.closeAddItemModal(); else if (this.id === 'newSaleModal') window.closeNewSale(); else if (this.id === 'invoiceModal') window.closeInvoiceModal(); else if (this.id === 'invoiceListModal') window.closeInvoiceList(); else if (this.id === 'ownerProfileModal') window.closeOwnerProfileModal(); else if (this.id === 'companyDetailsModal') window.closeCompanyDetailsModal(); else if (this.id === 'packSizeModal') window.closePackModal(); else if (this.id === 'productFilterModal') window.closeProductFilterModal(); else this.classList.remove('open'); 
+        if (this.id === 'modal') window.closeModal(); else if (this.id === 'quickFormModal') window.closeQuickForm(); else if (this.id === 'actionMenuModal') window.closeActionMenu(); else if (this.id === 'resetModal') window.closeResetModal(); else if (this.id === 'backupDataModal') window.closeBackupDataModal(); else if (this.id === 'restoreDataModal') window.closeRestoreDataModal(); else if (this.id === 'addItemModal') window.closeAddItemModal(); else if (this.id === 'newSaleModal') window.closeNewSale(); else if (this.id === 'invoiceModal') window.closeInvoiceModal(); else if (this.id === 'invoiceListModal') window.closeInvoiceList(); else if (this.id === 'ownerProfileModal') window.closeOwnerProfileModal(); else if (this.id === 'companyDetailsModal') window.closeCompanyDetailsModal(); else if (this.id === 'packSizeModal') window.closePackModal(); else if (this.id === 'productFilterModal') window.closeProductFilterModal(); else if (this.id === 'productSearchModal') window.closeProductSearchModal(); else this.classList.remove('open'); 
       }
     });
   });
