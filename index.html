@@ -911,7 +911,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
           <h4>${esc(p.name)} ${p.packSize ? `<span style="font-size:12px; color:var(--text-muted); font-weight:normal;">(${esc(p.packSize)})</span>` : ''}</h4>
           <p style="font-size:12px; margin-bottom:6px;"><span style="color:var(--primary); font-weight:600;">সাপ্লায়ার: ${esc(supName)}</span></p>
           <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-            <span style="font-size:13px; color:var(--text-muted); font-weight:600; white-space:nowrap;">বিক্রয়: ৳${p.saleRate}</span>
+            <div style="display:flex; flex-direction:column; gap:2px;">
+                <span style="font-size:11px; color:var(--text-muted); font-weight:600; white-space:nowrap;">MRP: ৳${p.mrp || 0}</span>
+                <span style="font-size:13px; color:var(--primary); font-weight:700; white-space:nowrap;">বিক্রয়: ৳${p.saleRate || 0}</span>
+            </div>
             <div style="background:${stockBg}; border:1.5px solid ${stockColor}; padding:5px 12px; border-radius:20px; display:flex; align-items:center; gap:6px; white-space:nowrap;">
               <i class="fa-solid fa-cubes" style="font-size:12px; color:${stockColor};"></i>
               <span style="font-size:11px; color:${stockColor}; font-weight:700;">${stockLabel}</span>
