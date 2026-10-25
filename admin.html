@@ -1420,17 +1420,32 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     logActivity('সাপ্লায়ার', `সাপ্লায়ার ${id ? 'এডিট' : 'যোগ'} করা হয়েছে: ${data.name}`);
   };
   
-  // saveProductToDB with MRP added
+  // saveProductToDB with MRP added & Stock Edit Functionality
   window.saveProductToDB = function(data, id = null, callback = null) {
     const pId = id || Date.now().toString(36);
+    const newStock = Math.max(0, Number(data.stock) || 0);
+    
     dbRef('products/' + pId).update({ 
       id: pId, name: data.name, code: data.code || '', category: data.category || '', subCategory: data.subCategory || '',
       supplierId: data.supplierId || '', purchaseRate: Number(data.purchaseRate) || 0, mrp: Number(data.mrp) || 0, saleRate: Number(data.saleRate) || 0, packSize: data.packSize || '',
       lowStockLimit: Number(data.lowStockLimit) || 10, imageUrl: data.imageLink || '' 
     }).then(() => {
-      if(data.stock > 0) {
-        let bId = Date.now().toString(36) + 'b';
-        dbRef('batches/' + bId).set({ id: bId, productId: pId, qty: Number(data.stock), batchNo: 'INITIAL' });
+      if (!id) {
+          // New Product
+          if(newStock > 0) {
+            let bId = Date.now().toString(36) + 'b';
+            dbRef('batches/' + bId).set({ id: bId, productId: pId, qty: newStock, batchNo: 'INITIAL' });
+          }
+      } else {
+          // Existing Product Edit: Adjust Stock
+          let currentStock = window.db.batches.filter(b=>b.productId===pId).reduce((a,b)=>a+Number(b.qty),0);
+          let diff = newStock - currentStock;
+          if (diff > 0) {
+              let bId = Date.now().toString(36) + 'b';
+              dbRef('batches/' + bId).set({ id: bId, productId: pId, qty: diff, batchNo: 'EDIT_ADD' });
+          } else if (diff < 0) {
+              deductStock(pId, Math.abs(diff));
+          }
       }
       logActivity('পণ্য', `পণ্য ${id ? 'এডিট' : 'যোগ'} করা হয়েছে: ${data.name}`);
       if(callback) callback();
@@ -2836,6 +2851,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if(type === 'product') {
       let cO = Object.keys(categoryData).map(c => `<option value="${c}" ${p.category === c ? 'selected' : ''}>${c}</option>`).join(''); let sO = p.category ? (categoryData[p.category]||[]).map(s => `<option value="${s}" ${p.subCategory === s ? 'selected' : ''}>${s}</option>`).join('') : ''; let supO = window.db.suppliers.map(s => `<option value="${s.id}" ${p.supplierId === s.id ? 'selected' : ''}>${s.name}</option>`).join('');
       
+      let currentStock = editId ? window.db.batches.filter(b=>b.productId===editId).reduce((a,b)=>a+Number(b.qty),0) : 0;
+
       showModal(editId ? 'পণ্য এডিট' : 'পণ্য যোগ', `
         <div class="img-preview-box">
           <div class="img-preview" id="productImagePreview">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%; height:100%; object-fit:cover;">` : '📦'}</div>
@@ -2875,7 +2892,11 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
           </div>
         </div>
 
-        ${!editId ? `<div class="form-group" style="margin-top:15px;"><label>বর্তমান স্টক (যোগ হবে)</label><input type="number" name="stock" value="0" min="0"></div>` : ''}
+        <div class="form-group" style="margin-top:15px;">
+          <label>স্টক ${editId ? `(বর্তমান: ${currentStock})` : '(যোগ হবে)'}</label>
+          <input type="number" name="stock" value="${currentStock}" min="0" required>
+          ${editId ? `<small style="color:var(--text-muted); font-size:11px;">স্টক কমাতে চাইলে এখানে কম সংখ্যা দিন</small>` : ''}
+        </div>
         <div class="form-group"><label>কম স্টকের সীমা</label><input type="number" name="lowStockLimit" value="${p.lowStockLimit || 10}" min="0"></div>
       `, (fd) => { saveProductToDB(Object.fromEntries(fd.entries()), editId, () => { if (window.refreshQuickFormProducts) window.refreshQuickFormProducts(); }); });
     } else if(type === 'party') {
