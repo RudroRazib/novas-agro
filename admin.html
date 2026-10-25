@@ -1451,6 +1451,24 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       if(callback) callback();
     });
   };
+
+  // Delete Product Logic
+  window.deleteProduct = function(id) {
+    const prod = window.db.products.find(p => p.id === id);
+    if(!prod) return;
+
+    if(confirm(`আপনি কি নিশ্চিত "${prod.name}" পণ্যটি ডিলিট করতে চান?`)) {
+        // Remove product
+        dbRef('products/' + id).remove().then(() => {
+            // Remove associated batches
+            window.db.batches.filter(b => b.productId === id).forEach(b => {
+                dbRef('batches/' + (b.key || b.id)).remove();
+            });
+            logActivity('পণ্য ডিলিট', `পণ্য ডিলিট করা হয়েছে: ${prod.name}`);
+            alert('পণ্যটি সফলভাবে ডিলিট করা হয়েছে!');
+        }).catch(err => alert('পণ্য ডিলিট করতে সমস্যা হয়েছে: ' + err.message));
+    }
+  };
   
   window.saveSRToDB = function(data, id = null) { 
     const nid = id || Date.now().toString(36); 
@@ -2684,7 +2702,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
           </div>
           <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;">
               <button class="btn-add-stock" onclick="openAddStockModal('${p.id}', '${esc(p.name)}')"><i class="fa-solid fa-plus"></i> স্টক</button>
-              <button class="btn-edit-icon" onclick="openForm('product', '${p.id}')"><i class="fa-solid fa-pen"></i></button>
+              <div style="display:flex; gap: 4px;">
+                  <button class="btn-edit-icon" onclick="openForm('product', '${p.id}')" title="এডিট"><i class="fa-solid fa-pen"></i></button>
+                  <button class="btn-edit-icon" onclick="deleteProduct('${p.id}')" style="background:#fee2e2; color:#ef4444;" title="ডিলিট"><i class="fa-solid fa-trash"></i></button>
+              </div>
           </div>
       </div>`;
     }).join('') || '<div style="text-align:center; padding:20px; color:#999;">কোনো পণ্য পাওয়া যায়নি</div>';
