@@ -1018,15 +1018,68 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
           <option value="">সিলেক্ট করুন</option>
         </select>
       </div>
-      <div style="display:flex; gap:10px;">
-        <div class="form-group" style="flex:1;"><label>পরিমাণ</label><input type="number" id="aiQty" value="1" min="1" oninput="updateAiTotal()"></div>
-        <div class="form-group" style="flex:1;"><label>মূল্য</label><input type="number" id="aiRate" value="0" min="0" oninput="updateAiTotal()"></div>
-        <div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (%)</label><input type="number" id="aiItemDiscount" value="0" min="0" max="100" oninput="updateAiTotal()"></div>
+      
+      <!-- Quantity & Price Row -->
+      <div style="display:flex; gap:10px; align-items: flex-end;">
+        <div class="form-group" style="flex:0.7; margin-bottom:0;">
+          <label>পরিমাণ</label>
+          <input type="number" id="aiQty" value="1" min="1" oninput="updateAiTotal()" style="text-align:center;">
+        </div>
+        <div class="form-group" style="flex:1.3; margin-bottom:0;">
+          <label>মূল্য</label>
+          <input type="number" id="aiRate" value="0" min="0" oninput="updateAiTotal()" style="text-align:right;">
+        </div>
       </div>
+
+      <!-- Discount Row -->
+      <div class="form-group" style="margin-top: 12px;">
+        <label>ডিসকাউন্ট (%)</label>
+        <input type="number" id="aiItemDiscount" value="0" min="0" max="100" oninput="updateAiTotal()">
+      </div>
+
       <div style="text-align:right; font-weight:bold; margin-bottom:15px; color:var(--primary); font-size:18px;">সাব-টোটাল: ৳ <span id="aiSubTotal">0.00</span></div>
       <button class="btn-submit" style="width:100%; padding:15px; border-radius:12px;" onclick="addItemToSale()">যুক্ত করুন</button>
     </div>
   </div>
+
+  <!-- Sales Return Item Modal -->
+  <div class="modal" id="salesReturnItemModal" style="z-index: 105;">
+    <div class="modal-box" style="border-radius: 24px; max-width: 400px; margin: auto;">
+      <div class="modal-head">
+        <h3 id="srItemModalTitle">আইটেম যোগ করুন</h3>
+        <button class="close-btn" onclick="closeSalesReturnItemModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="form-group">
+        <label>পণ্য</label>
+        <div id="sriProduct_display" onclick="openProductSearchModal('sriProduct', 'sriProduct_display', 'sales_return')" style="padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #F8FAFC; cursor: pointer; color: var(--text);">সিলেক্ট করুন</div>
+        <select id="sriProduct" style="display: none;" onchange="updateSriRate(); document.getElementById('sriProduct_display').innerText = this.options[this.selectedIndex].text;">
+          <option value="">সিলেক্ট করুন</option>
+        </select>
+      </div>
+      
+      <!-- Quantity & Price Row -->
+      <div style="display:flex; gap:10px; align-items: flex-end;">
+        <div class="form-group" style="flex:0.7; margin-bottom:0;">
+          <label>পরিমাণ</label>
+          <input type="number" id="sriQty" value="1" min="1" oninput="updateSriTotal()" style="text-align:center;">
+        </div>
+        <div class="form-group" style="flex:1.3; margin-bottom:0;">
+          <label>মূল্য</label>
+          <input type="number" id="sriRate" value="0" min="0" oninput="updateSriTotal()" style="text-align:right;">
+        </div>
+      </div>
+
+      <!-- Discount Row -->
+      <div class="form-group" style="margin-top: 12px;">
+        <label>ডিসকাউন্ট (%)</label>
+        <input type="number" id="sriItemDiscount" value="0" min="0" max="100" oninput="updateSriTotal()">
+      </div>
+
+      <div style="text-align:right; font-weight:bold; margin-bottom:15px; color:var(--primary); font-size:18px;">সাব-টোটাল: ৳ <span id="sriSubTotal">0.00</span></div>
+      <button class="btn-submit" style="width:100%; padding:15px; border-radius:12px;" onclick="addItemToSalesReturn()">যুক্ত করুন</button>
+    </div>
+  </div>
+
 </div>
 
 <!-- INVOICE LIST MODAL -->
@@ -1093,6 +1146,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   let currentUserEmail = '';
 
   window.currentSaleItems = [];
+  window.currentSalesReturnItems = [];
+  window.editingSalesReturnItemIndex = null;
   window.currentSaleType = 'cash';
   window.editingSaleId = null; 
   window.editingItemIndex = null;
@@ -1797,6 +1852,146 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     }
     calcSaleTotals();
   };
+
+  // ===== Sales Return Multi-Item =====
+  window.openSalesReturnItemModal = function() {
+      window.editingSalesReturnItemIndex = null;
+      document.getElementById('srItemModalTitle').innerText = 'আইটেম যোগ করুন';
+      document.getElementById('sriProduct_display').innerText = 'সিলেক্ট করুন';
+      document.getElementById('sriProduct').innerHTML = `<option value="">সিলেক্ট করুন</option>` + window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('');
+      document.getElementById('sriQty').value = 1;
+      document.getElementById('sriRate').value = '';
+      document.getElementById('sriItemDiscount').value = 0;
+      document.getElementById('sriSubTotal').innerText = '0.00';
+      document.getElementById('salesReturnItemModal').classList.add('open');
+  };
+
+  window.closeSalesReturnItemModal = function() {
+      document.getElementById('salesReturnItemModal').classList.remove('open');
+      window.editingSalesReturnItemIndex = null;
+  };
+
+  window.editSalesReturnItem = function(index) {
+      window.editingSalesReturnItemIndex = index;
+      const item = window.currentSalesReturnItems[index];
+      document.getElementById('srItemModalTitle').innerText = 'আইটেম এডিট';
+      document.getElementById('sriProduct').innerHTML = window.db.products.map(p => `<option value="${p.id}" data-rate="${p.saleRate}">${p.name} (স্টক: ${window.db.batches.filter(b=>b.productId===p.id).reduce((a,b)=>a+Number(b.qty),0)})</option>`).join('');
+      document.getElementById('sriProduct').value = item.productId;
+      const selectedOpt = document.getElementById('sriProduct').options[document.getElementById('sriProduct').selectedIndex];
+      if(selectedOpt) document.getElementById('sriProduct_display').innerText = selectedOpt.text;
+      document.getElementById('sriQty').value = item.qty;
+      document.getElementById('sriRate').value = item.rate;
+      document.getElementById('sriItemDiscount').value = item.itemDiscount || 0;
+      updateSriTotal();
+      document.getElementById('salesReturnItemModal').classList.add('open');
+  };
+
+  window.updateSriRate = function() {
+      const s = document.getElementById('sriProduct');
+      if(!s.value) return;
+      document.getElementById('sriRate').value = s.options[s.selectedIndex].getAttribute('data-rate') || 0;
+      updateSriTotal();
+  };
+
+  window.updateSriTotal = function() {
+      const qty = Number(document.getElementById('sriQty').value) || 0;
+      const rate = Number(document.getElementById('sriRate').value) || 0;
+      const discPercent = Number(document.getElementById('sriItemDiscount').value) || 0;
+      const subTotal = qty * rate;
+      const discAmount = (subTotal * discPercent) / 100;
+      const total = Math.max(0, subTotal - discAmount);
+      document.getElementById('sriSubTotal').innerText = total.toFixed(2);
+  };
+
+  window.addItemToSalesReturn = function() {
+      const prodId = document.getElementById('sriProduct').value;
+      const qty = Number(document.getElementById('sriQty').value);
+      const rate = Number(document.getElementById('sriRate').value);
+      const itemDisc = Number(document.getElementById('sriItemDiscount').value) || 0;
+
+      if(!prodId) return alert('পণ্য সিলেক্ট করুন!');
+      if(qty <= 0) return alert('সঠিক পরিমাণ দিন!');
+
+      const prod = window.db.products.find(p => p.id === prodId);
+
+      if (window.editingSalesReturnItemIndex !== null && window.editingSalesReturnItemIndex !== undefined) {
+          window.currentSalesReturnItems[window.editingSalesReturnItemIndex].qty = qty;
+          window.currentSalesReturnItems[window.editingSalesReturnItemIndex].rate = rate;
+          window.currentSalesReturnItems[window.editingSalesReturnItemIndex].itemDiscount = itemDisc;
+      } else {
+          const existing = window.currentSalesReturnItems.find(i => i.productId === prodId && i.rate === rate && (i.itemDiscount || 0) === itemDisc);
+          if(existing) existing.qty += qty;
+          else window.currentSalesReturnItems.push({ productId: prodId, name: prod.name, qty: qty, rate: rate, itemDiscount: itemDisc });
+      }
+      closeSalesReturnItemModal();
+      renderSalesReturnItems();
+  };
+
+  window.removeSalesReturnItem = function(index) {
+      window.currentSalesReturnItems.splice(index, 1);
+      renderSalesReturnItems();
+  };
+
+  window.renderSalesReturnItems = function() {
+      const list = document.getElementById('srItemsList');
+      if(!list) return;
+      if(window.currentSalesReturnItems.length === 0) {
+          list.innerHTML = `<div style="padding:20px; text-align:center; color:#999; font-size:14px;">কোনো আইটেম যুক্ত করা হয়নি</div>`;
+      } else {
+          list.innerHTML = window.currentSalesReturnItems.map((item, index) => {
+              let subTotal = item.qty * item.rate;
+              let discAmount = (subTotal * (item.itemDiscount || 0)) / 100;
+              let iTotal = Math.max(0, subTotal - discAmount);
+              let discLabel = item.itemDiscount > 0 ? ` - ডিস: ${item.itemDiscount}%` : '';
+              return `
+              <div class="ns-item-row">
+                <div class="ns-item-info">
+                  <span class="ns-item-name">${esc(item.name)}</span>
+                  <span class="ns-item-details">${item.qty} x ৳${item.rate}${discLabel} = ৳${iTotal.toFixed(2)}</span>
+                </div>
+                <div style="display:flex; align-items:center;">
+                  <span class="ns-item-total">৳${iTotal.toFixed(2)}</span>
+                  <span onclick="editSalesReturnItem(${index})" style="color:var(--secondary); cursor:pointer; margin-left:10px; font-size:16px;"><i class="fa-solid fa-pen"></i></span>
+                  <span class="ns-remove-item" onclick="removeSalesReturnItem(${index})"><i class="fa-solid fa-xmark"></i></span>
+                </div>
+              </div>
+            `;
+          }).join('');
+      }
+      calcSalesReturnTotals();
+  };
+
+  window.calcSalesReturnTotals = function(source = null) {
+      let subTotal = window.currentSalesReturnItems.reduce((acc, item) => {
+          let iSub = item.qty * item.rate;
+          let iDisc = (iSub * (item.itemDiscount || 0)) / 100;
+          return acc + Math.max(0, iSub - iDisc);
+      }, 0);
+
+      const subEl = document.getElementById('srSubTotal');
+      if(subEl) subEl.value = subTotal.toFixed(2);
+
+      const dP = document.getElementById('srDiscPercent');
+      const dF = document.getElementById('srDiscFlat');
+      let disc = 0;
+
+      if (source === 'percent') { disc = (subTotal * (Number(dP.value)||0)) / 100; if(dF) dF.value = disc > 0 ? disc.toFixed(2) : ''; }
+      else if (source === 'flat') { disc = Number(dF.value)||0; if(dP) dP.value = subTotal > 0 && disc > 0 ? ((disc / subTotal) * 100).toFixed(2) : ''; }
+      else { if (dF && dF.value !== '') disc = Number(dF.value); else if (dP && dP.value !== '') disc = (subTotal * Number(dP.value)) / 100; }
+
+      const del = Number(document.getElementById('srDelivery')?.value)||0;
+      let grand = Math.max(0, subTotal - disc + del);
+
+      const grandEl = document.getElementById('srGrandTotal');
+      if(grandEl) grandEl.value = grand.toFixed(2);
+
+      const paidEl = document.getElementById('srPaid');
+      if(paidEl) {
+          let due = grand - (Number(paidEl.value)||0);
+          const dueEl = document.getElementById('srDue');
+          if(dueEl) dueEl.value = (due > 0 ? due : 0).toFixed(2);
+      }
+  };
   
   window.calcSaleTotals = function(source = null) {
     let subTotal = window.currentSaleItems.reduce((acc, item) => {
@@ -2023,7 +2218,18 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         
         if(t.type === 'purchase') { typeStr = 'ক্রয়'; entityStr = supplier?.name || 'Unknown'; color = 'var(--secondary)'; detailsStr = `${pName} (${t.qty} পিস)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
         else if(t.type === 'sales') { typeStr = 'বিক্রয়'; entityStr = party?.name || 'Unknown'; color = 'var(--green)'; let itemsCount = t.items ? t.items.length : 0; detailsStr = `${t.invoiceNo || 'N/A'} (${itemsCount} আইটেম)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
-        else if(t.type === 'sales_return') { typeStr = 'বিক্রয় রিটার্ন'; entityStr = party?.name || 'Unknown'; color = 'var(--orange)'; detailsStr = `${pName} (${t.qty} পিস)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
+        else if(t.type === 'sales_return') {
+            typeStr = 'বিক্রয় রিটার্ন';
+            entityStr = party?.name || 'Unknown';
+            color = 'var(--orange)';
+            if (t.items && Array.isArray(t.items)) {
+                detailsStr = `${t.items.length} টি আইটেম`;
+            } else {
+                detailsStr = `${pName} (${t.qty} পিস)`;
+            }
+            totalAmt = Number(t.total || 0);
+            dueAmt = Number(t.due || 0);
+        }
         else if(t.type === 'purchase_return') { typeStr = 'ক্রয় রিটার্ন'; entityStr = supplier?.name || 'Unknown'; color = 'var(--red)'; detailsStr = `${pName} (${t.qty} পিস)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
         else if(t.type === 'cash_in') { typeStr = 'নগদ প্রাপ্তি'; entityStr = party?.name || 'Unknown'; color = 'var(--primary)'; detailsStr = t.note || 'বাকি আদায়'; totalAmt = Number(t.amount || 0); dueAmt = 0; }
         else if(t.type === 'cash_out') { typeStr = t.supplierId ? 'নগদ প্রদান' : 'খরচ'; entityStr = supplier?.name || 'Unknown'; color = 'var(--red)'; detailsStr = t.note || 'বাকি পরিশোধ'; totalAmt = Number(t.amount || 0); dueAmt = 0; }
@@ -2125,13 +2331,101 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     } else if (type === 'expense') {
       title.innerText = txn ? 'খরচ এডিট' : 'নতুন খরচ'; submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
       formFields.innerHTML = `<div class="form-group"><label>খরচের বিবরণ</label><input type="text" name="note" value="${txn ? (txn.note||'').replace('খরচ: ','') : ''}" required placeholder="যেমন: বিদ্যুৎ বিল"></div><div class="form-group"><label>পরিমাণ</label><input type="number" name="amount" value="${txn ? txn.amount : ''}" required min="1"></div>`;
-    } else if (type === 'sales_return' || type === 'purchase_return') {
-      title.innerText = txn ? (type === 'sales_return' ? 'বিক্রয় রিটার্ন এডিট' : 'ক্রয় রিটার্ন এডিট') : (type === 'sales_return' ? 'বিক্রি রিটার্ন' : 'ক্রয় রিটার্ন'); submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
-      let selectEntity = type === 'sales_return' ? partyOpts : supOpts; let labelEntity = type === 'sales_return' ? 'ক্রেতা (পার্টি)' : 'সাপ্লায়ার'; let nameAttr = type === 'sales_return' ? 'partyId' : 'supplierId';
-      formFields.innerHTML = `<div class="form-group"><label>${labelEntity}</label><select name="${nameAttr}" ${nameAttr === 'supplierId' ? 'id="q_supplier"' : ''} required><option value="">সিলেক্ট করুন</option>${selectEntity}</select></div>
+    } else if (type === 'sales_return') {
+      title.innerText = txn ? 'বিক্রয় রিটার্ন এডিট' : 'বিক্রি রিটার্ন';
+      submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
+
+      // reset multi-item state
+      window.currentSalesReturnItems = [];
+      window.editingSalesReturnItemIndex = null;
+
+      // load existing items if editing
+      if (txn) {
+          if (txn.items && Array.isArray(txn.items)) {
+              window.currentSalesReturnItems = JSON.parse(JSON.stringify(txn.items));
+          } else if (txn.productId) {
+              const prod = window.db.products.find(p => p.id === txn.productId);
+              window.currentSalesReturnItems = [{
+                  productId: txn.productId,
+                  name: prod ? prod.name : 'Unknown',
+                  qty: txn.qty,
+                  rate: txn.rate,
+                  itemDiscount: 0
+              }];
+          }
+      }
+
+      formFields.innerHTML = `
+          <div class="form-group">
+              <label>ক্রেতা (পার্টি)</label>
+              <select name="partyId" required>
+                  <option value="">সিলেক্ট করুন</option>
+                  ${partyOpts}
+              </select>
+          </div>
+
+          <div class="ns-add-item-btn" onclick="openSalesReturnItemModal()" style="margin-top:10px;">
+              <i class="fa-solid fa-circle-plus"></i> আইটেম যোগ করুন
+          </div>
+
+          <div class="ns-items-list" id="srItemsList" style="margin-bottom:15px;"></div>
+
+          <div class="ns-form-row">
+              <div class="ns-label">ডিসকাউন্ট</div>
+              <div class="ns-input-group ns-discount-row">
+                  <div class="symbol-box"><input type="number" id="srDiscPercent" value="" placeholder="0" oninput="calcSalesReturnTotals('percent')"><span>%</span></div>
+                  <div class="symbol-box"><input type="number" name="discFlat" id="srDiscFlat" value="${discVal}" placeholder="0" oninput="calcSalesReturnTotals('flat')"><span>৳</span></div>
+              </div>
+          </div>
+
+          <div class="ns-form-row">
+              <div class="ns-label">মোট মূল্য</div>
+              <div class="ns-input-group"><span class="ns-symbol">৳</span><input type="number" id="srSubTotal" readonly value="0.00"></div>
+          </div>
+
+          <div class="ns-form-row">
+              <div class="ns-label">ডেলিভারি চার্জ</div>
+              <div class="ns-input-group"><span class="ns-symbol">৳</span><input type="number" name="delivery" id="srDelivery" value="${delVal}" oninput="calcSalesReturnTotals()"></div>
+          </div>
+
+          <div class="ns-form-row">
+              <div class="ns-label" style="font-weight:bold;">সর্বমোট মূল্য</div>
+              <div class="ns-input-group"><span class="ns-symbol">৳</span><input type="number" id="srGrandTotal" readonly value="0.00" style="font-weight:bold; color:var(--primary);"></div>
+          </div>
+
+          <div class="ns-form-row">
+              <div class="ns-label" style="font-weight:bold;">টাকা ফেরত দেওয়া/নেওয়া</div>
+              <div class="ns-input-group"><span class="ns-symbol">৳</span><input type="number" name="paid" id="srPaid" value="${paidVal}" oninput="calcSalesReturnTotals()"></div>
+          </div>
+
+          <div class="ns-form-row">
+              <div class="ns-label" style="font-weight:bold;">বাকি</div>
+              <div class="ns-input-group"><span class="ns-symbol">৳</span><input type="number" id="srDue" readonly value="0.00" style="color:var(--red); font-weight:bold;"></div>
+          </div>
+      `;
+
+      setTimeout(() => {
+          if(txn) {
+              const partySel = form.querySelector('select[name="partyId"]');
+              if(partySel) partySel.value = txn.partyId;
+          }
+          renderSalesReturnItems();
+          calcSalesReturnTotals();
+      }, 50);
+
+      form.onsubmit = (e) => {
+          e.preventDefault();
+          processQuickForm('sales_return', new FormData(form), editId);
+      };
+
+      modal.classList.add('open');
+      return;
+    } else if (type === 'purchase_return') {
+      title.innerText = txn ? 'ক্রয় রিটার্ন এডিট' : 'ক্রয় রিটার্ন'; submitBtn.innerText = txn ? 'আপডেট করুন' : 'সেভ করুন';
+      formFields.innerHTML = `<div class="form-group"><label>সাপ্লায়ার</label><select name="supplierId" id="q_supplier" required><option value="">সিলেক্ট করুন</option>${supOpts}</select></div>
       <div class="form-group"><label>পণ্য</label>
-      <div id="q_product_display" onclick="openProductSearchModal('q_product', 'q_product_display', '${type}')" style="padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #F8FAFC; cursor: pointer; color: var(--text);">সিলেক্ট করুন</div>
-      <select name="productId" id="q_product" required style="display: none;" onchange="updateQuickFormRate(this.value, '${type}'); document.getElementById('q_product_display').innerText = this.options[this.selectedIndex].text;"><option value="">সিলেক্ট করুন</option>${prodOpts}</select></div>
+      <div id="q_product_display" onclick="openProductSearchModal('q_product', 'q_product_display', 'purchase_return')" style="padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #F8FAFC; cursor: pointer; color: var(--text);">সিলেক্ট করুন</div>
+      <select name="productId" id="q_product" required style="display: none;" onchange="updateQuickFormRate(this.value, 'purchase_return'); document.getElementById('q_product_display').innerText = this.options[this.selectedIndex].text;"><option value="">সিলেক্ট করুন</option>${prodOpts}</select></div>
       <div style="display:flex; gap:10px; align-items:flex-end;"><div class="form-group" style="flex:0.6; margin-bottom:0;"><label>পরিমাণ</label><input type="number" name="qty" id="q_qty" value="${qtyVal}" min="1" required oninput="calcQuickFormTotals()"></div><div class="form-group" style="flex:1.4; margin-bottom:0;"><label>মূল্য</label><input type="number" name="rate" id="q_rate" value="${rateVal}" required oninput="calcQuickFormTotals()"></div></div><div style="display:flex; gap:10px; margin-top:10px;"><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (%)</label><input type="number" name="discPercent" id="q_discPercent" value="0" oninput="calcQuickFormTotals('percent')"></div><div class="form-group" style="flex:1;"><label>ডিসকাউন্ট (৳)</label><input type="number" name="discFlat" id="q_discFlat" value="${discVal}" oninput="calcQuickFormTotals('flat')"></div></div><div class="form-group" style="margin-top:12px;"><label>ডেলিভারি চার্জ</label><input type="number" name="delivery" id="q_delivery" value="${delVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="form-group" style="margin-top:12px;"><label>টাকা ফেরত দেওয়া/নেওয়া</label><input type="number" name="paid" id="q_paid" value="${paidVal}" min="0" oninput="calcQuickFormTotals()"></div><div class="q-calc-box"><span>সর্বমোট: <span id="q_total_display">৳ ${txn ? txn.total.toFixed(2) : '0.00'}</span></span><span>বাকি: <span id="q_due_display" style="color:var(--red);">৳ ${txn ? txn.due.toFixed(2) : '0.00'}</span></span></div>`;
     } else if (type === 'damage') {
       title.innerText = 'ড্যামেজ পণ্য এন্ট্রি'; submitBtn.innerText = 'সেভ করুন';
@@ -2207,21 +2501,86 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
           calcQuickFormTotals(); 
       }
   };
-  window.closeQuickForm = function() { document.getElementById('quickFormModal').classList.remove('open'); document.getElementById('quickForm').reset(); };
+  window.closeQuickForm = function() {
+      document.getElementById('quickFormModal').classList.remove('open');
+      document.getElementById('quickForm').reset();
+      window.currentSalesReturnItems = [];
+      window.editingSalesReturnItemIndex = null;
+  };
   window.closeActionMenu = function() { document.getElementById('actionMenuModal').classList.remove('open'); };
 
   function processQuickForm(type, formData, editId = null) {
     const d = Object.fromEntries(formData.entries()); const isEdit = editId !== null; const txnId = isEdit ? editId : 'TXN-' + Date.now().toString(36).toUpperCase(); const date = isEdit ? window.db.transactions.find(t => t.id === txnId).date : new Date().toISOString();
 
-    if (type === 'purchase' || type === 'sales_return' || type === 'purchase_return') {
+    if (type === 'sales_return') {
+        const items = window.currentSalesReturnItems;
+        if (items.length === 0) return alert('কমপক্ষে ১টি আইটেম যোগ করুন!');
+
+        let subTotal = items.reduce((acc, item) => {
+            let iSub = item.qty * item.rate;
+            let iDisc = (iSub * (item.itemDiscount || 0)) / 100;
+            return acc + Math.max(0, iSub - iDisc);
+        }, 0);
+
+        const disc = Number(d.discFlat) || 0;
+        const del = Number(d.delivery) || 0;
+        const total = Math.max(0, subTotal - disc + del);
+        const paid = Number(d.paid) || 0;
+        const due = total - paid;
+
+        // Stock: undo old return (if editing), then apply new return (add back stock)
+        if (isEdit) {
+            const o = window.db.transactions.find(t => t.id === txnId);
+            if (o) {
+                if (o.items && Array.isArray(o.items)) {
+                    o.items.forEach(item => deductStock(item.productId, item.qty));
+                } else if (o.productId) {
+                    deductStock(o.productId, o.qty);
+                }
+            }
+        }
+        items.forEach(item => addStock(item.productId, item.qty, 'RETURN'));
+
+        let txnData = {
+            id: txnId,
+            date: date,
+            type: 'sales_return',
+            partyId: d.partyId,
+            items: items,
+            subTotal: subTotal,
+            discount: disc,
+            delivery: del,
+            total: total,
+            paid: paid,
+            due: due
+        };
+
+        if (!isEdit) {
+            txnData.createdBy = currentUserEmail;
+            txnData.creatorName = window.currentUserName;
+        } else {
+            const oldTxn = window.db.transactions.find(t => t.id === txnId);
+            if (oldTxn) {
+                if (oldTxn.createdBy) txnData.createdBy = oldTxn.createdBy;
+                if (oldTxn.creatorName) txnData.creatorName = oldTxn.creatorName;
+            }
+        }
+
+        dbRef('transactions/' + txnId).set(txnData).then(() => {
+            let partyName = window.db.parties.find(p => p.id === d.partyId)?.name || 'Unknown';
+            let itemsStr = items.map(i => `${i.name} (${i.qty} পিস)`).join(', ');
+            logActivity(isEdit ? 'বিক্রয় রিটার্ন এডিট' : 'বিক্রয় রিটার্ন', `${partyName} - থেকে রিটার্ন ${isEdit ? 'আপডেট' : ''}: ${itemsStr}। মোট: ${money(total)}, ফেরত: ${money(paid)}`);
+            alert('সফলভাবে সেভ হয়েছে!');
+            closeQuickForm();
+        });
+    } else if (type === 'purchase' || type === 'purchase_return') {
       const qty = Number(d.qty), rate = Number(d.rate), disc = Number(d.discFlat)||0, del = Number(d.delivery)||0;
       const total = Math.max(0, (qty * rate) - disc + del); const paid = Number(d.paid)||0; const due = total - paid;
       if (type === 'purchase') { if (isEdit) { const o = window.db.transactions.find(t => t.id === txnId); if(o && o.productId) deductStock(o.productId, o.qty); } addStock(d.productId, qty, 'PURCHASE'); } 
-      else if (type === 'sales_return') { if (isEdit) { const o = window.db.transactions.find(t => t.id === txnId); if(o && o.productId) deductStock(o.productId, o.qty); } addStock(d.productId, qty, 'RETURN'); } 
       else if (type === 'purchase_return') { if (isEdit) { const o = window.db.transactions.find(t => t.id === txnId); if(o && o.productId) addStock(o.productId, o.qty, 'EDIT_RESTORE'); } let ts = window.db.batches.filter(x => x.productId === d.productId).reduce((a,b)=>a+Number(b.qty),0); if(ts < qty) return alert('স্টক নেই!'); deductStock(d.productId, qty); }
 
       let txnData = { id: txnId, date: date, type: type, productId: d.productId, qty: qty, rate: rate, discount: disc, delivery: del, total: total, paid: paid, due: due };
-      if(type === 'purchase' || type === 'purchase_return') txnData.supplierId = d.supplierId; else txnData.partyId = d.partyId;
+      if(type === 'purchase' || type === 'purchase_return') txnData.supplierId = d.supplierId;
 
       if (!isEdit) {
           txnData.createdBy = currentUserEmail;
@@ -2235,9 +2594,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       }
 
       dbRef('transactions/' + txnId).set(txnData).then(() => {
-        let entity = type === 'sales_return' ? window.db.parties.find(p=>p.id === d.partyId)?.name : window.db.suppliers.find(s=>s.id === d.supplierId)?.name;
+        let entity = window.db.suppliers.find(s=>s.id === d.supplierId)?.name;
         let pName = window.db.products.find(p=>p.id === d.productId)?.name || 'Unknown';
-        let lType = type === 'purchase' ? 'ক্রয়' : (type === 'sales_return' ? 'বিক্রয় রিটার্ন' : 'ক্রয় রিটার্ন');
+        let lType = type === 'purchase' ? 'ক্রয়' : 'ক্রয় রিটার্ন';
         logActivity(isEdit ? lType+' এডিট' : lType, `${entity} - এর সাথে ${pName} (${qty} পিস) ${isEdit ? 'আপডেট' : lType}। মোট: ${money(total)}, জমা: ${money(paid)}`);
         alert('সফলভাবে সেভ হয়েছে!'); closeQuickForm();
       });
@@ -3001,7 +3360,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   document.querySelectorAll('.modal').forEach(modal => {
     modal.addEventListener('click', function(e) {
       if (e.target === this) {
-        if (this.id === 'modal') window.closeModal(); else if (this.id === 'quickFormModal') window.closeQuickForm(); else if (this.id === 'actionMenuModal') window.closeActionMenu(); else if (this.id === 'resetModal') window.closeResetModal(); else if (this.id === 'backupDataModal') window.closeBackupDataModal(); else if (this.id === 'restoreDataModal') window.closeRestoreDataModal(); else if (this.id === 'addItemModal') window.closeAddItemModal(); else if (this.id === 'newSaleModal') window.closeNewSale(); else if (this.id === 'invoiceModal') window.closeInvoiceModal(); else if (this.id === 'invoiceListModal') window.closeInvoiceList(); else if (this.id === 'ownerProfileModal') window.closeOwnerProfileModal(); else if (this.id === 'companyDetailsModal') window.closeCompanyDetailsModal(); else if (this.id === 'packSizeModal') window.closePackModal(); else if (this.id === 'productFilterModal') window.closeProductFilterModal(); else if (this.id === 'productSearchModal') window.closeProductSearchModal(); else this.classList.remove('open'); 
+        if (this.id === 'modal') window.closeModal(); else if (this.id === 'quickFormModal') window.closeQuickForm(); else if (this.id === 'actionMenuModal') window.closeActionMenu(); else if (this.id === 'resetModal') window.closeResetModal(); else if (this.id === 'backupDataModal') window.closeBackupDataModal(); else if (this.id === 'restoreDataModal') window.closeRestoreDataModal(); else if (this.id === 'addItemModal') window.closeAddItemModal(); else if (this.id === 'salesReturnItemModal') window.closeSalesReturnItemModal(); else if (this.id === 'newSaleModal') window.closeNewSale(); else if (this.id === 'invoiceModal') window.closeInvoiceModal(); else if (this.id === 'invoiceListModal') window.closeInvoiceList(); else if (this.id === 'ownerProfileModal') window.closeOwnerProfileModal(); else if (this.id === 'companyDetailsModal') window.closeCompanyDetailsModal(); else if (this.id === 'packSizeModal') window.closePackModal(); else if (this.id === 'productFilterModal') window.closeProductFilterModal(); else if (this.id === 'productSearchModal') window.closeProductSearchModal(); else this.classList.remove('open'); 
       }
     });
   });
