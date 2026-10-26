@@ -1019,20 +1019,20 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </select>
       </div>
       
-      <!-- Quantity & Price Row -->
-      <div style="display:flex; gap:10px; align-items: flex-end;">
-        <div class="form-group" style="flex:0.7; margin-bottom:0;">
-          <label>পরিমাণ</label>
-          <input type="number" id="aiQty" value="1" min="1" oninput="updateAiTotal()" style="text-align:center;">
-        </div>
-        <div class="form-group" style="flex:1.3; margin-bottom:0;">
-          <label>মূল্য</label>
-          <input type="number" id="aiRate" value="0" min="0" oninput="updateAiTotal()" style="text-align:right;">
-        </div>
+      <!-- Quantity (Stacked) -->
+      <div class="form-group">
+        <label>পরিমাণ</label>
+        <input type="number" id="aiQty" value="1" min="1" oninput="updateAiTotal()" style="text-align:center;">
+      </div>
+
+      <!-- Price (Stacked below Quantity) -->
+      <div class="form-group">
+        <label>মূল্য</label>
+        <input type="number" id="aiRate" value="0" min="0" oninput="updateAiTotal()" style="text-align:right;">
       </div>
 
       <!-- Discount Row -->
-      <div class="form-group" style="margin-top: 12px;">
+      <div class="form-group">
         <label>ডিসকাউন্ট (%)</label>
         <input type="number" id="aiItemDiscount" value="0" min="0" max="100" oninput="updateAiTotal()">
       </div>
@@ -1057,20 +1057,20 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </select>
       </div>
       
-      <!-- Quantity & Price Row -->
-      <div style="display:flex; gap:10px; align-items: flex-end;">
-        <div class="form-group" style="flex:0.7; margin-bottom:0;">
-          <label>পরিমাণ</label>
-          <input type="number" id="sriQty" value="1" min="1" oninput="updateSriTotal()" style="text-align:center;">
-        </div>
-        <div class="form-group" style="flex:1.3; margin-bottom:0;">
-          <label>মূল্য</label>
-          <input type="number" id="sriRate" value="0" min="0" oninput="updateSriTotal()" style="text-align:right;">
-        </div>
+      <!-- Quantity (Stacked) -->
+      <div class="form-group">
+        <label>পরিমাণ</label>
+        <input type="number" id="sriQty" value="1" min="1" oninput="updateSriTotal()" style="text-align:center;">
+      </div>
+
+      <!-- Price (Stacked below Quantity) -->
+      <div class="form-group">
+        <label>মূল্য</label>
+        <input type="number" id="sriRate" value="0" min="0" oninput="updateSriTotal()" style="text-align:right;">
       </div>
 
       <!-- Discount Row -->
-      <div class="form-group" style="margin-top: 12px;">
+      <div class="form-group">
         <label>ডিসকাউন্ট (%)</label>
         <input type="number" id="sriItemDiscount" value="0" min="0" max="100" oninput="updateSriTotal()">
       </div>
@@ -2921,7 +2921,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     dbRef('transactions/' + txnId).update({ settled: true, settledDate: new Date().toISOString() }).then(() => {
         logActivity('ড্যামেজ পরিশোধ', `ড্যামেজ পণ্য (${txn.qty} পিস) পরিশোধ করা হয়েছে এবং স্টকে যুক্ত করা হয়েছে।`);
         alert('সফলভাবে পরিশোধ করা হয়েছে এবং স্টক যোগ হয়েছে!');
-    }).catch(err => alert('সমস্যা হয়েছে: ' + err.message));
+    }).catch(err => alert('সমস্যা হয়েছে: ' + err.message));
   };
 
   // Parties
