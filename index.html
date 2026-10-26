@@ -28,7 +28,7 @@ body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: v
 .view.active { display: block; }
 @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 .panel { background: rgba(255,255,255,.78); border: 1px solid rgba(255,255,255,.65); border-radius: 25px; box-shadow: 0 8px 25px rgba(33,65,122,.07); backdrop-filter: blur(22px); padding: 12px; margin-bottom: 15px; }
-.dash-top-panel { padding: 10px 12px; margin-top: -5px; text-align: center; }
+.dash-top-panel { padding: 10px 12px; margin-top: 10px; text-align: center; }
 .dash-top-title { font-size: 11px; color: #475569; margin-bottom: 2px; font-weight: 500;}
 .dash-top-amount { font-size: 22px; font-weight: 700; color: #1647a7; margin-bottom: 8px; }
 .dash-split-box { background: rgba(255,255,255,0.6); border-radius: 12px; padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; border: 1px solid rgba(255,255,255,0.9); }
@@ -233,7 +233,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 <body>
 <div id="loginScreen">
   <div class="login-box">
-    <img src="https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png" class="login-logo" alt="Logo">
+    <img src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" class="login-logo" alt="Logo">
     <h2>Novas Agro SR</h2>
     <p style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">মোবাইল নম্বর ও পিন দিয়ে প্রবেশ করুন</p>
     <form id="loginForm">
@@ -410,7 +410,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   <div class="overlay" id="overlay"></div>
   <aside class="sidebar" id="sidebar">
     <div class="side-profile">
-      <img id="displaySrImage" src="https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png" alt="Profile">
+      <img id="displaySrImage" src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" alt="Profile">
       <h3 id="displaySrName">SR Name</h3>
       <div class="business-name" id="displaySrPhone">017xxxxxxxx</div>
       <p id="displaySrAddress"><i class="fa-solid fa-location-dot"></i> ঠিকানা</p>
@@ -516,22 +516,22 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </select>
       </div>
       
-      <!-- Quantity & Price Row -->
-      <div style="display:flex; gap:10px; align-items: flex-end;">
-        <div class="form-group" style="flex:0.7; margin-bottom:0;">
-          <label>পরিমাণ</label>
-          <input type="number" id="aiQty" value="1" min="1" oninput="updateAiTotal()" style="text-align:center;">
-        </div>
-        <div class="form-group" style="flex:1.3; margin-bottom:0;">
-          <label>মূল্য</label>
-          <input type="number" id="aiRate" value="0" min="0" oninput="updateAiTotal()" style="text-align:right;">
-        </div>
+      <!-- Quantity -->
+      <div class="form-group">
+        <label>পরিমাণ</label>
+        <input type="number" id="aiQty" value="1" min="1" oninput="updateAiTotal()" style="text-align:left;">
+      </div>
+
+      <!-- Price (Stacked below Quantity) -->
+      <div class="form-group">
+        <label>মূল্য</label>
+        <input type="number" id="aiRate" value="0" min="0" oninput="updateAiTotal()" style="text-align:left;">
       </div>
 
       <!-- Discount Row -->
-      <div class="form-group" style="margin-top: 12px;">
+      <div class="form-group">
         <label>ডিসকাউন্ট (%)</label>
-        <input type="number" id="aiItemDiscount" value="0" min="0" max="100" oninput="updateAiTotal()">
+        <input type="number" id="aiItemDiscount" value="0" min="0" max="100" oninput="updateAiTotal()" style="text-align:left;">
       </div>
 
       <div style="text-align:right; font-weight:bold; margin-bottom:15px; color:var(--primary); font-size:18px;">সাব-টোটাল: ৳ <span id="aiSubTotal">0.00</span></div>
@@ -554,22 +554,22 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </select>
       </div>
       
-      <!-- Quantity & Price Row -->
-      <div style="display:flex; gap:10px; align-items: flex-end;">
-        <div class="form-group" style="flex:0.7; margin-bottom:0;">
-          <label>পরিমাণ</label>
-          <input type="number" id="sriQty" value="1" min="1" oninput="updateSriTotal()" style="text-align:center;">
-        </div>
-        <div class="form-group" style="flex:1.3; margin-bottom:0;">
-          <label>মূল্য</label>
-          <input type="number" id="sriRate" value="0" min="0" oninput="updateSriTotal()" style="text-align:right;">
-        </div>
+      <!-- Quantity -->
+      <div class="form-group">
+        <label>পরিমাণ</label>
+        <input type="number" id="sriQty" value="1" min="1" oninput="updateSriTotal()" style="text-align:left;">
+      </div>
+
+      <!-- Price (Stacked below Quantity) -->
+      <div class="form-group">
+        <label>মূল্য</label>
+        <input type="number" id="sriRate" value="0" min="0" oninput="updateSriTotal()" style="text-align:left;">
       </div>
 
       <!-- Discount Row -->
-      <div class="form-group" style="margin-top: 12px;">
+      <div class="form-group">
         <label>ডিসকাউন্ট (%)</label>
-        <input type="number" id="sriItemDiscount" value="0" min="0" max="100" oninput="updateSriTotal()">
+        <input type="number" id="sriItemDiscount" value="0" min="0" max="100" oninput="updateSriTotal()" style="text-align:left;">
       </div>
 
       <div style="text-align:right; font-weight:bold; margin-bottom:15px; color:var(--primary); font-size:18px;">সাব-টোটাল: ৳ <span id="sriSubTotal">0.00</span></div>
@@ -826,7 +826,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
             document.getElementById('displaySrImage').src = srData.imageUrl;
             document.getElementById('displaySrImage').style.display = 'block';
         } else {
-            document.getElementById('displaySrImage').src = 'https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png';
+            document.getElementById('displaySrImage').src = 'https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png';
         }
     }
   }
@@ -1259,7 +1259,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         const existingItem = window.currentSaleItems.find(i => i.productId === prodId && i.rate === rate && (i.itemDiscount || 0) === itemDisc);
         let currentQtyInCart = existingItem ? existingItem.qty : 0;
         if(totalStock < (qty + currentQtyInCart)) return alert(`পর্যাপ্ত স্টক নেই! স্টক: ${totalStock}`);
-        if(existingItem) { existingItem.qty += qty; } else { window.currentSaleItems.push({ productId: prodId, name: prod.name, qty: qty, rate: rate, itemDiscount: itemDisc }); }
+        if(existingItem) { existingItem.qty += qty; } else { window.currentSaleItems.push({ productId: prodId, name: prod.name, packSize: prod.packSize || '', qty: qty, rate: rate, itemDiscount: itemDisc }); }
     }
     closeAddItemModal(); renderSaleItems();
   };
@@ -1275,9 +1275,11 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         let discAmount = (subTotal * (item.itemDiscount || 0)) / 100;
         let iTotal = Math.max(0, subTotal - discAmount);
         let discLabel = item.itemDiscount > 0 ? ` - ডিস: ${item.itemDiscount}%` : '';
+        let pSize = item.packSize || (window.db.products.find(p => p.id === item.productId)?.packSize || '');
+        let nameDisplay = esc(item.name) + (pSize ? ` (${esc(pSize)})` : '');
         return `
         <div class="ns-item-row">
-          <div class="ns-item-info"><span class="ns-item-name">${esc(item.name)}</span><span class="ns-item-details">${item.qty} x ৳${item.rate}${discLabel} = ৳${iTotal}</span></div>
+          <div class="ns-item-info"><span class="ns-item-name">${nameDisplay}</span><span class="ns-item-details">${item.qty} x ৳${item.rate}${discLabel} = ৳${iTotal}</span></div>
           <div style="display:flex; align-items:center;">
             <span class="ns-item-total">৳${money(iTotal).replace('৳ ', '')}</span>
             <span onclick="editSaleItem(${index})" style="color:var(--secondary); cursor:pointer; margin-left:10px; font-size:16px;"><i class="fa-solid fa-pen"></i></span>
@@ -1357,7 +1359,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       } else {
           const existing = window.currentSalesReturnItems.find(i => i.productId === prodId && i.rate === rate && (i.itemDiscount || 0) === itemDisc);
           if(existing) existing.qty += qty;
-          else window.currentSalesReturnItems.push({ productId: prodId, name: prod.name, qty: qty, rate: rate, itemDiscount: itemDisc });
+          else window.currentSalesReturnItems.push({ productId: prodId, name: prod.name, packSize: prod.packSize || '', qty: qty, rate: rate, itemDiscount: itemDisc });
       }
       closeSalesReturnItemModal();
       renderSalesReturnItems();
@@ -1379,10 +1381,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
               let discAmount = (subTotal * (item.itemDiscount || 0)) / 100;
               let iTotal = Math.max(0, subTotal - discAmount);
               let discLabel = item.itemDiscount > 0 ? ` - ডিস: ${item.itemDiscount}%` : '';
+              let pSize = item.packSize || (window.db.products.find(p => p.id === item.productId)?.packSize || '');
+              let nameDisplay = esc(item.name) + (pSize ? ` (${esc(pSize)})` : '');
               return `
               <div class="ns-item-row">
                 <div class="ns-item-info">
-                  <span class="ns-item-name">${esc(item.name)}</span>
+                  <span class="ns-item-name">${nameDisplay}</span>
                   <span class="ns-item-details">${item.qty} x ৳${item.rate}${discLabel} = ৳${iTotal.toFixed(2)}</span>
                 </div>
                 <div style="display:flex; align-items:center;">
@@ -1503,100 +1507,117 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if (previousDue < 0) previousDue = 0;
 
     const invoiceHTML = `
-    <div style="background: white; color: black; font-family: Arial, sans-serif; padding: 10px; font-size: 11px; line-height: 1.4;">
-        <!-- Header -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-            <div style="display: flex; align-items: flex-start; gap: 10px;">
-                <img src="https://i.postimg.cc/J0DDs1KQ/file-00000000548081faab6fdc937cdb06db.png" style="width: 60px; height: 60px; object-fit: contain;">
-                <div>
-                    <h2 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">${esc(window.db.companyDetails?.name || 'Novas Agro Distribution')}</h2>
-                    <div style="font-size: 10px; color: #555;">Phone: ${esc(window.db.companyDetails?.phone || '01743002000')}</div>
-                    <div style="font-size: 10px; color: #555;">Email: ${esc(window.db.companyDetails?.email || '')}</div>
-                </div>
-            </div>
-            <div style="text-align: right;">
-                <div style="font-size: 10px; color: #555; margin-bottom: 2px;">Date: ${dateStr}</div>
-                <h1 style="margin: 0 0 5px 0; font-size: 20px; color: #333; font-weight: bold;">INVOICE</h1>
-                <div style="font-size: 10px; color: #555;">Address: ${esc(window.db.companyDetails?.address || 'Dhaka Bangladesh')}</div>
-                <div style="font-size: 10px; color: #555;">Invoice No: ${invNo}</div>
-                <div style="font-size: 10px; color: #555;">Invoice Date: ${dateStr}</div>
-            </div>
-        </div>
+    <div style="position: relative; overflow: hidden; background: white; color: black; font-family: Arial, sans-serif; padding: 10px; font-size: 11px; line-height: 1.4;">
+        
+        <!-- Background Watermark Logo -->
+        <img src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; opacity: 0.05; z-index: 0; pointer-events: none;">
 
-        <!-- Customer Info -->
-        <div style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 8px 0; margin-bottom: 15px;">
-            <div style="display: flex; margin-bottom: 4px;"><span style="width: 100px; font-weight: bold; font-size: 12px;">Customer:</span> <span style="font-weight: bold; font-size: 12px;">${esc(party.name)}</span></div>
-            <div style="display: flex; margin-bottom: 4px;"><span style="width: 100px; font-weight: bold; font-size: 12px;">Phone:</span> <span>${esc(party.phone || '')}</span></div>
-            <div style="display: flex;"><span style="width: 100px; font-weight: bold; font-size: 12px;">Address:</span> <span>${esc(party.address || '')}</span></div>
-        </div>
-
-        <!-- Items Table -->
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-            <thead>
-                <tr style="background: #6366f1; color: white; font-size: 11px;">
-                    <th style="border: 1px solid #4f46e5; padding: 6px; text-align: center; width: 5%;">No</th>
-                    <th style="border: 1px solid #4f46e5; padding: 6px; text-align: left; width: 35%;">Item Name</th>
-                    <th style="border: 1px solid #4f46e5; padding: 6px; text-align: center; width: 10%;">Qty</th>
-                    <th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 15%;">Unit Price</th>
-                    <th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 15%;">Discount</th>
-                    <th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 20%;">Total Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${items.map((item, index) => {
-                    let iSub = item.qty * item.rate;
-                    let iDisc = (iSub * (item.itemDiscount || 0)) / 100;
-                    let iTotal = Math.max(0, iSub - iDisc);
-                    return `<tr>
-                        <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: center;">${index + 1}</td>
-                        <td style="border: 1px solid #e2e8f0; padding: 6px;">${esc(item.name)}</td>
-                        <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: center;">${item.qty}</td>
-                        <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${Number(item.rate).toFixed(2)}</td>
-                        <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${iDisc.toFixed(2)}</td>
-                        <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${iTotal.toFixed(2)}</td>
-                    </tr>`;
-                }).join('')}
-            </tbody>
-        </table>
-
-        <!-- Bottom Section -->
-        <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-            <div style="width: 55%;">
-                <div style="margin-bottom: 20px;">
-                    <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px;">In Words:</div>
-                    <div style="font-size: 12px;">Taka ${numberToWords(grandTotal)} Only</div>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-top: 40px;">
-                    <div style="text-align: center;">
-                        <div style="border-top: 1px solid #000; width: 150px; padding-top: 5px; font-size: 11px;">Customer Signature</div>
+        <!-- Main Content Wrapper for Z-Index -->
+        <div style="position: relative; z-index: 1;">
+            <!-- Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                <div style="display: flex; align-items: flex-start; gap: 10px;">
+                    <img src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" style="width: 60px; height: 60px; object-fit: contain;">
+                    <div>
+                        <h2 style="margin: 0 0 5px 0; font-size: 18px; color: #333;">${esc(window.db.companyDetails?.name || 'Novas Agro Distribution')}</h2>
+                        <div style="font-size: 10px; color: #555;">Phone: ${esc(window.db.companyDetails?.phone || '01743002000')}</div>
+                        <div style="font-size: 10px; color: #555;">Email: ${esc(window.db.companyDetails?.email || '')}</div>
                     </div>
                 </div>
-                <div style="margin-top: 30px;">
-                    <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px;">Terms & Conditions:</div>
-                    <div style="font-size: 10px; color: #555;">Sold products are not returnable under any circumstances.</div>
+                <div style="text-align: right;">
+                    <div style="font-size: 10px; color: #555; margin-bottom: 2px;">Date: ${dateStr}</div>
+                    <h1 style="margin: 0 0 5px 0; font-size: 20px; color: #333; font-weight: bold;">INVOICE</h1>
+                    <div style="font-size: 10px; color: #555;">Address: ${esc(window.db.companyDetails?.address || 'Dhaka Bangladesh')}</div>
+                    <div style="font-size: 10px; color: #555;">Invoice No: ${invNo}</div>
+                    <div style="font-size: 10px; color: #555;">Invoice Date: ${dateStr}</div>
                 </div>
             </div>
-            <div style="width: 40%;">
-                <div style="background: #eff6ff; padding: 15px; border-radius: 4px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Sub Total:</span> <span>৳ ${rawSubTotal.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Item Discount:</span> <span>৳ ${totalItemDiscount.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; font-weight: bold;"><span>Total:</span> <span>৳ ${grandTotal.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Total Paid Amount:</span> <span>৳ ${paid.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Total Due:</span> <span>৳ ${due.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Previous Due:</span> <span>৳ ${previousDue.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; color: #4338ca; margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 8px;"><span>Current Due:</span> <span>৳ ${(due + previousDue).toFixed(2)}</span></div>
+
+            <!-- Customer Info -->
+            <div style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 8px 0; margin-bottom: 15px;">
+                <div style="display: flex; margin-bottom: 4px;"><span style="width: 100px; font-weight: bold; font-size: 12px;">Customer:</span> <span style="font-weight: bold; font-size: 12px;">${esc(party.name)}</span></div>
+                <div style="display: flex; margin-bottom: 4px;"><span style="width: 100px; font-weight: bold; font-size: 12px;">Phone:</span> <span>${esc(party.phone || '')}</span></div>
+                <div style="display: flex;"><span style="width: 100px; font-weight: bold; font-size: 12px;">Address:</span> <span>${esc(party.address || '')}</span></div>
+            </div>
+
+            <!-- Items Table -->
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; background: transparent;">
+                <thead>
+                    <tr style="background: #6366f1; color: white; font-size: 11px;">
+                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: center; width: 5%;">No</th>
+                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: left; width: 35%;">Item Name</th>
+                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: center; width: 10%;">Qty</th>
+                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 15%;">Unit Price</th>
+                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 15%;">Discount</th>
+                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 20%;">Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${items.map((item, index) => {
+                        let iSub = item.qty * item.rate;
+                        let iDisc = (iSub * (item.itemDiscount || 0)) / 100;
+                        let iTotal = Math.max(0, iSub - iDisc);
+                        let pSize = item.packSize || (window.db.products.find(p => p.id === item.productId)?.packSize || '');
+                        
+                        // Translate pack size to English abbreviations
+                        if (pSize) {
+                            pSize = pSize.replace(/লিটার/g, 'Li').replace(/মিলি/g, 'ML').replace(/গ্রাম/g, 'G').replace(/বক্স/g, 'Box');
+                        }
+                        
+                        let packSizeSpan = pSize ? `<span style="font-size: 9px; color: #777; font-weight: normal; opacity: 0.8;">(${esc(pSize)})</span>` : '';
+                        let nameDisplay = esc(item.name) + ' ' + packSizeSpan;
+
+                        return `<tr>
+                            <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: center;">${index + 1}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 6px;">${nameDisplay}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: center;">${item.qty}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${Number(item.rate).toFixed(2)}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${iDisc.toFixed(2)}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${iTotal.toFixed(2)}</td>
+                        </tr>`;
+                    }).join('')}
+                </tbody>
+            </table>
+
+            <!-- Bottom Section -->
+            <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                <div style="width: 55%;">
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px;">In Words:</div>
+                        <div style="font-size: 12px;">Taka ${numberToWords(grandTotal)} Only</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 40px;">
+                        <div style="text-align: center;">
+                            <div style="border-top: 1px solid #000; width: 150px; padding-top: 5px; font-size: 11px;">Customer Signature</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px;">
+                        <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px;">Terms & Conditions:</div>
+                        <div style="font-size: 10px; color: #555;">Sold products are not returnable under any circumstances.</div>
+                    </div>
+                </div>
+                <div style="width: 40%;">
+                    <div style="background: #eff6ff; padding: 15px; border-radius: 4px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Sub Total:</span> <span>৳ ${rawSubTotal.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Item Discount:</span> <span>৳ ${totalItemDiscount.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; font-weight: bold;"><span>Total:</span> <span>৳ ${grandTotal.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Total Paid Amount:</span> <span>৳ ${paid.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Total Due:</span> <span>৳ ${due.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Previous Due:</span> <span>৳ ${previousDue.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; color: #4338ca; margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 8px;"><span>Current Due:</span> <span>৳ ${(due + previousDue).toFixed(2)}</span></div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Footer / Authorized Signature -->
-        <div style="display: flex; justify-content: flex-end; margin-top: 40px;">
-            <div style="text-align: center;">
-                <div style="border-top: 1px solid #000; width: 150px; padding-top: 5px; font-size: 11px;">Authorized Signature</div>
+            <!-- Footer / Authorized Signature -->
+            <div style="display: flex; justify-content: flex-end; margin-top: 40px;">
+                <div style="text-align: center;">
+                    <div style="border-top: 1px solid #000; width: 150px; padding-top: 5px; font-size: 11px;">Authorized Signature</div>
+                </div>
             </div>
-        </div>
 
-        <div style="text-align: right; margin-top: 20px; font-size: 10px; color: #888;">Page 1/1</div>
+            <div style="text-align: right; margin-top: 20px; font-size: 10px; color: #888;">Page 1/1</div>
+        </div>
     </div>
     `;
     document.getElementById('invoicePrintArea').innerHTML = invoiceHTML;
@@ -1705,6 +1726,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
               window.currentSalesReturnItems = [{
                   productId: existingTxn.productId,
                   name: prod ? prod.name : 'Unknown',
+                  packSize: prod ? (prod.packSize || '') : '',
                   qty: existingTxn.qty,
                   rate: existingTxn.rate,
                   itemDiscount: 0
