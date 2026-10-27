@@ -266,34 +266,23 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .inv-header-action { background: #F8FAFC; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px;}
 .btn-print { background: var(--primary); color: white; padding: 10px 20px; border-radius: 10px; font-weight: 600; border:none;}
 .btn-close-inv { background: #FEE2E2; color: var(--red); padding: 10px 15px; border-radius: 10px; font-weight: 600; border:none;}
-#invoicePrintArea { padding: 20px; background: white; color: black; font-family: 'Times New Roman', Times, serif; font-size: 13px; width: 100%; box-sizing: border-box; }
-.xin-inv-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; border-bottom: 2px solid black; padding-bottom: 10px; }
-.xin-inv-left { display: flex; align-items: center; gap: 10px; }
-.xin-logo-box { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; font-style: italic; object-fit: contain; }
-.xin-company-info h3 { font-size: 15px; font-weight: bold; }
-.xin-inv-right strong { display: inline-block; width: 90px; }
-.xin-title-row { display: flex; align-items: center; justify-content: space-between; margin: 15px 0; }
-.xin-title-row::before, .xin-title-row::after { content: ""; flex: 1; border-bottom: 2px solid black; }
-.xin-title-row h2 { margin: 0 15px; font-size: 20px; font-weight: bold; }
-.xin-bill-box { border-bottom: 1px dashed #ccc; padding-bottom: 10px; margin-bottom: 15px; }
-.xin-meta-table, .xin-items-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
-.xin-meta-table th, .xin-meta-table td, .xin-items-table th, .xin-items-table td { border: 1px solid #000; padding: 5px; }
-.xin-meta-table th, .xin-items-table th { background: #d9d9d9; font-weight: bold; text-align: center;}
-.xin-items-table .text-right { text-align: right; }
-.xin-items-table .text-center { text-align: center; }
-.xin-footer-right { border-top: 1px dashed #ccc; padding-top: 10px; }
-.xin-sum-row { display: flex; justify-content: space-between; padding: 4px 0; }
-.xin-sum-row.bold { font-weight: bold; border-top: 1px solid #000; border-bottom: 1px solid #000; margin-top: 5px;}
-.xin-sign-area { display: flex; justify-content: space-between; margin-top: 30px;}
-.xin-sign-line { width: 150px; border-top: 1px solid #000; text-align: center; padding-top: 5px; margin-top: 30px;}
-.xin-page-no { text-align: right; margin-top: 10px; }
+#invoicePrintArea { padding: 20px; background: white; color: black; font-size: 13px; width: 100%; box-sizing: border-box; }
+
+/* Force Normal Font for Invoice */
+#invoicePrintArea, #invoicePrintArea * {
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-style: normal !important;
+}
+
 @media print {
+  @page { size: A4 portrait; margin: 0; }
+  html, body { width: 210mm; height: 297mm; margin: 0; padding: 0; background: white; overflow: hidden; }
   body * { visibility: hidden; }
   #invoiceModal, #invoiceModal .modal-box, #invoicePrintArea, #invoicePrintArea * { visibility: visible; }
-  #invoiceModal { position: absolute; left: 0; top: 0; width: 100%; background: white; }
-  #invoiceModal .modal-box { box-shadow: none; border: none; padding: 0; max-height: none; overflow: visible;}
+  #invoiceModal { position: absolute; left: 0; top: 0; width: 210mm; background: white; margin: 0; padding: 0; }
+  #invoiceModal .modal-box { box-shadow: none; border: none; max-height: none; max-width: 100%; overflow: visible; padding: 0; margin: 0; }
   .inv-header-action, #invoiceImageContainer { display: none !important; }
-  #invoicePrintArea { width: 210mm; min-height: 297mm; padding: 15mm; margin: 0 auto; }
+  #invoicePrintArea { width: 210mm; min-height: 297mm; padding: 15mm; margin: 0; box-sizing: border-box; }
 }
 </style>
 
@@ -2729,43 +2718,51 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if (previousDue < 0) previousDue = 0;
 
     const invoiceHTML = `
-    <div style="position: relative; overflow: hidden; background: white; color: black; font-family: 'Times New Roman', Times, serif; padding: 10px; font-size: 13px; line-height: 1.4;">
+    <div style="position: relative; overflow: hidden; background: white; color: black; font-family: Arial, Helvetica, sans-serif; padding: 15px; font-size: 11px; line-height: 1.5;">
         
         <!-- Background Watermark Logo -->
-        <img src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; opacity: 0.05; z-index: 0; pointer-events: none;">
+        <img src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; opacity: 0.05; z-index: 0; pointer-events: none;">
 
         <!-- Main Content Wrapper for Z-Index -->
         <div style="position: relative; z-index: 1;">
             <!-- Header -->
-            <div style="text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px;">
-                <h2 style="margin: 0 0 5px 0; font-size: 22px; font-weight: bold; text-transform: uppercase;">${esc(window.db.companyDetails?.name || 'Novas Agro Distribution')}</h2>
-                <div style="font-size: 13px;">Phone: ${esc(window.db.companyDetails?.phone || '01743002000')} | Email: ${esc(window.db.companyDetails?.email || '')}</div>
-                <div style="font-size: 13px;">Address: ${esc(window.db.companyDetails?.address || 'Dhaka Bangladesh')}</div>
-            </div>
-
-            <!-- Customer & Invoice Info -->
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-                <div>
-                    <div style="font-weight: bold; font-size: 14px; margin-bottom: 3px;">Customer: ${esc(party.name)}</div>
-                    <div style="margin-bottom: 3px;">Phone: ${esc(party.phone || '')}</div>
-                    <div>Address: ${esc(party.address || '')}</div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <div style="display: flex; align-items: flex-start; gap: 15px;">
+                    <img src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" style="width: 65px; height: 65px; object-fit: contain;">
+                    <div>
+                        <h2 style="margin: 0 0 5px 0; font-size: 20px; color: #333; font-weight: bold;">${esc(window.db.companyDetails?.name || 'Novas Agro Distribution')}</h2>
+                        <div style="font-size: 12px; color: #555; margin-bottom: 2px;">Phone: ${esc(window.db.companyDetails?.phone || '01743002000')}</div>
+                        <div style="font-size: 12px; color: #555;">Email: ${esc(window.db.companyDetails?.email || '')}</div>
+                    </div>
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-weight: bold; margin-bottom: 3px;">Invoice No: ${invNo}</div>
-                    <div>Invoice Date: ${dateStr}</div>
+                    <div style="font-size: 11px; color: #555; margin-bottom: 5px;">Date: ${dateStr}</div>
+                    <h1 style="margin: 0 0 8px 0; font-size: 24px; color: #333; font-weight: bold; letter-spacing: 1px;">INVOICE</h1>
+                    <div style="font-size: 11px; color: #555; margin-bottom: 2px;">Address: ${esc(window.db.companyDetails?.address || 'Dhaka Bangladesh')}</div>
+                    <div style="font-size: 11px; color: #555; margin-bottom: 2px;">Invoice No: ${invNo}</div>
+                    <div style="font-size: 11px; color: #555;">Invoice Date: ${dateStr}</div>
                 </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #ddd; margin-bottom: 15px;">
+
+            <!-- Customer Info -->
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px;">
+                <div style="display: flex;"><span style="width: 100px; font-size: 12px;">Customer:</span> <span style="font-weight: bold; font-size: 12px;">${esc(party.name)}</span></div>
+                <div style="display: flex;"><span style="width: 100px; font-size: 12px;">Phone:</span> <span style="font-size: 12px;">${esc(party.phone || '')}</span></div>
+                <div style="display: flex;"><span style="width: 100px; font-size: 12px;">Address:</span> <span style="font-size: 12px;">${esc(party.address || '')}</span></div>
             </div>
 
             <!-- Items Table -->
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; border: 1px solid #000;">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #c7d2fe; font-size: 12px;">
                 <thead>
-                    <tr style="border-bottom: 2px solid #000; background: #f2f2f2;">
-                        <th style="padding: 8px; text-align: left; border-right: 1px solid #000; width: 5%;">No</th>
-                        <th style="padding: 8px; text-align: left; border-right: 1px solid #000; width: 45%;">Product Name</th>
-                        <th style="padding: 8px; text-align: center; border-right: 1px solid #000; width: 10%;">Qty</th>
-                        <th style="padding: 8px; text-align: right; border-right: 1px solid #000; width: 15%;">Price</th>
-                        <th style="padding: 8px; text-align: right; border-right: 1px solid #000; width: 10%;">Discount</th>
-                        <th style="padding: 8px; text-align: right; width: 15%;">Total Price</th>
+                    <tr style="background: #f8fafc; color: #4338ca; font-weight: bold;">
+                        <th style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: center; width: 5%;">No</th>
+                        <th style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: left; width: 45%;">Item Name</th>
+                        <th style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: center; width: 10%;">Qty</th>
+                        <th style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: right; width: 13%;">Unit Price</th>
+                        <th style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: right; width: 13%;">Discount</th>
+                        <th style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: right; width: 14%;">Total Amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -2775,60 +2772,63 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
                         let iTotal = Math.max(0, iSub - iDisc);
                         let pSize = item.packSize || (window.db.products.find(p => p.id === item.productId)?.packSize || '');
                         
-                        // Translate pack size to English abbreviations
                         if (pSize) {
                             pSize = pSize.replace(/লিটার/g, 'Li').replace(/মিলি/g, 'ML').replace(/গ্রাম/g, 'G').replace(/বক্স/g, 'Box');
                         }
                         
-                        let packSizeSpan = pSize ? `<span style="font-size: 10px; font-weight: normal; color: #333;">(${esc(pSize)})</span>` : '';
+                        let packSizeSpan = pSize ? `<span style="font-size: 11px; color: #000; font-weight: normal;">(${esc(pSize)})</span>` : '';
                         let nameDisplay = esc(item.name) + ' ' + packSizeSpan;
-                        
-                        return `<tr style="border-bottom: 1px solid #000;">
-                            <td style="padding: 8px; border-right: 1px solid #000;">${index + 1}</td>
-                            <td style="padding: 8px; border-right: 1px solid #000;">${nameDisplay}</td>
-                            <td style="padding: 8px; text-align: center; border-right: 1px solid #000;">${item.qty}</td>
-                            <td style="padding: 8px; text-align: right; border-right: 1px solid #000;">৳ ${Number(item.rate).toFixed(2)}</td>
-                            <td style="padding: 8px; text-align: right; border-right: 1px solid #000;">৳ ${iDisc.toFixed(2)}</td>
-                            <td style="padding: 8px; text-align: right;">৳ ${iTotal.toFixed(2)}</td>
+
+                        return `<tr>
+                            <td style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: center;">${index + 1}</td>
+                            <td style="border: 1px solid #c7d2fe; padding: 8px 10px;">${nameDisplay}</td>
+                            <td style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: center;">${item.qty}</td>
+                            <td style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: right;">৳ ${Number(item.rate).toFixed(2)}</td>
+                            <td style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: right;">৳ ${iDisc.toFixed(2)}</td>
+                            <td style="border: 1px solid #c7d2fe; padding: 8px 10px; text-align: right;">৳ ${iTotal.toFixed(2)}</td>
                         </tr>`;
                     }).join('')}
                 </tbody>
             </table>
 
             <!-- Bottom Section -->
-            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
                 <div style="width: 50%;">
-                    <div style="margin-bottom: 15px;">
-                        <div style="font-weight: bold; font-size: 13px; margin-bottom: 3px;">In Words:</div>
-                        <div style="font-size: 13px;">${numberToWords(grandTotal)} Taka Only</div>
+                    <div style="margin-bottom: 30px;">
+                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">In Words:</div>
+                        <div style="font-size: 12px;">Taka ${numberToWords(grandTotal)} Only</div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-start;">
+                        <div style="text-align: center; width: 200px;">
+                            <div style="border-top: 1px solid #333; padding-top: 5px; font-size: 12px;">Customer Signature</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px;">
+                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 3px;">Terms & Conditions:</div>
+                        <div style="font-size: 11px; color: #555;">Sold products are not returnable under any circumstances.</div>
                     </div>
                 </div>
-                <div style="width: 45%;">
-                    <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #ccc;"><span>Sub Total:</span> <span>৳ ${rawSubTotal.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #ccc;"><span>Item Discount:</span> <span>৳ ${totalItemDiscount.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #000; font-weight: bold;"><span>Total:</span> <span>৳ ${grandTotal.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; padding: 4px 0;"><span>Total Paid:</span> <span>৳ ${paid.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; padding: 4px 0;"><span>Total Due:</span> <span>৳ ${due.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; padding: 4px 0;"><span>Previous Due:</span> <span>৳ ${previousDue.toFixed(2)}</span></div>
-                    <div style="display: flex; justify-content: space-between; padding: 4px 0; border-top: 1px solid #000; border-bottom: 1px solid #000; font-weight: bold; margin-top: 4px;"><span>Current Due:</span> <span>৳ ${(due + previousDue).toFixed(2)}</span></div>
+                <div style="width: 40%;">
+                    <div style="background: #eff6ff; padding: 15px; border-radius: 8px; font-size: 12px; line-height: 1.8;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Sub Total:</span> <span>৳ ${rawSubTotal.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Item Discount:</span> <span>৳ ${totalItemDiscount.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold;"><span>Total:</span> <span>৳ ${grandTotal.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Paid Amount:</span> <span>৳ ${paid.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Due:</span> <span>৳ ${due.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px dashed #ccc;"><span>Previous Due:</span> <span>৳ ${previousDue.toFixed(2)}</span></div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold; color: #4338ca; font-size: 13px; margin-top: 4px;"><span>Current Due:</span> <span>৳ ${(due + previousDue).toFixed(2)}</span></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Signatures -->
-            <div style="display: flex; justify-content: space-between; margin-top: 40px;">
+            <!-- Footer / Authorized Signature -->
+            <div style="display: flex; justify-content: flex-end; margin-top: 40px;">
                 <div style="text-align: center; width: 200px;">
-                    <div style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 12px;">Customer Signature</div>
-                </div>
-                <div style="text-align: center; width: 200px;">
-                    <div style="border-top: 1px solid #000; padding-top: 5px; font-weight: bold; font-size: 12px;">Authorized Signature</div>
+                    <div style="border-top: 1px solid #333; padding-top: 5px; font-size: 12px;">Authorized Signature</div>
                 </div>
             </div>
 
-            <!-- Footer / Terms -->
-            <div style="margin-top: 30px; font-size: 11px; color: #333; text-align: center; border-top: 1px solid #ccc; padding-top: 10px;">
-                <div style="font-weight: bold; margin-bottom: 2px;">Terms & Conditions</div>
-                <div>Sold products are not returnable under any circumstances.</div>
-            </div>
+            <div style="text-align: right; margin-top: 20px; font-size: 10px; color: #888;">Page 1/1</div>
         </div>
     </div>
     `;
