@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Added Roboto Font for Invoice -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -219,9 +221,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .xin-sign-line { width: 150px; border-top: 1px solid #000; text-align: center; padding-top: 5px; margin-top: 30px;}
 .xin-page-no { text-align: right; font-size: 11px; margin-top: 10px; }
 
-/* Force Times New Roman Font for Invoice */
+/* Force Roboto Font for Invoice */
 #invoicePrintArea, #invoicePrintArea * {
-    font-family: 'Times New Roman', Times, serif !important;
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif !important;
     font-style: normal !important;
 }
 
@@ -1517,7 +1519,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if (previousDue < 0) previousDue = 0;
 
     const invoiceHTML = `
-    <div style="position: relative; overflow: hidden; background: white; color: black; font-family: 'Times New Roman', Times, serif; padding: 10px; font-size: 11px; line-height: 1.4;">
+    <div style="position: relative; overflow: hidden; background: white; color: black; padding: 10px; font-size: 11px; line-height: 1.4;">
         
         <!-- Background Watermark Logo -->
         <img src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; opacity: 0.05; z-index: 0; pointer-events: none;">
