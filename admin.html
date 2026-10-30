@@ -295,7 +295,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 <!-- Login / Register Screen -->
 <div id="loginScreen">
   <div class="login-box">
-    <img src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" class="login-logo" alt="Logo">
+    <img src="https://cdn.jsdelivr.net/gh/RudroRazib/photos-@main/60172.png" class="login-logo" alt="Logo">
     <h2 id="authTitle">Novas Agro Login</h2>
     <form id="authForm">
       <div class="login-input-group"><label>ইমেইল</label><input type="email" id="loginEmail" required></div>
@@ -660,7 +660,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="side-profile">
-      <img id="sidebarProfileImg" src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" alt="Profile" style="width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 3px solid rgba(255,255,255,0.8); margin-bottom: 10px; background: white;">
+      <img id="sidebarProfileImg" src="https://cdn.jsdelivr.net/gh/RudroRazib/photos-@main/60172.png" alt="Profile" style="width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 3px solid rgba(255,255,255,0.8); margin-bottom: 10px; background: white;">
       <div style="font-size: 18px; font-weight: 700; color: white; text-align: center; line-height: 1.2;" id="sidebarProfileName">Admin Name</div>
       <div style="font-size: 12px; font-weight: 600; opacity: 0.9; color: white; background: rgba(0,0,0,0.2); padding: 3px 12px; border-radius: 12px; margin-top: 8px;">(Admin)</div>
     </div>
@@ -1242,7 +1242,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
             const uData = snap.val() || {};
             const dispName = uData.name || user.email.split('@')[0];
             window.currentUserName = dispName;
-            const dispImg = uData.imageUrl || 'https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png';
+            const dispImg = uData.imageUrl || 'https://cdn.jsdelivr.net/gh/RudroRazib/photos-@main/60172.png';
             document.getElementById('sidebarProfileName').innerText = dispName;
             document.getElementById('sidebarProfileImg').src = dispImg;
         });
@@ -2721,14 +2721,14 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     <div style="position: relative; overflow: hidden; background: white; color: black; font-family: Arial, Helvetica, sans-serif; padding: 15px; font-size: 11px; line-height: 1.5;">
         
         <!-- Background Watermark Logo -->
-        <img src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; opacity: 0.05; z-index: 0; pointer-events: none;">
+        <img src="https://cdn.jsdelivr.net/gh/RudroRazib/photos-@main/60172.png" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; opacity: 0.05; z-index: 0; pointer-events: none;">
 
         <!-- Main Content Wrapper for Z-Index -->
         <div style="position: relative; z-index: 1;">
             <!-- Header -->
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                 <div style="display: flex; align-items: flex-start; gap: 15px;">
-                    <img src="https://i.ibb.co.com/JjQBLQsF/file-000000004014820888438eb6c755c89e.png" style="width: 65px; height: 65px; object-fit: contain;">
+                    <img src="https://cdn.jsdelivr.net/gh/RudroRazib/photos-@main/60172.png" style="width: 65px; height: 65px; object-fit: contain;">
                     <div>
                         <h2 style="margin: 0 0 5px 0; font-size: 20px; color: #333; font-weight: bold;">${esc(window.db.companyDetails?.name || 'Novas Agro Distribution')}</h2>
                         <div style="font-size: 12px; color: #555; margin-bottom: 2px;">Phone: ${esc(window.db.companyDetails?.phone || '01743002000')}</div>
