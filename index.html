@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<!-- Added Roboto Font for Invoice -->
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -189,45 +188,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .btn-print { background: var(--primary); color: white; padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 14px; border:none;}
 .btn-close-inv { background: #FEE2E2; color: var(--red); padding: 10px 15px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 14px; border:none;}
 #invoicePrintArea { padding: 20px; background: white; color: black; font-size: 11px; width: 100%; box-sizing: border-box; }
-.xin-inv-header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; border-bottom: 2px solid black; padding-bottom: 10px; }
-.xin-inv-left { display: flex; flex-direction: row; gap: 10px; align-items: center; }
-.xin-logo-box { width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; font-style: italic; flex-shrink: 0;}
-.xin-company-info { font-size: 11px; line-height: 1.4; }
-.xin-company-info h3 { font-size: 15px; margin-bottom: 3px; font-weight: bold; }
-.xin-inv-right { text-align: left; font-size: 11px; line-height: 1.6; }
-.xin-inv-right strong { display: inline-block; width: 90px; }
-.xin-title-row { display: flex; align-items: center; justify-content: space-between; margin: 15px 0; }
-.xin-title-row::before, .xin-title-row::after { content: ""; flex: 1; border-bottom: 2px solid black; }
-.xin-title-row h2 { margin: 0 15px; font-size: 20px; font-weight: bold; }
-.xin-bill-to { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; font-size: 11px; line-height: 1.5; border-bottom: 1px dashed #ccc; padding-bottom: 10px;}
-.xin-bill-box { width: 100%; }
-.xin-bill-box h4 { font-size: 12px; margin-bottom: 3px; font-weight: bold; }
-.xin-bill-box strong { font-size: 12px; font-weight: bold; }
-.xin-meta-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
-.xin-meta-table th, .xin-meta-table td { border: 1px solid #000; padding: 5px; text-align: left; }
-.xin-meta-table th { background: #d9d9d9; font-weight: bold; width: 20%; }
-.xin-items-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
-.xin-items-table th, .xin-items-table td { border: 1px solid #000; padding: 6px; text-align: left; word-break: break-word; }
-.xin-items-table th { background: #e6e6e6; font-weight: bold; text-align: center; }
-.xin-items-table td.text-right { text-align: right; }
-.xin-items-table td.text-center { text-align: center; }
-.xin-footer-section { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
-.xin-footer-left { width: 100%; font-size: 11px; line-height: 1.5; }
-.xin-footer-right { width: 100%; font-size: 11px; border-top: 1px dashed #ccc; padding-top: 10px; }
-.xin-sum-row { display: flex; justify-content: space-between; padding: 4px 0; }
-.xin-sum-row.bold { font-weight: bold; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px 0; margin-top: 5px;}
-.xin-sum-row.total-due { font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 6px;}
-.xin-sign-area { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; font-size: 11px;}
-.xin-sign-line { width: 150px; border-top: 1px solid #000; text-align: center; padding-top: 5px; margin-top: 30px;}
-.xin-page-no { text-align: right; font-size: 11px; margin-top: 10px; }
-
-/* Force Roboto Font for Invoice */
-#invoicePrintArea, #invoicePrintArea * {
-    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif !important;
-    font-style: normal !important;
-}
-
-/* ====== Perfect A4 Print CSS ====== */
+#invoicePrintArea, #invoicePrintArea * { font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif !important; font-style: normal !important; }
 @media print {
   @page { size: A4 portrait; margin: 0; }
   html, body { width: 210mm; height: 297mm; margin: 0; padding: 0; background: white; overflow: hidden; }
@@ -238,6 +199,21 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   .inv-header-action, #invoiceImageContainer { display: none !important; }
   #invoicePrintArea { width: 210mm; min-height: 297mm; padding: 15mm; margin: 0; box-sizing: border-box; }
 }
+
+/* ===== নতুন ফিচারের জন্য স্টাইল ===== */
+.delivery-tab { transition: all 0.2s; }
+.delivery-tab.active { background: var(--primary) !important; color: white !important; }
+.new-features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
+.feature-card { background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 16px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 4px 15px rgba(31, 63, 120, 0.05), inset 0 1px 2px rgba(255, 255, 255, 0.9); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+.feature-card:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.65); }
+.feature-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); transition: 0.7s; }
+.feature-card:hover::before { left: 150%; }
+.fc-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: transform 0.3s; }
+.feature-card:hover .fc-icon { transform: translateY(-3px) scale(1.05); }
+.fc-title { font-size: 12.5px; font-weight: 700; color: var(--primary); text-align: center; }
+.bg-grad-orange { background: linear-gradient(135deg, #F59E0B, #D97706); }
+.bg-grad-purple { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
+.bg-grad-blue { background: linear-gradient(135deg, #3B82F6, #2563EB); }
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -340,6 +316,28 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
           </div>
         </div>
       </div>
+      
+      <!-- ========== নতুন ফিচার সমূহ (হোম পেজের নিচে) ========== -->
+      <div class="panel" style="margin-top: 20px; padding: 15px;">
+        <div class="card-title" style="margin-bottom: 12px; font-size: 14px; border-bottom: none; padding-bottom: 0;">
+          📊 অ্যাডভান্সড রিপোর্টস <i class="fa-solid fa-chart-simple" style="float:right; color:var(--primary);"></i>
+        </div>
+        <div class="new-features-grid">
+          <div class="feature-card" onclick="switchView('delivery')">
+            <div class="fc-icon bg-grad-orange"><i class="fa-solid fa-truck-fast"></i></div>
+            <div class="fc-title">ডেলিভারি</div>
+          </div>
+          <div class="feature-card" onclick="switchView('srPerformance')">
+            <div class="fc-icon bg-grad-purple"><i class="fa-solid fa-ranking-star"></i></div>
+            <div class="fc-title">SR পারফরম্যান্স</div>
+          </div>
+          <div class="feature-card" onclick="switchView('forecast')">
+            <div class="fc-icon bg-grad-blue"><i class="fa-solid fa-chart-column"></i></div>
+            <div class="fc-title">বিক্রয় পূর্বাভাস</div>
+          </div>
+        </div>
+      </div>
+      <!-- ========== নতুন ফিচার শেষ ========== -->
     </section>
 
     <div class="glass-content" id="otherViewsContainer" style="display:none;">
@@ -410,6 +408,38 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         <div id="productsList"></div>
       </section>
       <section id="users" class="view"><div class="section-title">ইউজার (SR)</div><div id="srTable"></div></section>
+      
+      <!-- ডেলিভারি ট্র্যাকিং -->
+      <section id="delivery" class="view">
+        <div class="section-title">ডেলিভারি ট্র্যাকিং <button class="btn-add" onclick="switchView('dashboard')" style="background:#F1F5F9; color:#475569; box-shadow:none;">← ফিরে যান</button></div>
+        <div style="display:flex; gap:6px; margin-bottom:15px; overflow-x:auto; padding-bottom:5px;">
+          <button class="delivery-tab active" data-status="pending" onclick="filterDelivery('pending')" style="padding:8px 14px; border-radius:20px; border:1px solid #e2e8f0; background:var(--primary); color:white; font-size:12px; font-weight:600; white-space:nowrap; cursor:pointer;">অপেক্ষমাণ</button>
+          <button class="delivery-tab" data-status="packed" onclick="filterDelivery('packed')" style="padding:8px 14px; border-radius:20px; border:1px solid #e2e8f0; background:white; color:var(--text); font-size:12px; font-weight:600; white-space:nowrap; cursor:pointer;">প্যাকড</button>
+          <button class="delivery-tab" data-status="shipped" onclick="filterDelivery('shipped')" style="padding:8px 14px; border-radius:20px; border:1px solid #e2e8f0; background:white; color:var(--text); font-size:12px; font-weight:600; white-space:nowrap; cursor:pointer;">শিপড</button>
+          <button class="delivery-tab" data-status="delivered" onclick="filterDelivery('delivered')" style="padding:8px 14px; border-radius:20px; border:1px solid #e2e8f0; background:white; color:var(--text); font-size:12px; font-weight:600; white-space:nowrap; cursor:pointer;">সম্পন্ন</button>
+        </div>
+        <div id="deliveryList"></div>
+      </section>
+
+      <!-- SR পারফরম্যান্স -->
+      <section id="srPerformance" class="view">
+        <div class="section-title">SR পারফরম্যান্স <button class="btn-add" onclick="switchView('dashboard')" style="background:#F1F5F9; color:#475569; box-shadow:none;">← ফিরে যান</button></div>
+        <select id="srDateRange" onchange="renderSRPerformance(this.value)" style="width:100%; padding:14px 15px; border-radius:14px; border:1px solid #e2e8f0; font-size:14px; margin-bottom:15px; outline:none; background:white;">
+          <option value="today">আজ</option>
+          <option value="week">শেষ ৭ দিন</option>
+          <option value="month" selected>শেষ ৩০ দিন</option>
+          <option value="3month">শেষ ৩ মাস</option>
+          <option value="year">শেষ ১ বছর</option>
+          <option value="all">সব সময়</option>
+        </select>
+        <div id="srPerformanceContent"></div>
+      </section>
+
+      <!-- বিক্রয় পূর্বাভাস -->
+      <section id="forecast" class="view">
+        <div class="section-title">বিক্রয় পূর্বাভাস <button class="btn-add" onclick="switchView('dashboard')" style="background:#F1F5F9; color:#475569; box-shadow:none;">← ফিরে যান</button></div>
+        <div id="forecastContent"></div>
+      </section>
     </div>
   </main>
 
@@ -433,6 +463,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       <div class="side-menu-item" onclick="switchView('transactions')"><div class="side-menu-left"><i class="fa-solid fa-bag-shopping"></i> লেনদেন এডিট</div></div>
       <div class="side-menu-item" onclick="switchView('dues')"><div class="side-menu-left"><i class="fa-solid fa-file-invoice-dollar"></i> দেনা-পাওনা</div></div>
       <div class="side-menu-item" onclick="switchView('expenses')"><div class="side-menu-left"><i class="fa-solid fa-money-bill-trend-up"></i> ব্যয়/খরচ</div></div>
+      <div class="side-menu-item" onclick="switchView('delivery')"><div class="side-menu-left"><i class="fa-solid fa-truck-fast"></i> ডেলিভারি</div></div>
+      <div class="side-menu-item" onclick="switchView('srPerformance')"><div class="side-menu-left"><i class="fa-solid fa-ranking-star"></i> SR পারফরম্যান্স</div></div>
+      <div class="side-menu-item" onclick="switchView('forecast')"><div class="side-menu-left"><i class="fa-solid fa-chart-column"></i> পূর্বাভাস</div></div>
       <div class="side-menu-item" onclick="switchView('products')"><div class="side-menu-left"><i class="fa-solid fa-boxes-stacked"></i> পণ্য</div></div>
       <div class="side-menu-item" onclick="switchView('parties')"><div class="side-menu-left"><i class="fa-solid fa-users"></i> পার্টি</div></div>
       <div class="side-menu-item" onclick="switchView('suppliers')"><div class="side-menu-left"><i class="fa-solid fa-industry"></i> সাপ্লায়ার</div></div>
@@ -440,8 +473,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       <div class="side-menu-item" onclick="logoutUser()" style="color: var(--red);"><div class="side-menu-left"><i class="fa-solid fa-right-from-bracket" style="color:var(--red)"></i> লগআউট</div></div>
     </div>
     <div class="version-text">Novas Agro SR | ভার্সন: ২.৮.২</div>
-  </aside>
-
+  </aside>  <!-- Modals -->
   <div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h3 id="modalTitle">তথ্য দিন</h3><button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button></div><form id="dataForm" autocomplete="off"><div id="formFields"></div><div class="form-actions"><button type="button" class="btn-cancel" onclick="closeModal()">বাতিল</button><button type="submit" class="btn-submit" id="submitBtn">সংরক্ষণ</button></div></form></div></div>
 
   <!-- Filter Modal -->
@@ -472,7 +504,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     </div>
   </div>
 
-  <!-- Product Search Modal for Quick Forms & Sales (Fixed z-index to 115) -->
+  <!-- Product Search Modal for Quick Forms & Sales -->
   <div class="modal" id="productSearchModal" style="z-index: 115;">
     <div class="modal-box" style="border-radius: 24px; max-width: 400px; margin: auto;">
       <div class="modal-head"><h3>পণ্য সিলেক্ট করুন</h3><button class="close-btn" onclick="closeProductSearchModal()"><i class="fa-solid fa-xmark"></i></button></div>
@@ -510,6 +542,15 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       <div class="ns-form-row"><div class="ns-label" style="font-weight:bold;">সর্বমোট মূল্য</div><div class="ns-input-group"><span class="ns-symbol">৳</span><input type="number" id="nsGrandTotal" readonly value="0.00" style="font-weight:bold; color:var(--primary);"></div></div>
       <div class="ns-form-row"><div class="ns-label" style="font-weight:bold;">পেলাম</div><div class="ns-input-group"><span class="ns-symbol">৳</span><input type="number" id="nsPaid" value="0.00" oninput="calcSaleTotals()"></div></div>
       <div class="ns-form-row"><div class="ns-label" style="font-weight:bold;">বাকি</div><div class="ns-input-group"><span class="ns-symbol">৳</span><input type="number" id="nsDue" readonly value="0.00" style="color:var(--red); font-weight:bold;"></div></div>
+      
+      <!-- নতুন: ডেলিভারি চেকবক্স -->
+      <div class="ns-form-row" style="background:#F8FAFC; padding:10px 15px; border-radius:12px; margin-bottom:15px;">
+        <div class="ns-label" style="font-weight:600;">🚚 ডেলিভারি দিতে হবে?</div>
+        <div class="ns-input-group" style="justify-content:flex-end;">
+          <input type="checkbox" id="nsDeliveryRequired" style="width:20px; height:20px; cursor:pointer;">
+        </div>
+      </div>
+
       <div class="ns-payment-section"><label>পেমেন্টের মাধ্যম</label><select class="ns-payment-select" id="nsPaymentMethod"><option value="Cash">💵 Cash</option><option value="Bank">🏦 Bank</option><option value="Bkash">📱 Bkash</option></select></div>
     </div>
     <div class="ns-footer"><button class="ns-save-btn" id="nsSaveBtn" onclick="saveNewSale()">সেভ করুন</button></div>
@@ -528,19 +569,16 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </select>
       </div>
       
-      <!-- Quantity -->
       <div class="form-group">
         <label>পরিমাণ</label>
         <input type="number" id="aiQty" value="1" min="1" oninput="updateAiTotal()" style="text-align:left;">
       </div>
 
-      <!-- Price (Stacked below Quantity) -->
       <div class="form-group">
         <label>মূল্য</label>
         <input type="number" id="aiRate" value="0" min="0" oninput="updateAiTotal()" style="text-align:left;">
       </div>
 
-      <!-- Discount Row -->
       <div class="form-group">
         <label>ডিসকাউন্ট (%)</label>
         <input type="number" id="aiItemDiscount" value="0" min="0" max="100" oninput="updateAiTotal()" style="text-align:left;">
@@ -566,19 +604,16 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </select>
       </div>
       
-      <!-- Quantity -->
       <div class="form-group">
         <label>পরিমাণ</label>
         <input type="number" id="sriQty" value="1" min="1" oninput="updateSriTotal()" style="text-align:left;">
       </div>
 
-      <!-- Price (Stacked below Quantity) -->
       <div class="form-group">
         <label>মূল্য</label>
         <input type="number" id="sriRate" value="0" min="0" oninput="updateSriTotal()" style="text-align:left;">
       </div>
 
-      <!-- Discount Row -->
       <div class="form-group">
         <label>ডিসকাউন্ট (%)</label>
         <input type="number" id="sriItemDiscount" value="0" min="0" max="100" oninput="updateSriTotal()" style="text-align:left;">
@@ -623,8 +658,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     </div>
   </div>
 </div>
-
 <script>
+  // Firebase Setup
   const firebaseConfig = { apiKey: "AIzaSyD4-daxO-6RYTHN-1tTt0WsUzFmYWyGpSk", authDomain: "novas-agro.firebaseapp.com", databaseURL: "https://novas-agro-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "novas-agro", storageBucket: "novas-agro.firebasestorage.app", messagingSenderId: "71814265788", appId: "1:71814265788:web:8e1054a70772a9ad30c9b9" };
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
@@ -635,7 +670,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   // Product Filters State
   window.activeProductFilters = { supplierId: '', category: '', stockStatus: '' };
-
+  
   // Product Search Modal State
   window.productSearchTargetId = null;
   window.productSearchTargetDisplayId = null;
@@ -653,7 +688,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   window.currentSalesReturnItems = [];
   window.editingSalesReturnItemIndex = null;
   window.currentSaleType = 'cash';
-  window.editingSaleId = null;
+  window.editingSaleId = null; 
   window.editingItemIndex = null;
   window.currentGeneratedDataUrl = '';
   window.currentGeneratedBlob = null;
@@ -672,7 +707,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
           sr.businessId = dirSnap.val().businessId || 'root';
           sr.id = dirSnap.val().srId || sr.id;
         } else {
-          // Directory entry gone — likely deleted
           localStorage.removeItem('novasAgroSR');
           return;
         }
@@ -744,9 +778,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     }
   });
 
-  // 🔑 showApp — verify SR still exists before showing app
+  // Verify SR still exists before showing app
   async function showApp() {
-    // First verify SR record still exists in DB (handles deletion while app was closed)
     try {
       const verifyPath = (currentSR.businessId && currentSR.businessId !== 'root')
         ? 'businesses/' + currentSR.businessId + '/srs/' + currentSR.id
@@ -758,9 +791,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         window.location.reload();
         return;
       }
-    } catch(e) {
-      // Network error — proceed, live listener will catch
-    }
+    } catch(e) {}
     loginScreen.style.display = 'none';
     appContent.style.display = 'flex';
     listenToData();
@@ -801,12 +832,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       renderAll();
     });
 
-    // 🔑 Auto-logout if this SR is deleted by admin (real-time presence check)
+    // Auto-logout if SR is deleted by admin
     if (currentSR && currentSR.id) {
-      if (window.__srPresenceRef) {
-        window.__srPresenceRef.off();
-        window.__srPresenceRef = null;
-      }
+      if (window.__srPresenceRef) { window.__srPresenceRef.off(); window.__srPresenceRef = null; }
       const mySrPath = (currentSR.businessId && currentSR.businessId !== 'root')
         ? 'businesses/' + currentSR.businessId + '/srs/' + currentSR.id
         : 'srs/' + currentSR.id;
@@ -856,8 +884,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   function calculatePartyDue(party) {
     let due = Number(party.previousDue || 0);
-    window.db.approvedSales.filter(s => s.customerName === party.name || s.partyId === party.id).forEach(s => { due += (Number(s.total || 0) - Number(s.paid || 0)); });
-    window.db.transactions.filter(t => t.partyId === party.id).forEach(t => {
+    window.db.approvedSales.filter(s => (s.customerName === party.name || s.partyId === party.id) && !s.isVoided).forEach(s => { due += (Number(s.total || 0) - Number(s.paid || 0)); });
+    window.db.transactions.filter(t => t.partyId === party.id && !t.isVoided).forEach(t => {
       let tTotal = Number(t.total || 0), tPaid = Number(t.paid || 0), tAmount = Number(t.amount || 0);
       if (t.type === 'sales') { let txnDue = (t.due !== undefined && t.due !== null) ? Number(t.due) : (tTotal - tPaid); due += txnDue; }
       if (t.type === 'due_collect' || t.type === 'cash_in') due -= tAmount;
@@ -868,7 +896,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   function calculateSupplierDue(supplierId) {
     let due = 0;
-    window.db.transactions.filter(t => t.supplierId === supplierId).forEach(t => {
+    window.db.transactions.filter(t => t.supplierId === supplierId && !t.isVoided).forEach(t => {
       if(t.type === 'purchase') due += (Number(t.total) - Number(t.paid));
       if(t.type === 'due_pay' || t.type === 'cash_out') due -= Number(t.amount);
       if(t.type === 'purchase_return') due -= (Number(t.total) - Number(t.paid));
@@ -878,8 +906,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   function calculateSystemCash() {
     let inCash = 0, outCash = 0;
-    window.db.approvedSales.forEach(s => { inCash += Number(s.paid || 0); });
-    window.db.transactions.forEach(t => {
+    window.db.approvedSales.filter(s => !s.isVoided).forEach(s => { inCash += Number(s.paid || 0); });
+    window.db.transactions.filter(t => !t.isVoided).forEach(t => {
       if(t.type === 'sales') inCash += Number(t.paid || 0);
       if(t.type === 'due_collect' || t.type === 'cash_in' || t.type === 'purchase_return') inCash += Number(t.paid || t.amount || 0);
       if(t.type === 'purchase') outCash += Number(t.paid || 0);
@@ -890,7 +918,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   function calculateTotalExpense() {
     let total = 0;
-    window.db.transactions.forEach(t => { if(t.type === 'cash_out' && t.note && t.note.includes('খরচ:')) total += Number(t.amount || 0); });
+    window.db.transactions.filter(t => !t.isVoided).forEach(t => { if(t.type === 'cash_out' && t.note && t.note.includes('খরচ:')) total += Number(t.amount || 0); });
     return total;
   }
 
@@ -904,16 +932,13 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   };
 
   window.openProductFilterModal = function() {
-    // Populate Suppliers
     const sSelect = document.getElementById('prodFilterSupplier');
     sSelect.innerHTML = `<option value="">সব সাপ্লায়ার</option>` + window.db.suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
     
-    // Populate Categories dynamically from existing products
     const categories = [...new Set(window.db.products.map(p => p.category).filter(Boolean))];
     const cSelect = document.getElementById('prodFilterCategory');
     cSelect.innerHTML = `<option value="">সব ক্যাটাগরি</option>` + categories.map(c => `<option value="${c}">${c}</option>`).join('');
     
-    // Set current values
     sSelect.value = window.activeProductFilters.supplierId;
     cSelect.value = window.activeProductFilters.category;
     document.getElementById('prodFilterStock').value = window.activeProductFilters.stockStatus;
@@ -954,7 +979,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if(!container) return;
     let prods = [...window.db.products];
     
-    // Apply Text Search
     if(searchTerm) {
       const lower = searchTerm.toLowerCase();
       prods = prods.filter(p => {
@@ -965,7 +989,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       });
     }
 
-    // Apply Active Filters
     if (window.activeProductFilters.supplierId) {
         prods = prods.filter(p => p.supplierId === window.activeProductFilters.supplierId);
     }
@@ -1035,19 +1058,34 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if(!container) return;
     let expenses = window.db.transactions.filter(t => t.type === 'cash_out' && t.note && t.note.includes('খরচ:'));
     expenses.sort((a,b) => new Date(b.date) - new Date(a.date));
-    let total = expenses.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+    
+    let total = expenses.filter(t => !t.isVoided).reduce((sum, t) => sum + Number(t.amount || 0), 0);
     if(totalEl) totalEl.innerText = money(total);
+    
     if(expenses.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো খরচ পাওয়া যায়নি</div>'; return; }
+    
     container.innerHTML = expenses.map(t => {
       let note = (t.note || '').replace('খরচ: ', '');
       let date = new Date(t.date).toLocaleDateString('en-GB');
       let time = new Date(t.date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-      return `<div class="invoice-list-item" style="cursor:default;">
-        <div class="inv-list-header"><div><div class="inv-list-inv" style="color:var(--red);"><i class="fa-solid fa-receipt"></i> খরচ</div><div class="inv-list-cust">${esc(note)}</div><div class="inv-list-date">${date} • ${time}</div></div><div class="inv-list-amounts"><div class="inv-list-total" style="color:var(--red);">৳ ${Number(t.amount || 0).toFixed(2)}</div></div></div>
+      let isVoidedStyle = t.isVoided ? 'opacity: 0.6; background: #FEE2E2;' : '';
+      let voidBadge = t.isVoided ? `<span style="background:#EF4444; color:white; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold; margin-left:5px;">বাতিলকৃত</span>` : '';
+      
+      return `<div class="invoice-list-item" style="${isVoidedStyle} padding-bottom:10px;">
+        <div class="inv-list-header" style="cursor:pointer;" onclick="editTransaction('${t.id}')">
+          <div><div class="inv-list-inv" style="color:var(--red);"><i class="fa-solid fa-receipt"></i> খরচ ${voidBadge}</div><div class="inv-list-cust">${esc(note)}</div><div class="inv-list-date">${date} • ${time}</div></div>
+          <div class="inv-list-amounts"><div class="inv-list-total" style="color:var(--red);">৳ ${Number(t.amount || 0).toFixed(2)}</div></div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px; border-top:1px dashed #e2e8f0; padding-top:10px;">
+            ${t.isVoided 
+                ? `<button onclick="editTransaction('${t.id}')" style="background:#FEF3C7; color:#B45309; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-rotate-left"></i> সচল করুন</button>` 
+                : `<button onclick="editTransaction('${t.id}')" style="background:#EFF6FF; color:var(--primary); border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-pen"></i> এডিট করুন</button>
+                   <button onclick="voidTransaction('${t.id}')" style="background:#FEE2E2; color:#EF4444; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-ban"></i> বাতিল</button>`
+            }
+        </div>
       </div>`;
     }).join('');
   };
-
   window.openNewSale = function() {
     closeActionMenu();
     window.currentSaleItems = []; window.currentSaleType = 'cash'; window.editingSaleId = null; window.editingItemIndex = null;
@@ -1064,6 +1102,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         return `<option value="${p.id}">${esc(p.name)}${dueText}</option>`;
     }).join('');
     document.getElementById('nsDiscPercent').value = ''; document.getElementById('nsDiscFlat').value = ''; document.getElementById('nsDelivery').value = 0; document.getElementById('nsPaid').value = 0;
+    if(document.getElementById('nsDeliveryRequired')) document.getElementById('nsDeliveryRequired').checked = false;
     setSaleType('cash'); renderSaleItems(); document.getElementById('newSaleModal').classList.add('open');
   };
 
@@ -1128,10 +1167,21 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const date = new Date(t.date).toLocaleDateString('en-GB');
     const due = t.due !== undefined ? Number(t.due) : (Number(t.total) - Number(t.paid || 0));
     let srBadge = t.srName ? `<span class="sr-badge">SR: ${esc(t.srName)}</span>` : '';
-    return `<div class="invoice-list-item" onclick="editExistingInvoice('${t.id}')">
-        <div class="inv-list-header">
-            <div><div class="inv-list-inv">${t.invoiceNo || 'N/A'} ${srBadge}</div><div class="inv-list-cust">কাস্টমার: <strong>${esc(pName)}</strong></div><div class="inv-list-date">${date}</div></div>
+    
+    let isVoidedStyle = t.isVoided ? 'opacity: 0.6; background: #FEE2E2;' : '';
+    let voidBadge = t.isVoided ? `<span style="background:#EF4444; color:white; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold; margin-left:5px;">বাতিলকৃত</span>` : '';
+
+    return `<div class="invoice-list-item" style="${isVoidedStyle} padding-bottom:10px;">
+        <div class="inv-list-header" style="cursor:pointer;" onclick="editExistingInvoice('${t.id}')">
+            <div><div class="inv-list-inv">${t.invoiceNo || 'N/A'} ${srBadge} ${voidBadge}</div><div class="inv-list-cust">কাস্টমার: <strong>${esc(pName)}</strong></div><div class="inv-list-date">${date}</div></div>
             <div class="inv-list-amounts"><div class="inv-list-total">৳ ${Number(t.total).toFixed(2)}</div><div class="inv-list-due" style="color:${due > 0 ? 'var(--red)' : 'var(--green)'};">বাকি: ৳ ${due.toFixed(2)}</div></div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px; border-top:1px dashed #e2e8f0; padding-top:10px;">
+            ${t.isVoided 
+                ? `<button onclick="editExistingInvoice('${t.id}')" style="background:#FEF3C7; color:#B45309; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-rotate-left"></i> সচল করুন</button>` 
+                : `<button onclick="editExistingInvoice('${t.id}')" style="background:#EFF6FF; color:var(--primary); border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-pen"></i> এডিট করুন</button>
+                   <button onclick="voidTransaction('${t.id}')" style="background:#FEE2E2; color:#EF4444; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-ban"></i> বাতিল</button>`
+            }
         </div>
     </div>`;
   }
@@ -1153,6 +1203,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     document.getElementById('nsDiscPercent').value = ''; document.getElementById('nsDiscFlat').value = txn.discount || ''; document.getElementById('nsDelivery').value = txn.delivery || 0; document.getElementById('nsPaid').value = txn.paid || 0;
     if(txn.due > 0) { window.currentSaleType = 'credit'; document.getElementById('btnCashToggle').classList.remove('active'); document.getElementById('btnCreditToggle').classList.add('active'); }
     else { window.currentSaleType = 'cash'; document.getElementById('btnCashToggle').classList.add('active'); document.getElementById('btnCreditToggle').classList.remove('active'); }
+    
+    // Set Delivery Checkbox if editing
+    if(document.getElementById('nsDeliveryRequired')) {
+        document.getElementById('nsDeliveryRequired').checked = (txn.deliveryStatus === 'pending');
+    }
+
     calcSaleTotals(); document.getElementById('newSaleModal').classList.add('open');
   };
 
@@ -1194,20 +1250,80 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         let totalHtml = `<div class="inv-list-total">৳ ${totalAmt.toFixed(2)}</div>`;
         let dueHtml = (t.type !== 'cash_in' && t.type !== 'cash_out') ? `<div class="inv-list-due" style="color:${dueAmt > 0 ? 'var(--red)' : 'var(--green)'};">বাকি: ৳ ${dueAmt.toFixed(2)}</div>` : '';
         let srInfo = t.srName ? `<span class="sr-badge">SR: ${esc(t.srName)}</span>` : '';
-        return `<div class="invoice-list-item" onclick="editTransaction('${t.id}')">
-            <div class="inv-list-header">
-                <div><div class="inv-list-inv" style="color:${color};">${typeStr} ${srInfo}</div><div class="inv-list-cust">${esc(entityStr)}</div><div class="inv-list-date">${esc(detailsStr)} - ${new Date(t.date).toLocaleDateString('en-GB')}</div></div>
+        
+        let isVoidedStyle = t.isVoided ? 'opacity: 0.6; background: #FEE2E2;' : '';
+        let voidBadge = t.isVoided ? `<span style="background:#EF4444; color:white; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold; margin-left:5px;">বাতিলকৃত</span>` : '';
+
+        return `<div class="invoice-list-item" style="${isVoidedStyle} padding-bottom:10px;">
+            <div class="inv-list-header" style="cursor:pointer;" onclick="editTransaction('${t.id}')">
+                <div><div class="inv-list-inv" style="color:${color};">${typeStr} ${srInfo} ${voidBadge}</div><div class="inv-list-cust">${esc(entityStr)}</div><div class="inv-list-date">${esc(detailsStr)} - ${new Date(t.date).toLocaleDateString('en-GB')}</div></div>
                 <div class="inv-list-amounts">${totalHtml}${dueHtml}</div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px; border-top:1px dashed #e2e8f0; padding-top:10px;">
+                ${t.isVoided 
+                    ? `<button onclick="editTransaction('${t.id}')" style="background:#FEF3C7; color:#B45309; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-rotate-left"></i> সচল করুন</button>` 
+                    : `<button onclick="editTransaction('${t.id}')" style="background:#EFF6FF; color:var(--primary); border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-pen"></i> এডিট করুন</button>
+                       <button onclick="voidTransaction('${t.id}')" style="background:#FEE2E2; color:#EF4444; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-ban"></i> বাতিল</button>`
+                }
             </div>
         </div>`;
     }).join('');
   }
 
+  window.voidTransaction = function(txnId) {
+    const txn = window.db.transactions.find(t => t.id === txnId);
+    if(!txn || txn.isVoided) return;
+    
+    if (txn.srPhone !== currentSR.phone && txn.srId !== currentSR.id && txn.createdBy !== currentSR.phone) {
+        return alert('দুঃখিত! আপনি শুধুমাত্র নিজের করা লেনদেন বাতিল করতে পারবেন।');
+    }
+    
+    const reason = prompt('⚠️ এই লেনদেনটি বাতিল (Void) করার কারণ লিখুন:');
+    if(reason === null) return; 
+    if(!reason.trim()) return alert('বাতিল করার কারণ অবশ্যই দিতে হবে!');
+
+    if (txn.type === 'sales') {
+        if (txn.items) txn.items.forEach(item => addStock(item.productId, item.qty, 'VOID_SALE'));
+    } else if (txn.type === 'sales_return') {
+        if (txn.items) txn.items.forEach(item => deductStock(item.productId, item.qty));
+        else if (txn.productId) deductStock(txn.productId, txn.qty);
+    }
+
+    srDbRef('transactions/' + txnId).update({
+        isVoided: true,
+        voidReason: reason,
+        voidedBy: currentSR.phone,
+        voidedAt: new Date().toISOString()
+    }).then(() => {
+        logActivity('লেনদেন বাতিল', `${txn.invoiceNo || txnId} বাতিল করা হয়েছে। কারণ: ${reason}`);
+        alert('লেনদেনটি সফলভাবে বাতিল করা হয়েছে এবং স্টক আপডেট হয়েছে।');
+        
+        if(document.getElementById('invoiceModal').classList.contains('open')) closeInvoiceModal();
+        if(document.getElementById('quickFormModal').classList.contains('open')) closeQuickForm();
+        renderAll();
+    }).catch(err => alert('সমস্যা হয়েছে: ' + err.message));
+  };
+
   window.editTransaction = function(txnId) {
     const txn = window.db.transactions.find(t => t.id === txnId); if(!txn) return;
+    
     if (txn.srPhone !== currentSR.phone && txn.srId !== currentSR.id && txn.createdBy !== currentSR.phone) {
-        return alert('দুঃখিত! এটি আপনার করা লেনদেন নয়। আপনি শুধুমাত্র নিজের করা লেনদেন এডিট করতে পারবেন।');
+        return alert('দুঃখিত! এটি আপনার করা লেনদেন নয়। আপনি শুধুমাত্র নিজের করা লেনদেন এডিট বা বাতিল করতে পারবেন।');
     }
+    
+    if (txn.isVoided) {
+        if(confirm(`এই লেনদেনটি বাতিল করা হয়েছে।\nকারণ: ${txn.voidReason}\n\nআপনি কি এটি আবার সচল (Unvoid) করতে চান?`)) {
+            if (txn.type === 'sales' && txn.items) txn.items.forEach(item => deductStock(item.productId, item.qty));
+            else if (txn.type === 'sales_return' && txn.items) txn.items.forEach(item => addStock(item.productId, item.qty, 'UNVOID_RETURN'));
+            else if (txn.type === 'sales_return' && txn.productId) addStock(txn.productId, txn.qty, 'UNVOID_RETURN');
+            
+            srDbRef('transactions/' + txnId).update({ isVoided: false, voidReason: null }).then(() => { 
+                alert('সচল করা হয়েছে!'); renderAll(); 
+            });
+        }
+        return;
+    }
+
     if (txn.type === 'sales') { editExistingInvoice(txnId); }
     else if (txn.type === 'cash_in') { openQuickForm('due_collect', txnId); }
     else if (txn.type === 'cash_out') { if (txn.supplierId) openQuickForm('due_pay', txnId); else openQuickForm('expense', txnId); }
@@ -1271,7 +1387,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         const existingItem = window.currentSaleItems.find(i => i.productId === prodId && i.rate === rate && (i.itemDiscount || 0) === itemDisc);
         let currentQtyInCart = existingItem ? existingItem.qty : 0;
         if(totalStock < (qty + currentQtyInCart)) return alert(`পর্যাপ্ত স্টক নেই! স্টক: ${totalStock}`);
-        if(existingItem) { existingItem.qty += qty; } else { window.currentSaleItems.push({ productId: prodId, name: prod.name, packSize: prod.packSize || '', qty: qty, rate: rate, itemDiscount: itemDisc }); }
+        if(existingItem) { existingItem.qty += qty; } else { window.currentSaleItems.push({ productId: prodId, name: prod.name, packSize: prod.packSize || '', qty: qty, rate: rate, itemDiscount: itemDisc, purchaseRate: prod.purchaseRate || 0 }); }
     }
     closeAddItemModal(); renderSaleItems();
   };
@@ -1481,7 +1597,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     const isEdit = window.editingSaleId !== null; const txnId = isEdit ? window.editingSaleId : 'TXN-' + Date.now().toString(36).toUpperCase(); const date = isEdit ? window.db.transactions.find(t => t.id === txnId).date : new Date().toISOString(); const saleItemsCopy = [...window.currentSaleItems]; const partyObj = window.db.parties.find(p => p.id === partyId);
     if (isEdit) { const oldTxn = window.db.transactions.find(t => t.id === txnId); if (oldTxn && oldTxn.items) for(let item of oldTxn.items) addStock(item.productId, item.qty, 'EDIT_RESTORE'); }
     for(let item of saleItemsCopy) deductStock(item.productId, item.qty);
-    let txnData = { id: txnId, invoiceNo: invNo, date: date, type: 'sales', partyId: partyId, items: saleItemsCopy, subTotal: subTotal, discount: discFlat, delivery: delivery, total: grandTotal, paid: paid, due: due, paymentMethod: paymentMethod, srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.phone, creatorName: currentSR.name };
+    
+    // Added Delivery Status
+    let txnData = { id: txnId, invoiceNo: invNo, date: date, type: 'sales', partyId: partyId, items: saleItemsCopy, subTotal: subTotal, discount: discFlat, delivery: delivery, total: grandTotal, paid: paid, due: due, paymentMethod: paymentMethod, deliveryStatus: (document.getElementById('nsDeliveryRequired')?.checked ? 'pending' : 'delivered'), srId: currentSR.id, srName: currentSR.name, srPhone: currentSR.phone, createdBy: currentSR.phone, creatorName: currentSR.name };
+    
     srDbRef('transactions/' + txnId).set(txnData).then(() => {
       let itemsStr = saleItemsCopy.map(i => `${i.name} (${i.qty} পিস)`).join(', ');
       logActivity(isEdit ? 'বিক্রয় এডিট' : 'বিক্রয়', `${currentSR.name} ${partyObj.name} - এর কাছে বিক্রয় ${isEdit ? 'আপডেট' : ''}: ${itemsStr}। মোট: ${money(grandTotal)}, জমা: ${money(paid)}, বাকি: ${money(due)}`);
@@ -1520,114 +1639,36 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
     const invoiceHTML = `
     <div style="position: relative; overflow: hidden; background: white; color: black; padding: 10px; font-size: 11px; line-height: 1.4;">
-        
-        <!-- Background Watermark Logo -->
         <img src="https://cdn.jsdelivr.net/gh/RudroRazib/photos-@main/60172.png" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; opacity: 0.05; z-index: 0; pointer-events: none;">
-
-        <!-- Main Content Wrapper for Z-Index -->
         <div style="position: relative; z-index: 1;">
-            <!-- Header -->
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
                 <div style="display: flex; align-items: flex-start; gap: 10px;">
                     <img src="https://cdn.jsdelivr.net/gh/RudroRazib/photos-@main/60172.png" style="width: 60px; height: 60px; object-fit: contain;">
-                    <div>
-                        <h2 style="margin: 0 0 5px 0; font-size: 18px; color: #333; font-weight: 600;">${esc(window.db.companyDetails?.name || 'Novas Agro Distribution')}</h2>
-                        <div style="font-size: 10px; color: #555;">Phone: ${esc(window.db.companyDetails?.phone || '01743002000')}</div>
-                        <div style="font-size: 10px; color: #555;">Email: ${esc(window.db.companyDetails?.email || '')}</div>
-                    </div>
+                    <div><h2 style="margin: 0 0 5px 0; font-size: 18px; color: #333; font-weight: 600;">${esc(window.db.companyDetails?.name || 'Novas Agro Distribution')}</h2><div style="font-size: 10px; color: #555;">Phone: ${esc(window.db.companyDetails?.phone || '01743002000')}</div><div style="font-size: 10px; color: #555;">Email: ${esc(window.db.companyDetails?.email || '')}</div></div>
                 </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 10px; color: #555; margin-bottom: 2px;">Date: ${dateStr}</div>
-                    <h1 style="margin: 0 0 5px 0; font-size: 20px; color: #333; font-weight: 700;">INVOICE</h1>
-                    <div style="font-size: 10px; color: #555;">Address: ${esc(window.db.companyDetails?.address || 'Dhaka Bangladesh')}</div>
-                    <div style="font-size: 10px; color: #555;">Invoice No: ${invNo}</div>
-                    <div style="font-size: 10px; color: #555;">Invoice Date: ${dateStr}</div>
-                </div>
+                <div style="text-align: right;"><div style="font-size: 10px; color: #555; margin-bottom: 2px;">Date: ${dateStr}</div><h1 style="margin: 0 0 5px 0; font-size: 20px; color: #333; font-weight: 700;">INVOICE</h1><div style="font-size: 10px; color: #555;">Address: ${esc(window.db.companyDetails?.address || 'Dhaka Bangladesh')}</div><div style="font-size: 10px; color: #555;">Invoice No: ${invNo}</div><div style="font-size: 10px; color: #555;">Invoice Date: ${dateStr}</div></div>
             </div>
-
-            <!-- Customer Info -->
             <div style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 8px 0; margin-bottom: 15px;">
-                <div style="display: flex; margin-bottom: 4px;"><span style="width: 100px; font-size: 12px;">Customer:</span> <span style="font-weight: 600; font-size: 12px;">${esc(party.name)}</span></div>
-                <div style="display: flex; margin-bottom: 4px;"><span style="width: 100px; font-size: 12px;">Phone:</span> <span>${esc(party.phone || '')}</span></div>
-                <div style="display: flex;"><span style="width: 100px; font-size: 12px;">Address:</span> <span>${esc(party.address || '')}</span></div>
+                <div style="display: flex; margin-bottom: 4px;"><span style="width: 100px; font-size: 12px;">Customer:</span> <span style="font-weight: 600; font-size: 12px;">${esc(party.name)}</span></div><div style="display: flex; margin-bottom: 4px;"><span style="width: 100px; font-size: 12px;">Phone:</span> <span>${esc(party.phone || '')}</span></div><div style="display: flex;"><span style="width: 100px; font-size: 12px;">Address:</span> <span>${esc(party.address || '')}</span></div>
             </div>
-
-            <!-- Items Table -->
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; background: transparent;">
-                <thead>
-                    <tr style="background: #6366f1; color: white; font-size: 11px;">
-                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: center; width: 5%; font-weight: 600;">No</th>
-                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: left; width: 35%; font-weight: 600;">Item Name</th>
-                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: center; width: 10%; font-weight: 600;">Qty</th>
-                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 15%; font-weight: 600;">Unit Price</th>
-                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 15%; font-weight: 600;">Discount</th>
-                        <th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 20%; font-weight: 600;">Total Amount</th>
-                    </tr>
-                </thead>
+                <thead><tr style="background: #6366f1; color: white; font-size: 11px;"><th style="border: 1px solid #4f46e5; padding: 6px; text-align: center; width: 5%; font-weight: 600;">No</th><th style="border: 1px solid #4f46e5; padding: 6px; text-align: left; width: 35%; font-weight: 600;">Item Name</th><th style="border: 1px solid #4f46e5; padding: 6px; text-align: center; width: 10%; font-weight: 600;">Qty</th><th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 15%; font-weight: 600;">Unit Price</th><th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 15%; font-weight: 600;">Discount</th><th style="border: 1px solid #4f46e5; padding: 6px; text-align: right; width: 20%; font-weight: 600;">Total Amount</th></tr></thead>
                 <tbody>
                     ${items.map((item, index) => {
-                        let iSub = item.qty * item.rate;
-                        let iDisc = (iSub * (item.itemDiscount || 0)) / 100;
-                        let iTotal = Math.max(0, iSub - iDisc);
+                        let iSub = item.qty * item.rate; let iDisc = (iSub * (item.itemDiscount || 0)) / 100; let iTotal = Math.max(0, iSub - iDisc);
                         let pSize = item.packSize || (window.db.products.find(p => p.id === item.productId)?.packSize || '');
-                        
-                        // Translate pack size to English abbreviations
-                        if (pSize) {
-                            pSize = pSize.replace(/লিটার/g, 'Li').replace(/মিলি/g, 'ML').replace(/গ্রাম/g, 'G').replace(/বক্স/g, 'Box');
-                        }
-                        
+                        if (pSize) pSize = pSize.replace(/লিটার/g, 'Li').replace(/মিলি/g, 'ML').replace(/গ্রাম/g, 'G').replace(/বক্স/g, 'Box');
                         let packSizeSpan = pSize ? `<span style="font-size: 10px; color: #000; font-weight: normal;">(${esc(pSize)})</span>` : '';
                         let nameDisplay = esc(item.name) + ' ' + packSizeSpan;
-
-                        return `<tr>
-                            <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: center;">${index + 1}</td>
-                            <td style="border: 1px solid #e2e8f0; padding: 6px;">${nameDisplay}</td>
-                            <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: center;">${item.qty}</td>
-                            <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${Number(item.rate).toFixed(2)}</td>
-                            <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${iDisc.toFixed(2)}</td>
-                            <td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${iTotal.toFixed(2)}</td>
-                        </tr>`;
+                        return `<tr><td style="border: 1px solid #e2e8f0; padding: 6px; text-align: center;">${index + 1}</td><td style="border: 1px solid #e2e8f0; padding: 6px;">${nameDisplay}</td><td style="border: 1px solid #e2e8f0; padding: 6px; text-align: center;">${item.qty}</td><td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${Number(item.rate).toFixed(2)}</td><td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${iDisc.toFixed(2)}</td><td style="border: 1px solid #e2e8f0; padding: 6px; text-align: right;">৳ ${iTotal.toFixed(2)}</td></tr>`;
                     }).join('')}
                 </tbody>
             </table>
-
-            <!-- Bottom Section -->
             <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
-                <div style="width: 55%;">
-                    <div style="margin-bottom: 20px;">
-                        <div style="font-size: 12px; margin-bottom: 4px;">In Words:</div>
-                        <div style="font-size: 12px;">Taka ${numberToWords(grandTotal)} Only</div>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 40px;">
-                        <div style="text-align: center;">
-                            <div style="border-top: 1px solid #000; width: 150px; padding-top: 5px; font-size: 11px;">Customer Signature</div>
-                        </div>
-                    </div>
-                    <div style="margin-top: 30px;">
-                        <div style="font-size: 12px; margin-bottom: 4px;">Terms & Conditions:</div>
-                        <div style="font-size: 10px; color: #555;">Sold products are not returnable under any circumstances.</div>
-                    </div>
-                </div>
-                <div style="width: 40%;">
-                    <div style="background: #eff6ff; padding: 15px; border-radius: 4px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Sub Total:</span> <span>৳ ${rawSubTotal.toFixed(2)}</span></div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Item Discount:</span> <span>৳ ${totalItemDiscount.toFixed(2)}</span></div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; font-weight: bold;"><span>Total:</span> <span>৳ ${grandTotal.toFixed(2)}</span></div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Total Paid Amount:</span> <span>৳ ${paid.toFixed(2)}</span></div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Total Due:</span> <span>৳ ${due.toFixed(2)}</span></div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Previous Due:</span> <span>৳ ${previousDue.toFixed(2)}</span></div>
-                        <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; color: #4338ca; margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 8px;"><span>Current Due:</span> <span>৳ ${(due + previousDue).toFixed(2)}</span></div>
-                    </div>
-                </div>
+                <div style="width: 55%;"><div style="margin-bottom: 20px;"><div style="font-size: 12px; margin-bottom: 4px;">In Words:</div><div style="font-size: 12px;">Taka ${numberToWords(grandTotal)} Only</div></div><div style="display: flex; justify-content: space-between; margin-top: 40px;"><div style="text-align: center;"><div style="border-top: 1px solid #000; width: 150px; padding-top: 5px; font-size: 11px;">Customer Signature</div></div></div><div style="margin-top: 30px;"><div style="font-size: 12px; margin-bottom: 4px;">Terms & Conditions:</div><div style="font-size: 10px; color: #555;">Sold products are not returnable under any circumstances.</div></div></div>
+                <div style="width: 40%;"><div style="background: #eff6ff; padding: 15px; border-radius: 4px;"><div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Sub Total:</span> <span>৳ ${rawSubTotal.toFixed(2)}</span></div><div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Item Discount:</span> <span>৳ ${totalItemDiscount.toFixed(2)}</span></div><div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; font-weight: bold;"><span>Total:</span> <span>৳ ${grandTotal.toFixed(2)}</span></div><div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Total Paid Amount:</span> <span>৳ ${paid.toFixed(2)}</span></div><div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Total Due:</span> <span>৳ ${due.toFixed(2)}</span></div><div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px;"><span>Previous Due:</span> <span>৳ ${previousDue.toFixed(2)}</span></div><div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; color: #4338ca; margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 8px;"><span>Current Due:</span> <span>৳ ${(due + previousDue).toFixed(2)}</span></div></div></div>
             </div>
-
-            <!-- Footer / Authorized Signature -->
-            <div style="display: flex; justify-content: flex-end; margin-top: 40px;">
-                <div style="text-align: center;">
-                    <div style="border-top: 1px solid #000; width: 150px; padding-top: 5px; font-size: 11px;">Authorized Signature</div>
-                </div>
-            </div>
-
+            <div style="display: flex; justify-content: flex-end; margin-top: 40px;"><div style="text-align: center;"><div style="border-top: 1px solid #000; width: 150px; padding-top: 5px; font-size: 11px;">Authorized Signature</div></div></div>
             <div style="text-align: right; margin-top: 20px; font-size: 10px; color: #888;">Page 1/1</div>
         </div>
     </div>
@@ -1725,11 +1766,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       title.innerText = existingTxn ? 'বিক্রয় রিটার্ন এডিট' : 'বিক্রি রিটার্ন';
       submitBtn.innerText = existingTxn ? 'আপডেট করুন' : 'সেভ করুন';
 
-      // reset multi-item state
       window.currentSalesReturnItems = [];
       window.editingSalesReturnItemIndex = null;
 
-      // load existing items if editing
       if (existingTxn) {
           if (existingTxn.items && Array.isArray(existingTxn.items)) {
               window.currentSalesReturnItems = JSON.parse(JSON.stringify(existingTxn.items));
@@ -1911,6 +1950,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         if(viewId === 'products') { const pi = document.getElementById('productSearchInput'); if(pi) pi.value = ''; renderProducts(''); }
         if(viewId === 'parties') { const pi = document.getElementById('partySearchInput'); if(pi) pi.value = ''; renderParties(''); }
         if(viewId === 'expenses') renderExpenses();
+        if(viewId === 'delivery') { filterDelivery('pending'); }
+        if(viewId === 'srPerformance') renderSRPerformance('month');
+        if(viewId === 'forecast') renderForecast();
     }
   };
 
@@ -1948,7 +1990,6 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     }
   };
 
-  // Product Search Modal Logic (For Quick Forms & Sales)
   window.openProductSearchModal = function(targetSelectId, targetDisplayId, type) {
       window.productSearchTargetId = targetSelectId;
       window.productSearchTargetDisplayId = targetDisplayId;
@@ -2069,6 +2110,234 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       }
     });
   });
+  /* ========================================================
+     নতুন ৩টি ফিচারের সম্পূর্ণ জাভাস্ক্রিপ্ট কোড
+     ======================================================== */
+
+  window.getDateRange = function(range) {
+    const now = new Date(); const end = now.getTime(); const start = new Date();
+    switch(range) {
+      case 'today': start.setHours(0,0,0,0); break;
+      case 'week': start.setDate(now.getDate() - 7); start.setHours(0,0,0,0); break;
+      case 'month': start.setDate(now.getDate() - 30); start.setHours(0,0,0,0); break;
+      case '3month': start.setMonth(now.getMonth() - 3); start.setHours(0,0,0,0); break;
+      case 'year': start.setFullYear(now.getFullYear() - 1); start.setHours(0,0,0,0); break;
+      default: start.setFullYear(2000); start.setHours(0,0,0,0);
+    }
+    return { start: start.getTime(), end: end };
+  };
+
+  // ১. ডেলিভারি ট্র্যাকিং
+  window.currentDeliveryFilter = 'pending';
+  window.filterDelivery = function(status) {
+    window.currentDeliveryFilter = status;
+    document.querySelectorAll('.delivery-tab').forEach(btn => {
+      if (btn.dataset.status === status) { btn.style.background = 'var(--primary)'; btn.style.color = 'white'; btn.classList.add('active'); } 
+      else { btn.style.background = 'white'; btn.style.color = 'var(--text)'; btn.classList.remove('active'); }
+    });
+    window.renderDelivery();
+  };
+
+  window.renderDelivery = function() {
+    const container = document.getElementById('deliveryList'); if (!container) return;
+    let sales = window.db.transactions.filter(t => t.type === 'sales'); sales.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const filterStatus = window.currentDeliveryFilter;
+    sales = sales.filter(s => { const status = s.deliveryStatus || 'delivered'; return status === filterStatus; });
+
+    const statusMap = {
+      pending: { label: '⏳ অপেক্ষমাণ', color: '#F59E0B', bg: '#FEF3C7', next: 'packed', nextLabel: 'প্যাক করুন' },
+      packed: { label: '📦 প্যাকড', color: '#3B82F6', bg: '#DBEAFE', next: 'shipped', nextLabel: 'শিপ করুন' },
+      shipped: { label: '🚚 শিপড', color: '#8B5CF6', bg: '#EDE9FE', next: 'delivered', nextLabel: 'ডেলিভারি সম্পন্ন' },
+      delivered: { label: '✅ সম্পন্ন', color: '#10B981', bg: '#D1FAE5', next: null, nextLabel: null }
+    };
+
+    if (sales.length === 0) { container.innerHTML = `<div style="text-align:center; padding:40px 20px; color:#999;">কোনো "${statusMap[filterStatus].label}" ডেলিভারি নেই</div>`; return; }
+
+    container.innerHTML = sales.map(s => {
+      const party = window.db.parties.find(p => p.id === s.partyId); const pName = party ? party.name : 'Unknown'; const pPhone = party ? (party.phone || '') : '';
+      const status = s.deliveryStatus || 'delivered'; const st = statusMap[status]; const itemCount = Array.isArray(s.items) ? s.items.length : 0; const dateStr = new Date(s.date).toLocaleDateString('en-GB');
+      const actionBtn = st.next ? `<button onclick="updateDeliveryStatus('${s.id}', '${st.next}')" style="background: var(--primary); color:white; border:none; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; width:100%; margin-top:8px;"><i class="fa-solid fa-arrow-right"></i> ${st.nextLabel}</button>` : '';
+      const revertBtn = status !== 'pending' ? `<button onclick="updateDeliveryStatus('${s.id}', 'pending')" style="background: #F1F5F9; color:var(--text-muted); border:1px solid #e2e8f0; padding:6px 10px; border-radius:6px; font-size:11px; cursor:pointer; margin-top:6px;">↺ রিসেট</button>` : '';
+
+      return `<div class="panel" style="background:white; margin-bottom:12px; padding:15px; border-left:4px solid ${st.color};">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <div><div style="font-weight:700; color:var(--primary); font-size:15px;">${s.invoiceNo || 'N/A'}</div><div style="font-size:13px; font-weight:600; margin-top:2px;">${esc(pName)}</div>${pPhone ? `<div style="font-size:11px; color:var(--text-muted);"><i class="fa-solid fa-phone"></i> ${esc(pPhone)}</div>` : ''}</div>
+          <span style="background:${st.bg}; color:${st.color}; padding:4px 10px; border-radius:12px; font-size:11px; font-weight:700;">${st.label}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); padding:8px 0; border-top:1px solid #f1f5f9; border-bottom:1px solid #f1f5f9; margin-bottom:8px;">
+          <span><i class="fa-solid fa-box"></i> ${itemCount} আইটেম</span><span><i class="fa-solid fa-calendar"></i> ${dateStr}</span><span style="font-weight:700; color:var(--text);">৳ ${Number(s.total || 0).toFixed(2)}</span>
+        </div>${actionBtn}${revertBtn}
+      </div>`;
+    }).join('');
+  };
+
+  window.updateDeliveryStatus = function(txnId, newStatus) {
+    const txn = window.db.transactions.find(t => t.id === txnId); if (!txn) return;
+    const statusLabels = { pending: 'অপেক্ষমাণ', packed: 'প্যাকড', shipped: 'শিপড', delivered: 'সম্পন্ন' }; const oldStatus = txn.deliveryStatus || 'delivered';
+    srDbRef('transactions/' + txnId).update({ deliveryStatus: newStatus }).then(() => {
+      logActivity('ডেলিভারি', `ইনভয়েস ${txn.invoiceNo || txnId}: ${statusLabels[oldStatus]} → ${statusLabels[newStatus]}`); window.renderDelivery();
+    }).catch(err => alert('আপডেট ব্যর্থ: ' + err.message));
+  };
+
+  // ২. SR পারফরম্যান্স
+  window.renderSRPerformance = function(range = 'month') {
+    const container = document.getElementById('srPerformanceContent'); if (!container) return;
+    const { start, end } = window.getDateRange(range);
+    
+    const txns = window.db.transactions.filter(t => { 
+        if (t.type !== 'sales' && t.type !== 'sales_return') return false; 
+        const tm = new Date(t.date).getTime(); return tm >= start && tm <= end && !t.isVoided; 
+    });
+
+    const groups = {};
+    txns.forEach(s => {
+      const key = s.srId || s.srName || s.creatorName || s.createdBy || 'Unknown';
+      if (!groups[key]) { 
+          groups[key] = { name: s.srName || s.creatorName || (s.createdBy ? s.createdBy.split('@')[0] : 'Unknown'), isSR: !!s.srName, count: 0, totalSales: 0, totalPaid: 0, totalDue: 0 }; 
+      }
+      
+      const total = Number(s.total || 0);
+      const paid = Number(s.paid || 0);
+      const due = Number(s.due || 0);
+
+      if (s.type === 'sales') {
+          groups[key].count++;
+          groups[key].totalSales += total;
+          groups[key].totalPaid += paid;
+          groups[key].totalDue += due;
+      } else if (s.type === 'sales_return') {
+          groups[key].totalSales -= total;
+          groups[key].totalPaid -= paid;
+          groups[key].totalDue -= due;
+      }
+    });
+
+    const sorted = Object.values(groups).sort((a, b) => b.totalSales - a.totalSales); 
+    const grandTotal = sorted.reduce((s, g) => s + g.totalSales, 0); 
+    const maxSales = sorted.length > 0 ? sorted[0].totalSales : 0;
+    const totalSalesCount = txns.filter(t => t.type === 'sales').length;
+
+    if (sorted.length === 0) { container.innerHTML = `<div style="text-align:center; padding:40px 20px; color:#999;"><i class="fa-solid fa-user-slash" style="font-size:40px; margin-bottom:10px; opacity:0.4;"></i><div>এই সময়ে কোনো লেনদেন হয়নি</div></div>`; return; }
+
+    let html = `<div class="panel" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE); border:1px solid #93C5FD; margin-bottom:15px; padding:20px; text-align:center;"><div style="font-size:12px; color:#1E40AF; font-weight:600;">মোট বিক্রয় (${sorted.length} জন)</div><div style="font-size:26px; font-weight:800; color:#1E40AF; margin-top:5px;">৳ ${grandTotal.toFixed(2)}</div><div style="font-size:12px; color:#64748B; margin-top:6px;">${totalSalesCount} টি ইনভয়েস • ${totalSalesCount > 0 ? (totalSalesCount / sorted.length).toFixed(1) : 0} টি/জন</div></div>`;
+
+    html += sorted.map((sr, index) => {
+      const barPercent = maxSales > 0 ? (sr.totalSales / maxSales) * 100 : 0; 
+      const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+      const roleBadge = sr.isSR ? `<span style="background:#F3E8FF; color:#7E22CE; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">SR</span>` : `<span style="background:#E0F2FE; color:#0369A1; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:700;">ADMIN</span>`;
+      
+      return `<div class="panel" style="background:white; margin-bottom:12px; padding:15px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div style="display:flex; align-items:center; gap:10px;"><span style="font-size:18px; font-weight:700;">${medal}</span><div><div style="font-weight:700; font-size:14px;">${esc(sr.name)} ${roleBadge}</div><div style="font-size:11px; color:var(--text-muted);">${sr.count} টি বিক্রয়</div></div></div>
+          <div style="text-align:right;"><div style="font-weight:800; color:var(--primary); font-size:16px;">৳ ${sr.totalSales.toFixed(0)}</div><div style="font-size:10px; color:var(--text-muted);">মোট</div></div>
+        </div>
+        <div style="height:8px; background:#F1F5F9; border-radius:4px; overflow:hidden; margin-bottom:10px;"><div style="height:100%; width:${barPercent}%; background:linear-gradient(90deg, #3B82F6, #8B5CF6); border-radius:4px; transition:width 0.5s;"></div></div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; padding-top:8px; border-top:1px solid #f1f5f9;">
+          <div style="text-align:center; flex:1;"><div style="color:var(--green); font-weight:700;">৳ ${sr.totalPaid.toFixed(0)}</div><div style="font-size:10px; color:var(--text-muted);">আদায়</div></div>
+          <div style="text-align:center; flex:1; border-left:1px solid #f1f5f9; border-right:1px solid #f1f5f9;"><div style="color:var(--red); font-weight:700;">৳ ${sr.totalDue.toFixed(0)}</div><div style="font-size:10px; color:var(--text-muted);">বাকি</div></div>
+          <div style="text-align:center; flex:1;"><div style="color:var(--primary); font-weight:700;">${sr.count > 0 ? (sr.totalSales / sr.count).toFixed(0) : 0}</div><div style="font-size:10px; color:var(--text-muted);">গড় ৳/ইনভয়েস</div></div>
+        </div>
+      </div>`;
+    }).join('');
+    container.innerHTML = html;
+  };
+
+  // ৩. বিক্রয় পূর্বাভাস
+  window.renderForecast = function() {
+    const container = document.getElementById('forecastContent'); if (!container) return;
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); const start = d.getTime(); const end = new Date(d.getFullYear(), d.getMonth() + 1, 1).getTime();
+      let total = 0, count = 0;
+      window.db.transactions.forEach(t => { const tm = new Date(t.date).getTime(); if (t.type === 'sales' && tm >= start && tm < end && !t.isVoided) { total += Number(t.total || 0); count++; } });
+      months.push({ label: d.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' }), total: total, count: count, isCurrentMonth: i === 0 });
+    }
+
+    const maxMonthly = Math.max(...months.map(m => m.total), 1);
+    const last3 = months.slice(-3).filter(m => m.total > 0);
+    const prediction = last3.length > 0 ? last3.reduce((s, m) => s + m.total, 0) / last3.length : 0;
+    const lastMonth = months[months.length - 1].total;
+    const trend = lastMonth > prediction * 0.9 ? 'up' : 'down';
+    const trendLabel = trend === 'up' ? '📈 ঊর্ধ্বমুখী' : '📉 নিম্নমুখী'; const trendColor = trend === 'up' ? '#059669' : '#DC2626';
+
+    const productSales = {};
+    const threeMonthAgo = new Date(); threeMonthAgo.setMonth(threeMonthAgo.getMonth() - 3);
+    window.db.transactions.filter(t => { if (t.type !== 'sales') return false; return new Date(t.date).getTime() >= threeMonthAgo.getTime() && !t.isVoided; }).forEach(t => {
+      if (Array.isArray(t.items)) { t.items.forEach(item => { if (!productSales[item.productId]) { productSales[item.productId] = { name: item.name, qty: 0, avgMonthly: 0 }; } productSales[item.productId].qty += item.qty; }); }
+    });
+    Object.values(productSales).forEach(p => p.avgMonthly = p.qty / 3);
+    const topForecast = Object.values(productSales).sort((a, b) => b.avgMonthly - a.avgMonthly).slice(0, 5);
+
+    const warningProducts = topForecast.map(p => {
+      const prod = window.db.products.find(pr => pr.name === p.name); if (!prod) return null;
+      const currentStock = window.db.batches.filter(b => b.productId === prod.id).reduce((s, b) => s + Number(b.qty), 0); const needed = Math.ceil(p.avgMonthly);
+      if (currentStock < needed) { return { name: p.name, currentStock, needed }; } return null;
+    }).filter(Boolean);
+
+    container.innerHTML = `
+      <div class="panel" style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5); border:1px solid #86EFAC; margin-bottom:15px; padding:20px; text-align:center;">
+        <div style="font-size:12px; color:#065F46; font-weight:600;">🔮 আগামী মাসের সম্ভাব্য বিক্রয়</div>
+        <div style="font-size:30px; font-weight:800; color:#059669; margin-top:5px;">৳ ${prediction.toFixed(2)}</div>
+        <div style="font-size:12px; margin-top:6px; color:${trendColor}; font-weight:700;">${trendLabel}</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">(গত ৩ মাসের গড় ভিত্তিতে)</div>
+      </div>
+
+      <div class="panel" style="background:white; margin-bottom:15px; padding:15px;">
+        <div style="font-weight:700; margin-bottom:15px; color:var(--primary); font-size:14px;">
+          <i class="fa-solid fa-chart-column"></i> শেষ ৬ মাসের বিক্রয়
+        </div>
+        <div style="display:flex; align-items:flex-end; justify-content:space-around; height:160px; gap:6px; padding:10px 0; border-bottom:1px solid #f1f5f9;">
+          ${months.map(m => {
+            const h = maxMonthly > 0 ? (m.total / maxMonthly) * 130 : 5;
+            const color = m.isCurrentMonth ? 'linear-gradient(180deg,#10B981,#059669)' : 'linear-gradient(180deg,#93C5FD,#3B82F6)';
+            return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;">
+              <div style="font-size:9px; font-weight:700; color:${m.isCurrentMonth ? '#059669' : '#64748B'}; white-space:nowrap;">৳${(m.total/1000).toFixed(0)}k</div>
+              <div style="width:100%; height:${Math.max(h, 4)}px; background:${color}; border-radius:4px 4px 0 0; min-height:4px;"></div>
+              <div style="font-size:9px; color:var(--text-muted); text-align:center; transform:rotate(-45deg); transform-origin:center; white-space:nowrap; margin-top:4px;">${m.label}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="panel" style="background:white; margin-bottom:15px; padding:15px;">
+        <div style="font-weight:700; margin-bottom:12px; color:var(--primary); font-size:14px;">
+          <i class="fa-solid fa-boxes-stacked"></i> সম্ভাব্য স্টক প্রয়োজন (আগামী মাস)
+        </div>
+        ${topForecast.length > 0 ? topForecast.map((p, i) => `
+          <div class="breakdown-item" style="align-items:center; border-bottom:1px solid #f1f5f9; padding:10px 0;">
+            <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+              <div style="width:22px; height:22px; border-radius:50%; background:#EFF6FF; color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; flex-shrink:0;">${i + 1}</div>
+              <div style="min-width:0;">
+                <div style="font-weight:600; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${esc(p.name)}</div>
+                <div style="font-size:11px; color:var(--text-muted);">গত ৩ মাসে মোট: ${p.qty} পিস</div>
+              </div>
+            </div>
+            <div style="text-align:right; flex-shrink:0;">
+              <div style="font-weight:700; color:var(--primary); font-size:14px;">~${Math.ceil(p.avgMonthly)}</div>
+              <div style="font-size:10px; color:var(--text-muted);">পিস/মাস</div>
+            </div>
+          </div>
+        `).join('') : '<div style="text-align:center; padding:20px; color:#999;">পূর্বাভাসের জন্য যথেষ্ট ডাটা নেই</div>'}
+      </div>
+
+      ${warningProducts.length > 0 ? `
+      <div class="panel" style="background:#FEF3C7; border:1px solid #FCD34D; padding:15px;">
+        <div style="font-weight:700; margin-bottom:10px; color:#B45309; font-size:14px;">
+          <i class="fa-solid fa-triangle-exclamation"></i> স্টক সতর্কতা
+        </div>
+        ${warningProducts.map(p => `
+          <div style="font-size:12px; color:#92400E; padding:6px 0; border-bottom:1px solid #FDE68A;">
+            <strong>${esc(p.name)}</strong>: বর্তমান স্টক ${p.currentStock} পিস, প্রয়োজন ~${p.needed} পিস
+          </div>
+        `).join('')}
+      </div>` : ''}
+
+      <div style="font-size:11px; color:var(--text-muted); text-align:center; padding:15px;">
+        ℹ️ এটি সিম্পল মুভিং এভারেজ (SMA) ভিত্তিক পূর্বাভাস — বাস্তব ফল ভিন্ন হতে পারে
+      </div>
+    `;
+  };
+
 </script>
 </body>
 </html>
