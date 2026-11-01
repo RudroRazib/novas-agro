@@ -2488,7 +2488,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     calcSaleTotals(); document.getElementById('newSaleModal').classList.add('open');
   };
 
-  window.renderTransactionsList = function(searchTerm = '') {
+    window.renderTransactionsList = function(searchTerm = '') {
     const container = document.getElementById('transactionsList'); if(!container) return;
     let txns = window.db.transactions; txns.sort((a,b) => new Date(b.date) - new Date(a.date));
     if (searchTerm) {
@@ -2502,10 +2502,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       });
     }
     if (txns.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো লেনদেন পাওয়া যায়নি</div>'; return; }
+    
     container.innerHTML = txns.map(t => {
         let typeStr = '', entityStr = '', color = '', detailsStr = '', totalAmt = 0, dueAmt = 0;
         const pName = window.db.products.find(p => p.id === t.productId)?.name || '';
-        const party = window.db.parties.find(p => p.id === t.partyId); const supplier = window.db.suppliers.find(s => s.id === t.supplierId);
+        const party = window.db.parties.find(p => p.id === t.partyId); 
+        const supplier = window.db.suppliers.find(s => s.id === t.supplierId);
         
         if(t.type === 'purchase') { typeStr = 'ক্রয়'; entityStr = supplier?.name || 'Unknown'; color = 'var(--secondary)'; detailsStr = `${pName} (${t.qty} পিস)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
         else if(t.type === 'sales') { typeStr = 'বিক্রয়'; entityStr = party?.name || 'Unknown'; color = 'var(--green)'; let itemsCount = t.items ? t.items.length : 0; detailsStr = `${t.invoiceNo || 'N/A'} (${itemsCount} আইটেম)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
@@ -2516,7 +2518,11 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         }
         else if(t.type === 'purchase_return') { typeStr = 'ক্রয় রিটার্ন'; entityStr = supplier?.name || 'Unknown'; color = 'var(--red)'; detailsStr = `${pName} (${t.qty} পিস)`; totalAmt = Number(t.total || 0); dueAmt = Number(t.due || 0); }
         else if(t.type === 'cash_in') { typeStr = 'নগদ প্রাপ্তি'; entityStr = party?.name || 'Unknown'; color = 'var(--primary)'; detailsStr = t.note || 'বাকি আদায়'; totalAmt = Number(t.amount || 0); dueAmt = 0; }
-        else if(t.type === 'cash_out') { typeStr = t.supplierId ? 'নগদ প্রদান' : 'খরচ'; entityStr = supplier?.name || 'Unknown'; color = 'var(--red)'; detailsStr = t.note || 'বাকি পরিশোধ'; totalAmt = Number(t.amount || 0); dueAmt = 0; }
+        else if(t.type === 'cash_out') { 
+            typeStr = t.supplierId ? 'নগদ প্রদান' : 'খরচ'; 
+            entityStr = t.supplierId ? (supplier?.name || 'Unknown') : (t.note ? t.note.replace('খরচ: ', '') : 'খরচ'); 
+            color = 'var(--red)'; detailsStr = t.note || 'বাকি পরিশোধ'; totalAmt = Number(t.amount || 0); dueAmt = 0; 
+        }
         else if(t.type === 'damage') { typeStr = t.settled ? 'ড্যামেজ (পরিশোধিত)' : 'ড্যামেজ'; entityStr = supplier?.name || 'Unknown'; color = 'var(--red)'; detailsStr = `${pName} (${t.qty} পিস)`; totalAmt = Number(t.total || 0); dueAmt = 0; }
         
         let totalHtml = `<div class="inv-list-total">৳ ${totalAmt.toFixed(2)}</div>`;
@@ -2527,18 +2533,21 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         let isVoidedStyle = t.isVoided ? 'opacity: 0.6; background: #FEE2E2;' : '';
         let voidBadge = t.isVoided ? `<span style="background:#EF4444; color:white; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold; margin-left:5px;">বাতিলকৃত</span>` : '';
 
-        return `<div class="invoice-list-item" style="${isVoidedStyle}" onclick="editTransaction('${t.id}')">
-            <div class="inv-list-header">
+        return `<div class="invoice-list-item" style="${isVoidedStyle} padding-bottom:10px;">
+            <div class="inv-list-header" style="cursor:pointer;" onclick="editTransaction('${t.id}')">
                 <div>
                     <div class="inv-list-inv" style="color:${color};">${typeStr} ${srInfo} ${creatorInfo} ${voidBadge}</div>
                     <div class="inv-list-cust">${esc(entityStr)}</div>
                     <div class="inv-list-date">${esc(detailsStr)} - ${new Date(t.date).toLocaleDateString('en-GB')}</div>
                 </div>
-                <div class="inv-list-amounts" style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
-                    ${totalHtml}
-                    ${dueHtml}
-                    ${!t.isVoided ? `<button onclick="event.stopPropagation(); voidTransaction('${t.id}')" style="background:#FEE2E2; color:#EF4444; border:none; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-ban"></i> বাতিল</button>` : ''}
-                </div>
+                <div class="inv-list-amounts">${totalHtml}${dueHtml}</div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px; border-top:1px dashed #e2e8f0; padding-top:10px;">
+                ${t.isVoided 
+                    ? `<button onclick="editTransaction('${t.id}')" style="background:#FEF3C7; color:#B45309; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-rotate-left"></i> সচল করুন</button>` 
+                    : `<button onclick="editTransaction('${t.id}')" style="background:#EFF6FF; color:var(--primary); border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-pen"></i> এডিট করুন</button>
+                       <button onclick="voidTransaction('${t.id}')" style="background:#FEE2E2; color:#EF4444; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-ban"></i> বাতিল</button>`
+                }
             </div>
         </div>`;
     }).join('');
@@ -2584,7 +2593,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
   
 
-  window.editTransaction = function(txnd) {
+  window.editTransaction = function(txnId) {
     const txn = window.db.transactions.find(t => t.id === txnId); if(!txn) return;
     if (txn.isVoided) {
         if(confirm(`এই লেনদেনটি বাতিল করা হয়েছে।\nকারণ: ${txn.voidReason}\n\nআপনি কি এটি আবার সচল (Unvoid) করতে চান?`)) {
@@ -2962,7 +2971,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     } else { window.forceDownloadImage(); }
   };
 
-  window.renderExpenses = function() {
+    window.renderExpenses = function() {
     const container = document.getElementById('expenseList'); const totalEl = document.getElementById('expenseTotalView'); if(!container) return;
     let expenses = window.db.transactions.filter(t => t.type === 'cash_out' && t.note && t.note.includes('খরচ:'));
     expenses.sort((a,b) => new Date(b.date) - new Date(a.date));
@@ -2979,13 +2988,17 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       let isVoidedStyle = t.isVoided ? 'opacity: 0.6; background: #FEE2E2;' : '';
       let voidBadge = t.isVoided ? `<span style="background:#EF4444; color:white; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold; margin-left:5px;">বাতিলকৃত</span>` : '';
       
-      return `<div class="invoice-list-item" style="cursor:pointer; ${isVoidedStyle}" onclick="editTransaction('${t.id}')">
-        <div class="inv-list-header">
+      return `<div class="invoice-list-item" style="${isVoidedStyle} padding-bottom:10px;">
+        <div class="inv-list-header" style="cursor:pointer;" onclick="editTransaction('${t.id}')">
           <div><div class="inv-list-inv" style="color:var(--red);"><i class="fa-solid fa-receipt"></i> খরচ ${creatorInfo} ${voidBadge}</div><div class="inv-list-cust">${esc(note)}</div><div class="inv-list-date">${date} • ${time}</div></div>
-          <div class="inv-list-amounts" style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
-            <div class="inv-list-total" style="color:var(--red);">৳ ${Number(t.amount || 0).toFixed(2)}</div>
-            ${!t.isVoided ? `<button onclick="event.stopPropagation(); voidTransaction('${t.id}')" style="background:#FEE2E2; color:#EF4444; border:none; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-ban"></i> বাতিল</button>` : ''}
-          </div>
+          <div class="inv-list-amounts"><div class="inv-list-total" style="color:var(--red);">৳ ${Number(t.amount || 0).toFixed(2)}</div></div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px; border-top:1px dashed #e2e8f0; padding-top:10px;">
+            ${t.isVoided 
+                ? `<button onclick="editTransaction('${t.id}')" style="background:#FEF3C7; color:#B45309; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-rotate-left"></i> সচল করুন</button>` 
+                : `<button onclick="editTransaction('${t.id}')" style="background:#EFF6FF; color:var(--primary); border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-pen"></i> এডিট করুন</button>
+                   <button onclick="voidTransaction('${t.id}')" style="background:#FEE2E2; color:#EF4444; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-ban"></i> বাতিল</button>`
+            }
         </div>
       </div>`;
     }).join('');
@@ -3147,8 +3160,8 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       }
     });
 
-    const expenses = window.db.transactions.filter(t => t.type === 'cash_out' && t.note && t.note.includes('খরচ:') && inRange(t)).reduce((s, t) => s + Number(t.amount || 0), 0);
-    const returns = window.db.transactions.filter(t => t.type === 'sales_return' && inRange(t)).reduce((s, t) => s + Number(t.total || 0), 0);
+    const expenses = window.db.transactions.filter(t => t.type === 'cash_out' && t.note && t.note.includes('খরচ:') && inRange(t) && !t.isVoided).reduce((s, t) => s + Number(t.amount || 0), 0);
+    const returns = window.db.transactions.filter(t => t.type === 'sales_return' && inRange(t) && !t.isVoided).reduce((s, t) => s + Number(t.total || 0), 0);
 
     const grossProfit = totalSales - totalCOGS;
     const netProfit = grossProfit - expenses - returns;
