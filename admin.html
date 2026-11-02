@@ -29,6 +29,19 @@
   --purple: #8B5CF6;
   --border: rgba(255, 255, 255, 0.65); 
 }
+/* ===== নতুন ফিনটেক প্রিমিয়াম ব্যাকগ্রাউন্ড স্টাইল ===== */
+.advanced-reports-bg {
+    /* আইসি ব্লু গ্রেডিয়েন্ট এবং গ্লোসি অ্যাম্বিয়েন্ট লাইট (রেডিয়াল গ্রেডিয়েন্ট) */
+    background: 
+        radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.9) 0%, transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+        linear-gradient(180deg, #E8F0FC 0%, #AFC3E5 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(33, 65, 122, 0.08), inset 0 1px 3px rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    /* বর্ডার রেডিয়াস আগের কোড থেকেই নিবে, তাই আলাদা করে দিতে হবে না */
+}
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
 
@@ -500,7 +513,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </div>
       </div>
       <!-- ========== নতুন ফিচার সমূহ (হোম পেজের নিচে) ========== -->
-      <div class="panel" style="margin-top: 20px; padding: 15px;">
+      <div class="panel advanced-reports-bg" style="margin-top: 20px; padding: 15px;">
         <div class="card-title" style="margin-bottom: 12px; font-size: 14px; border-bottom: none; padding-bottom: 0;">
           📊 অ্যাডভান্সড রিপোর্টস <i class="fa-solid fa-chart-simple" style="float:right; color:var(--primary);"></i>
         </div>
