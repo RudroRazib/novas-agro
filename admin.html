@@ -3317,13 +3317,20 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     container.innerHTML = html;
   };
 
-  window.renderForecast = function() {
+    window.renderForecast = function() {
     const container = document.getElementById('forecastContent'); if (!container) return;
     const months = [];
     for (let i = 5; i >= 0; i--) {
       const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); const start = d.getTime(); const end = new Date(d.getFullYear(), d.getMonth() + 1, 1).getTime();
       let total = 0, count = 0;
-      window.db.transactions.forEach(t => { const tm = new Date(t.date).getTime(); if (t.type === 'sales' && tm >= start && tm < end) { total += Number(t.total || 0); count++; } });
+      // মোট বিক্রয়ের চার্টেও বাতিলকৃত লেনদেন বাদ দেওয়া হলো
+      window.db.transactions.forEach(t => { 
+          const tm = new Date(t.date).getTime(); 
+          if (t.type === 'sales' && tm >= start && tm < end && !t.isVoided) { 
+              total += Number(t.total || 0); 
+              count++; 
+          } 
+      });
       months.push({ label: d.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' }), total: total, count: count, isCurrentMonth: i === 0 });
     }
 
@@ -3336,22 +3343,55 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
     const productSales = {};
     const threeMonthAgo = new Date(); threeMonthAgo.setMonth(threeMonthAgo.getMonth() - 3);
-    window.db.transactions.filter(t => { if (t.type !== 'sales') return false; return new Date(t.date).getTime() >= threeMonthAgo.getTime(); }).forEach(t => {
-      if (Array.isArray(t.items)) { t.items.forEach(item => { if (!productSales[item.productId]) { productSales[item.productId] = { name: item.name, qty: 0, avgMonthly: 0 }; } productSales[item.productId].qty += item.qty; }); }
+    
+    // বাতিলকৃত লেনদেন বাদ দেওয়া এবং বিক্রয় রিটার্ন হিসাব করা
+    window.db.transactions.filter(t => { 
+        if (t.isVoided) return false; // বাতিলকৃত বাদ
+        if (t.type !== 'sales' && t.type !== 'sales_return') return false; 
+        return new Date(t.date).getTime() >= threeMonthAgo.getTime(); 
+    }).forEach(t => {
+      if (Array.isArray(t.items)) { 
+          t.items.forEach(item => { 
+              if (!productSales[item.productId]) { 
+                  const prod = window.db.products.find(pr => pr.id === item.productId);
+                  let pName = item.name;
+                  if (prod && prod.packSize) pName += ` (${prod.packSize})`;
+                  
+                  productSales[item.productId] = { id: item.productId, name: pName, qty: 0, avgMonthly: 0 }; 
+              } 
+              if (t.type === 'sales') {
+                  productSales[item.productId].qty += item.qty;
+              } else if (t.type === 'sales_return') {
+                  productSales[item.productId].qty -= item.qty; 
+              }
+          }); 
+      }
     });
-    Object.values(productSales).forEach(p => p.avgMonthly = p.qty / 3);
+    
+    // স্টক মাইনাস হয়ে গেলে সেটা ০ করে দেওয়া
+    Object.values(productSales).forEach(p => {
+        if (p.qty < 0) p.qty = 0;
+        p.avgMonthly = p.qty / 3; 
+    });
+    
     const topForecast = Object.values(productSales).sort((a, b) => b.avgMonthly - a.avgMonthly).slice(0, 5);
 
     const warningProducts = topForecast.map(p => {
-      const prod = window.db.products.find(pr => pr.name === p.name); if (!prod) return null;
-      const currentStock = window.db.batches.filter(b => b.productId === prod.id).reduce((s, b) => s + Number(b.qty), 0); const needed = Math.ceil(p.avgMonthly);
-      if (currentStock < needed) { return { name: p.name, currentStock, needed }; } return null;
+      const prod = window.db.products.find(pr => pr.id === p.id); 
+      if (!prod) return null;
+      
+      const currentStock = window.db.batches.filter(b => b.productId === prod.id).reduce((s, b) => s + Number(b.qty), 0); 
+      const needed = Math.ceil(p.avgMonthly);
+      if (currentStock < needed) { 
+          return { name: p.name, currentStock, needed }; 
+      } 
+      return null;
     }).filter(Boolean);
 
     container.innerHTML = `
       <div class="panel" style="background:linear-gradient(135deg,#ECFDF5,#D1FAE5); border:1px solid #86EFAC; margin-bottom:15px; padding:20px; text-align:center;">
         <div style="font-size:12px; color:#065F46; font-weight:600;">🔮 আগামী মাসের সম্ভাব্য বিক্রয়</div>
-        <div style="font-size:30px; font-weight:800; color:#059669; margin-top:5px;">৳ ${        prediction.toFixed(2)}</div>
+        <div style="font-size:30px; font-weight:800; color:#059669; margin-top:5px;">৳ ${prediction.toFixed(2)}</div>
         <div style="font-size:12px; margin-top:6px; color:${trendColor}; font-weight:700;">${trendLabel}</div>
         <div style="font-size:11px; color:var(--text-muted); margin-top:5px;">(গত ৩ মাসের গড় ভিত্তিতে)</div>
       </div>
