@@ -214,6 +214,24 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .bg-grad-orange { background: linear-gradient(135deg, #F59E0B, #D97706); }
 .bg-grad-purple { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
 .bg-grad-blue { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+.bg-grad-orange { background: linear-gradient(135deg, #F59E0B, #D97706); }
+.bg-grad-purple { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
+.bg-grad-blue { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+
+/* ===== এখানে আমার দেওয়া কোডটি পেস্ট করুন ===== */
+.advanced-reports-bg {
+    background: 
+        radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.9) 0%, transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+        linear-gradient(180deg, #E8F0FC 0%, #AFC3E5 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 10px 30px rgba(33, 65, 122, 0.08), inset 0 1px 3px rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+/* ============================================== */
+
+</style>
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -318,7 +336,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
       </div>
       
       <!-- ========== নতুন ফিচার সমূহ (হোম পেজের নিচে) ========== -->
-      <div class="panel" style="margin-top: 20px; padding: 15px;">
+      <div class="panel advanced-reports-bg" style="margin-top: 20px; padding: 15px;">
         <div class="card-title" style="margin-bottom: 12px; font-size: 14px; border-bottom: none; padding-bottom: 0;">
           📊 অ্যাডভান্সড রিপোর্টস <i class="fa-solid fa-chart-simple" style="float:right; color:var(--primary);"></i>
         </div>
@@ -334,6 +352,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
           <div class="feature-card" onclick="switchView('forecast')">
             <div class="fc-icon bg-grad-blue"><i class="fa-solid fa-chart-column"></i></div>
             <div class="fc-title">বিক্রয় পূর্বাভাস</div>
+
           </div>
         </div>
       </div>
