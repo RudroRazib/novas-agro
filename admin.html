@@ -405,11 +405,11 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         <div class="dash-top-amount" id="cashBalance" onclick="editDashboardAmount('cashBalance')">৳ 0.00</div>
         
         <div class="dash-split-box" style="gap: 6px; padding: 6px;">
-          <div class="dash-split-item" style="border-right: none; padding: 2px;" onclick="editDashboardAmount('cashIn')">
+          <div class="dash-split-item" style="border-right: none; padding: 2px;">
             <div class="dash-split-title" style="font-size: 10px;"><span style="color:#10B981; background:#D1FAE5; padding:1px 3px; border-radius:3px; font-size:8px;"><i class="fa-solid fa-arrow-down"></i></span> নগদ প্রাপ্তি</div>
             <div class="dash-split-val" id="cashIn" style="font-size: 12px;">৳ 0.00</div>
           </div>
-          <div class="dash-split-item" style="padding: 2px;" onclick="editDashboardAmount('cashOut')">
+          <div class="dash-split-item" style="padding: 2px;">
             <div class="dash-split-title" style="font-size: 10px;"><span style="color:#EF4444; background:#FEE2E2; padding:1px 3px; border-radius:3px; font-size:8px;"><i class="fa-solid fa-arrow-up"></i></span> নগদ প্রদান</div>
             <div class="dash-split-val" id="cashOut" style="font-size: 12px;">৳ 0.00</div>
           </div>
@@ -1849,9 +1849,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   window.renderAll = function() {
     let c = calculateSystemCash(); let d = calculateTotalDueAndPayable(); 
     let overrides = window.db.dashboardOverrides || {};
-    let dispBal = (overrides.cashBalance !== undefined && overrides.cashBalance !== null) ? Number(overrides.cashBalance) : c.balance;
-    let dispIn = (overrides.cashIn !== undefined && overrides.cashIn !== null) ? Number(overrides.cashIn) : c.in;
-    let dispOut = (overrides.cashOut !== undefined && overrides.cashOut !== null) ? Number(overrides.cashOut) : c.out;
+    let dispBal = c.balance;
+    let dispIn = c.in;
+    let dispOut = c.out;
     let dispDue = (overrides.totalDueDashboard !== undefined && overrides.totalDueDashboard !== null) ? Number(overrides.totalDueDashboard) : d.receivable;
     let dispPayable = (overrides.totalPayableDashboard !== undefined && overrides.totalPayableDashboard !== null) ? Number(overrides.totalPayableDashboard) : d.payable;
 
