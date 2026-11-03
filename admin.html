@@ -2473,7 +2473,7 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     let due = calculatePartyDue(party); document.getElementById('pfPartyDue').textContent = money(due);
     let history = [];
     window.db.approvedSales.filter(s => s.customerName === party.name || s.partyId === party.id).forEach(s => { history.push({ date: new Date(Number(s.id.substring(0,8), 36)).toISOString(), type: 'বিক্রয় (পুরনো)', amount: s.total }); });
-    window.db.transactions.filter(t => t.partyId === id).forEach(t => { history.push({ date: t.date, type: t.type, amount: t.total || t.amount }); });
+    window.db.transactions.filter(t => t.partyId === id && !t.isVoided).forEach(t => { history.push({ date: t.date, type: t.type, amount: t.total || t.amount }); });
     history.sort((a,b) => new Date(b.date) - new Date(a.date));
     if(history.length === 0) document.getElementById('pfPartyHistory').innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো লেনদেন নেই</div>';
     else document.getElementById('pfPartyHistory').innerHTML = `<table><thead><tr><th>তারিখ</th><th>বিবরণ</th><th>টাকা</th></tr></thead><tbody>${history.map(t => `<tr><td>${new Date(t.date).toLocaleDateString('en-GB')}</td><td>${t.type}</td><td>${money(t.amount)}</td></tr>`).join('')}</tbody></table>`;
