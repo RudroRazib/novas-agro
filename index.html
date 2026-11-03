@@ -194,12 +194,12 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   html, body { width: 210mm; height: 297mm; margin: 0; padding: 0; background: white; overflow: hidden; }
   body * { visibility: hidden; }
   #invoiceModal, #invoiceModal .modal-box, #invoicePrintArea, #invoicePrintArea * { visibility: visible; }
-  #invoiceModal { position: absolute; left: 0; top: 0; width: 210mm; background: white; margin: 0; padding: 0; }
-  #invoiceModal .modal-box { box-shadow: none; border: none; max-height: none; max-width: 100%; overflow: visible; padding: 0; margin: 0; }
-  .inv-header-action, #invoiceImageContainer { display: none !important; }
-  #invoicePrintArea { width: 210mm; min-height: 297mm; padding: 15mm; margin: 0; box-sizing: border-box; }
+  #partyStatementModal, #partyStatementModal .modal-box, #statementPrintArea, #statementPrintArea * { visibility: visible; }
+  #invoiceModal, #partyStatementModal { position: absolute; left: 0; top: 0; width: 210mm; background: white; margin: 0; padding: 0; }
+  #invoiceModal .modal-box, #partyStatementModal .modal-box { box-shadow: none; border: none; max-height: none; max-width: 100%; overflow: visible; padding: 0; margin: 0; }
+  .inv-header-action, #invoiceImageContainer, #statementActionHeader, #statementImageContainer { display: none !important; }
+  #invoicePrintArea, #statementPrintArea { width: 210mm; min-height: 297mm; padding: 15mm; margin: 0; box-sizing: border-box; }
 }
-
 /* ===== নতুন ফিচারের জন্য স্টাইল ===== */
 .delivery-tab { transition: all 0.2s; }
 .delivery-tab.active { background: var(--primary) !important; color: white !important; }
@@ -233,6 +233,31 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
 </style>
 </style>
+<!-- Party Statement Modal -->
+<div class="modal" id="partyStatementModal" style="z-index: 130; align-items: center; justify-content: center; padding: 10px;">
+  <div class="modal-box" style="border-radius: 16px; width: 100%; max-width: 800px; max-height: 95vh; padding: 0; background: white;">
+    
+    <div class="inv-header-action" id="statementActionHeader" style="background: #F8FAFC; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0;">
+      <h3 style="margin: 0; color: var(--text); font-size: 18px; font-weight: 700;">লেজার স্টেটমেন্ট</h3>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-print" onclick="window.print()" style="background: var(--green);"><i class="fa-solid fa-print"></i> প্রিন্ট</button>
+        <button class="btn-print" id="btnDownloadStatement" onclick="downloadStatementImage()"><i class="fa-solid fa-camera"></i> ছবি</button>
+        <button class="btn-close-inv" onclick="closePartyStatementModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+
+    <div style="background: white; padding: 0; overflow-y: auto; max-height: calc(95vh - 60px);">
+        <div id="statementPrintArea" style="padding: 20px;"></div>
+        <div id="statementImageContainer" style="display:none; text-align:center; padding: 20px;">
+            <p style="font-weight: bold; color: #15803D; font-size: 15px; margin-bottom: 15px;">✅ স্টেটমেন্ট তৈরি হয়েছে।</p>
+            <img id="generatedStatementImg" style="width: 100%; height: auto; border: 1px solid #ddd; border-radius: 12px; margin-bottom: 20px;">
+            <button class="btn-print" style="background: var(--primary); width: 100%; padding: 15px;" onclick="shareStatementImage()"><i class="fa-solid fa-share-nodes"></i> শেয়ার করুন</button>
+            <button class="btn-print" style="background: var(--green); width: 100%; padding: 15px; margin-top: 10px;" onclick="forceDownloadStatement()"><i class="fa-solid fa-download"></i> ডাউনলোড করুন</button>
+            <button class="btn-print" style="background: #F1F5F9; color: var(--text); width: 100%; padding: 15px; margin-top: 10px;" onclick="hideStatementImage()"><i class="fa-solid fa-arrow-left"></i> ফিরে যান</button>
+        </div>
+    </div>
+  </div>
+</div>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -384,12 +409,19 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         </div>
         <div id="expenseList"></div>
       </section>
-      <section id="partyProfile" class="view">
+            <section id="partyProfile" class="view">
         <span class="back-btn" onclick="switchView('parties')"><i class="fa-solid fa-arrow-left"></i> পার্টি লিস্টে ফিরে যান</span>
         <div class="profile-header">
           <h2 id="pfPartyName">পার্টির নাম</h2>
           <p id="pfPartyPhone"><i class="fa-solid fa-phone"></i> ফোন: --</p>
-          <div class="profile-due"><span>মোট বাকী পরিমাণ</span><strong id="pfPartyDue">৳ 0.00</strong></div>
+          <div class="profile-due">
+            <span>মোট বাকী পরিমাণ</span>
+            <strong id="pfPartyDue">৳ 0.00</strong>
+          </div>
+          <!-- নতুন লেজার স্টেটমেন্ট বাটন -->
+          <button onclick="showPartyStatement(window.currentProfilePartyId)" style="margin-top: 15px; width: 100%; background: var(--primary); color: white; padding: 12px; border-radius: 10px; font-weight: 600; border: none; cursor: pointer;">
+            <i class="fa-solid fa-file-invoice"></i> লেজার স্টেটমেন্ট দেখুন
+          </button>
         </div>
         <div class="section-title">লেনদেনের ইতিহাস</div>
         <div id="pfPartyHistory" class="table-wrap"></div>
@@ -833,7 +865,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
     ['products','batches','srs','parties','suppliers','transactions','partyRequests','pendingSales','approvedSales','deliveries','activityLogs'].forEach(r => srDbRef(r).off());
     srDbRef('dashboardOverrides').off();
-
+    srDbRef('companyDetails').off();
+    srDbRef('companyDetails').on('value', snap => {
+        window.db.companyDetails = snap.val() || {};
+    });
     srDbRef('products').on('value', handleSnap('products'));
     srDbRef('batches').on('value', handleSnap('batches'));
     srDbRef('srs').on('value', handleSnap('srs'));
@@ -1983,6 +2018,208 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   };
 
   window.openPartyProfile = function(id) {
+  // ===== Party Ledger Statement Logic =====
+  window.showPartyStatement = function(partyId) {
+    if(!partyId) return;
+    const party = window.db.parties.find(p => p.id === partyId);
+    if(!party) return;
+
+    // এই পার্টির সব লেনদেন ফিল্টার করা
+    let txns = window.db.transactions.filter(t => t.partyId === partyId && !t.isVoided);
+    
+    // তারিখ অনুযায়ী সাজানো (পুরোনো আগে)
+    txns.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    let previousDue = Number(party.previousDue || 0);
+    let currentBalance = previousDue;
+    
+    // স্টেটমেন্টের টেবিল রো তৈরি করা
+    let rowsHtml = '';
+    
+    if(previousDue !== 0) {
+        rowsHtml += `<tr>
+            <td style="text-align:center;">-</td>
+            <td>পূর্বের বাকি (Opening Balance)</td>
+            <td style="text-align:right;">${previousDue > 0 ? '৳ ' + previousDue.toFixed(2) : '-'}</td>
+            <td style="text-align:right;">${previousDue < 0 ? '৳ ' + Math.abs(previousDue).toFixed(2) : '-'}</td>
+            <td style="text-align:right; font-weight:bold;">৳ ${currentBalance.toFixed(2)}</td>
+        </tr>`;
+    }
+
+    txns.forEach(t => {
+        let debit = 0; // বিক্রয় বা বকেয়া বেড়ে যাওয়া
+        let credit = 0; // জমা বা বাকি কমা
+        let description = '';
+
+        if(t.type === 'sales') {
+            debit = Number(t.total || 0);
+            description = `বিক্রয় (ইনভয়েস: ${t.invoiceNo || 'N/A'})`;
+        } else if(t.type === 'sales_return') {
+            credit = Number(t.total || 0);
+            description = `বিক্রয় রিটার্ন`;
+        } else if(t.type === 'cash_in' || t.type === 'due_collect') {
+            credit = Number(t.amount || t.paid || 0);
+            description = `নগদ জমা / বাকি আদায়`;
+        }
+
+        currentBalance = currentBalance + debit - credit;
+
+        if(debit > 0 || credit > 0) {
+            rowsHtml += `<tr>
+                <td style="text-align:center;">${new Date(t.date).toLocaleDateString('en-GB')}</td>
+                <td>${description}</td>
+                <td style="text-align:right;">${debit > 0 ? '৳ ' + debit.toFixed(2) : '-'}</td>
+                <td style="text-align:right;">${credit > 0 ? '৳ ' + credit.toFixed(2) : '-'}</td>
+                <td style="text-align:right; font-weight:bold;">৳ ${currentBalance.toFixed(2)}</td>
+            </tr>`;
+        }
+    });
+
+    if(rowsHtml === '') {
+        rowsHtml = `<tr><td colspan="5" style="text-align:center; padding: 20px;">কোনো লেনদেন পাওয়া যায়নি</td></tr>`;
+    }
+
+    // স্টেটমেন্টের ডিজাইন
+    const companyName = window.db.companyDetails?.name || 'Novas Agro Distribution';
+    const companyPhone = window.db.companyDetails?.phone || '01743002000';
+    const companyAddress = window.db.companyDetails?.address || 'Dhaka, Bangladesh';
+    const dateStr = new Date().toLocaleDateString('en-GB');
+
+    const statementHTML = `
+    <div style="font-family: Arial, sans-serif; color: #000; font-size: 12px; line-height: 1.5;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #4338ca; padding-bottom: 10px; margin-bottom: 15px;">
+            <div>
+                <h2 style="margin: 0 0 5px 0; font-size: 22px; color: #4338ca;">${esc(companyName)}</h2>
+                <div>${esc(companyAddress)}</div>
+                <div>Phone: ${esc(companyPhone)}</div>
+            </div>
+            <div style="text-align: right;">
+                <h1 style="margin: 0 0 5px 0; font-size: 20px; color: #333;">লেজার স্টেটমেন্ট</h1>
+                <div>তারিখ: ${dateStr}</div>
+            </div>
+        </div>
+
+        <div style="background: #F8FAFC; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between;">
+                <div>
+                    <div style="font-size: 11px; color: #64748B; margin-bottom: 4px;">কাস্টমারের নাম:</div>
+                    <div style="font-size: 16px; font-weight: bold; color: #1E293B;">${esc(party.name)}</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 11px; color: #64748B; margin-bottom: 4px;">মোবাইল:</div>
+                    <div style="font-size: 14px; font-weight: bold;">${esc(party.phone || 'N/A')}</div>
+                </div>
+            </div>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+                <tr style="background: #eff6ff; color: #1e40af;">
+                    <th style="border: 1px solid #c7d2fe; padding: 8px; text-align: center; width: 15%;">তারিখ</th>
+                    <th style="border: 1px solid #c7d2fe; padding: 8px; text-align: left; width: 40%;">বিবরণ</th>
+                    <th style="border: 1px solid #c7d2fe; padding: 8px; text-align: right; width: 15%;">বিক্রয় (Debit)</th>
+                    <th style="border: 1px solid #c7d2fe; padding: 8px; text-align: right; width: 15%;">জমা (Credit)</th>
+                    <th style="border: 1px solid #c7d2fe; padding: 8px; text-align: right; width: 15%;">ব্যালেন্স</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rowsHtml}
+            </tbody>
+            <tfoot>
+                <tr style="background: #F8FAFC; font-weight: bold;">
+                    <td colspan="4" style="border: 1px solid #c7d2fe; padding: 10px; text-align: right;">সর্বমোট বাকি (Current Due):</td>
+                    <td style="border: 1px solid #c7d2fe; padding: 10px; text-align: right; color: ${currentBalance > 0 ? '#DC2626' : '#059669'}; font-size: 14px;">৳ ${currentBalance.toFixed(2)}</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div style="text-align: center; font-size: 10px; color: #888; margin-top: 30px;">
+            এটি একটি কম্পিউটার জেনারেটেড স্টেটমেন্ট। কোনো ভুল থাকলে দয়া করে যোগাযোগ করুন।
+        </div>
+    </div>
+    `;
+
+    document.getElementById('statementPrintArea').innerHTML = statementHTML;
+    document.getElementById('partyStatementModal').classList.add('open');
+  };
+
+  window.closePartyStatementModal = function() {
+    document.getElementById('partyStatementModal').classList.remove('open');
+    hideStatementImage();
+  };
+
+  // স্টেটমেন্টের ছবি তৈরি ও ডাউনলোড
+  window.downloadStatementImage = function() {
+    const element = document.getElementById('statementPrintArea');
+    const btn = document.getElementById('btnDownloadStatement');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '⏳...'; btn.disabled = true;
+
+    const originalStyle = element.getAttribute('style') || '';
+    element.style.width = '794px'; 
+    element.style.maxWidth = '794px'; 
+    element.style.padding = '40px'; 
+    element.style.background = '#ffffff';
+
+    setTimeout(() => {
+        html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false }).then(canvas => {
+            window.currentStatementDataUrl = canvas.toDataURL('image/jpeg', 0.95); 
+            canvas.toBlob((blob) => { if(blob) window.currentStatementBlob = blob; }, 'image/jpeg', 0.95);
+            
+            element.setAttribute('style', originalStyle);
+            document.getElementById('generatedStatementImg').src = window.currentStatementDataUrl; 
+            document.getElementById('statementPrintArea').style.display = 'none'; 
+            document.getElementById('statementImageContainer').style.display = 'block'; 
+            document.getElementById('statementActionHeader').style.display = 'none';
+            
+            btn.innerHTML = originalText; btn.disabled = false;
+        }).catch(err => { 
+            alert('স্টেটমেন্ট তৈরি করতে সমস্যা হয়েছে।'); 
+            element.setAttribute('style', originalStyle); 
+            btn.innerHTML = originalText; btn.disabled = false; 
+        });
+    }, 100);
+  };
+
+  window.hideStatementImage = function() {
+    document.getElementById('generatedStatementImg').src = ''; 
+    document.getElementById('statementImageContainer').style.display = 'none'; 
+    document.getElementById('statementPrintArea').style.display = 'block'; 
+    document.getElementById('statementActionHeader').style.display = 'flex';
+  };
+
+  window.forceDownloadStatement = function() {
+    if(!window.currentStatementDataUrl) return;
+    try {
+        if (window.currentStatementBlob) { 
+            const blobUrl = URL.createObjectURL(window.currentStatementBlob); 
+            const link = document.createElement('a'); 
+            link.href = blobUrl; 
+            link.download = `Statement_${document.getElementById('pfPartyName').innerText}.jpg`; 
+            document.body.appendChild(link); link.click(); document.body.removeChild(link); 
+            URL.revokeObjectURL(blobUrl); 
+        } else { 
+            const link = document.createElement('a'); 
+            link.href = window.currentStatementDataUrl; 
+            link.download = `Statement_${document.getElementById('pfPartyName').innerText}.jpg`; 
+            document.body.appendChild(link); link.click(); document.body.removeChild(link); 
+        }
+    } catch (e) { alert('সরাসরি ডাউনলোড ব্যর্থ হয়েছে। ছবিটি চেপে ধরে সেভ করার চেষ্টা করুন।'); }
+  };
+
+  window.shareStatementImage = function() {
+    if(!window.currentStatementDataUrl) return;
+    if (navigator.share && navigator.canShare) {
+        try {
+            fetch(window.currentStatementDataUrl).then(res => res.blob()).then(blob => {
+                    const file = new File([blob], `Statement.jpg`, { type: 'image/jpeg' });
+                    if (navigator.canShare({ files: [file] })) { 
+                        navigator.share({ files: [file], title: 'Party Statement', text: 'Here is your statement.' }).catch(err => { window.forceDownloadStatement(); }); 
+                    } else { window.forceDownloadStatement(); }
+                }).catch(err => { window.forceDownloadStatement(); });
+        } catch(e) { window.forceDownloadStatement(); }
+    } else { window.forceDownloadStatement(); }
+  };
     window.currentProfilePartyId = id;
     const party = window.db.parties.find(p => p.id === id);
     document.getElementById('pfPartyName').textContent = party.name; document.getElementById('pfPartyPhone').textContent = 'ফোন: ' + (party.phone || '--');
