@@ -2053,9 +2053,11 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 
         if(t.type === 'sales') {
             debit = Number(t.total || 0);
+            credit = Number(t.paid || 0); // বিক্রির সময় যে টাকা নগদ জমা হয়েছে তা ক্রেডিট হবে
             description = `বিক্রয় (ইনভয়েস: ${t.invoiceNo || 'N/A'})`;
         } else if(t.type === 'sales_return') {
-            credit = Number(t.total || 0);
+            debit = Number(t.paid || 0); // রিটার্নের সময় টাকা ফেরত দিলে ডেবিট হবে
+            credit = Number(t.total || 0); // মোট রিটার্ন মূল্য ক্রেডিট হবে
             description = `বিক্রয় রিটার্ন`;
         } else if(t.type === 'cash_in' || t.type === 'due_collect') {
             credit = Number(t.amount || t.paid || 0);
