@@ -216,6 +216,10 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .bg-grad-orange { background: linear-gradient(135deg,#F59E0B,#D97706); }
 .bg-grad-purple { background: linear-gradient(135deg,#8B5CF6,#6D28D9); }
 .bg-grad-blue { background: linear-gradient(135deg,#3B82F6,#2563EB); }
+/* Scroll Lock Class */
+html.no-scroll, body.no-scroll {
+    overflow: hidden !important;
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -732,7 +736,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
         if(viewId === 'invoices') renderInvoiceView(''); if(viewId === 'transactions') renderTransactionsList(''); if(viewId === 'dues') renderDuesView(); if(viewId === 'totalSales') renderTotalSales(''); if(viewId === 'todaySales') renderTodaySales(''); if(viewId === 'settings') loadPartnersList(); if(viewId === 'activityLog') { document.getElementById('activityLogSearchInput').value = ''; renderActivityLog(''); } if(viewId === 'products') { document.getElementById('productSearchInput').value = ''; renderProducts(''); } if(viewId === 'parties') { document.getElementById('partySearchInput').value = ''; renderParties(''); } if(viewId === 'expenses') { renderExpenses(); } if(viewId === 'damages') { renderDamageView(); } if(viewId === 'profitLoss') renderProfitLoss('month'); if(viewId === 'delivery') { filterDelivery('pending'); } if(viewId === 'srPerformance') renderSRPerformance('month'); if(viewId === 'forecast') renderForecast(); if(viewId === 'cashBook') renderCashBook(); if(viewId === 'srTargetsList') renderSRTargetsListView();
     }
   };
-    window.showModal = function(title, bodyHTML, handler) { 
+  
+  // --- FIXED: Removed setTimeout that was resetting the discount purchase rate ---
+  window.showModal = function(title, bodyHTML, handler) { 
     document.getElementById('modalTitle').textContent = title; 
     document.getElementById('formFields').innerHTML = bodyHTML; 
     document.getElementById('dataForm').onsubmit = (e) => { e.preventDefault(); handler(new FormData(document.getElementById('dataForm'))); closeModal(); }; 
@@ -741,9 +747,9 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     if (title.includes('পণ্য')) { 
       const c = document.querySelector('select[name="category"]'), s = document.querySelector('select[name="subCategory"]'); 
       if(c && s) c.addEventListener('change', function() { s.innerHTML = '<option value="">সিলেক্ট</option>' + (categoryData[this.value]||[]).map(x => `<option value="${x}">${x}</option>`).join(''); }); 
-      // এখান থেকে setTimeout(...) লাইনটি মুছে ফেলা হয়েছে
     } 
   };
+
   window.closeModal = function() { document.getElementById('modal').classList.remove('open'); document.getElementById('dataForm').reset(); };
   
   window.calcProductNetPurchaseRate = function() {
@@ -1116,6 +1122,33 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
   /* ==================== END SR TARGETS ==================== */
 
   document.querySelectorAll('.modal').forEach(modal => { modal.addEventListener('click', function(e) { if (e.target === this) { if (this.id === 'modal') window.closeModal(); else if (this.id === 'quickFormModal') window.closeQuickForm(); else if (this.id === 'actionMenuModal') window.closeActionMenu(); else if (this.id === 'resetModal') window.closeResetModal(); else if (this.id === 'backupDataModal') window.closeBackupDataModal(); else if (this.id === 'restoreDataModal') window.closeRestoreDataModal(); else if (this.id === 'addItemModal') window.closeAddItemModal(); else if (this.id === 'salesReturnItemModal') window.closeSalesReturnItemModal(); else if (this.id === 'newSaleModal') window.closeNewSale(); else if (this.id === 'invoiceModal') window.closeInvoiceModal(); else if (this.id === 'invoiceListModal') window.closeInvoiceList(); else if (this.id === 'ownerProfileModal') window.closeOwnerProfileModal(); else if (this.id === 'companyDetailsModal') window.closeCompanyDetailsModal(); else if (this.id === 'packSizeModal') window.closePackModal(); else if (this.id === 'productFilterModal') window.closeProductFilterModal(); else if (this.id === 'productSearchModal') window.closeProductSearchModal(); else if (this.id === 'partyStatementModal') window.closePartyStatementModal(); else if (this.id === 'srTargetPinModal') window.closeSRTargetPinModal(); else this.classList.remove('open'); } }); });
+
+  // --- FIXED: Background Scroll Lock Logic ---
+  (function setupScrollLock() {
+      const observer = new MutationObserver(() => {
+          let isAnyModalOpen = false;
+          document.querySelectorAll('.modal').forEach(modal => {
+              if (modal.classList.contains('open')) {
+                  isAnyModalOpen = true;
+              }
+          });
+          if (document.getElementById('sidebar') && document.getElementById('sidebar').classList.contains('open')) {
+              isAnyModalOpen = true;
+          }
+          if (isAnyModalOpen) {
+              document.body.classList.add('no-scroll');
+              document.documentElement.classList.add('no-scroll');
+          } else {
+              document.body.classList.remove('no-scroll');
+              document.documentElement.classList.remove('no-scroll');
+          }
+      });
+      document.querySelectorAll('.modal').forEach(modal => {
+          observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+      });
+      const sidebar = document.getElementById('sidebar');
+      if(sidebar) observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+  })();
 </script>
 </body>
 </html>
