@@ -217,6 +217,29 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 .bg-grad-purple { background: linear-gradient(135deg,#8B5CF6,#6D28D9); }
 .bg-grad-blue { background: linear-gradient(135deg,#3B82F6,#2563EB); }
 .advanced-reports-bg { background: radial-gradient(circle at 0% 0%, rgba(255,255,255,.9) 0%, transparent 40%), radial-gradient(circle at 100% 100%, rgba(255,255,255,.4) 0%, transparent 50%), linear-gradient(180deg,#E8F0FC 0%,#AFC3E5 100%) !important; border: 1px solid rgba(255,255,255,.6) !important; box-shadow: 0 10px 30px rgba(33,65,122,.08), inset 0 1px 3px rgba(255,255,255,.9) !important; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+
+/* ===== FIX: background scroll lock when modal opens ===== */
+body.modal-open {
+  overflow: hidden !important;
+  height: 100vh !important;
+}
+
+/* Prevent scroll chaining inside modals / side panels */
+.modal-box,
+.ns-content,
+.side-menu,
+#productSearchList,
+#invoiceListContainer,
+#invoiceViewContainer,
+#transactionsList,
+#statementPrintArea,
+#totalSalesList,
+#todaySalesList,
+#partiesTable,
+#productsList {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
 </style>
 <div class="modal" id="partyStatementModal" style="z-index: 130; align-items: center; justify-content: center; padding: 10px;">
   <div class="modal-box" style="border-radius: 16px; width: 100%; max-width: 800px; max-height: 95vh; padding: 0; background: white;">
@@ -801,6 +824,19 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
     }
     container.innerHTML = html;
   };
+
+  /* ===== FIX: Lock body scroll whenever any modal is open ===== */
+  (function initModalScrollLock() {
+    const syncScrollLock = () => {
+      const anyModalOpen = document.querySelector('.modal.open');
+      document.body.classList.toggle('modal-open', !!anyModalOpen);
+    };
+    const observer = new MutationObserver(syncScrollLock);
+    document.querySelectorAll('.modal').forEach(m => {
+      observer.observe(m, { attributes: true, attributeFilter: ['class'] });
+    });
+    syncScrollLock();
+  })();
 </script>
 </body>
 </html>
