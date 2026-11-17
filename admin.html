@@ -220,6 +220,163 @@ th { background: #F8FAFC; color: var(--text-muted); font-weight: 600; font-size:
 html.no-scroll, body.no-scroll {
     overflow: hidden !important;
 }
+/* ============================================================ */
+/* DESKTOP / PC APP LAYOUT (≥ 900px)                            */
+/* Mobile / APK (< 900px) unchanged — safe to add              */
+/* ============================================================ */
+@media (min-width: 900px) {
+  html, body { overflow-x: hidden; }
+  body { align-items: stretch; }
+
+  /* ফোন-ফ্রেম সরিয়ে full-width ওয়েবসাইট */
+  .phone-wrapper {
+    max-width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding-left: 260px;
+  }
+
+  /* সাইডবার সবসময় বাঁ দিকে দৃশ্যমান */
+  .sidebar {
+    left: 0 !important;
+    width: 260px;
+    border-right: 1px solid rgba(0,0,0,.06);
+    box-shadow: 4px 0 24px rgba(15,23,42,.06);
+  }
+  .overlay { display: none !important; }
+  .menu-btn { display: none !important; }
+
+  /* হেডার sticky */
+  .app-header {
+    border-radius: 0 !important;
+    padding: 14px 28px;
+    position: sticky;
+    top: 0;
+  }
+
+  /* কনটেন্ট wide area */
+  .content-area {
+    padding: 20px 28px 100px;
+    margin-top: 0 !important;
+  }
+
+  .glass-content {
+    border-radius: 18px;
+    padding: 24px;
+    min-height: auto;
+    max-width: 1200px;
+    margin: 10px auto 0;
+  }
+
+  /* ড্যাশবোর্ড → মাল্টি-কলাম গ্রিড */
+  #dashboard.active {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  #dashboard > * { margin-bottom: 0 !important; }
+
+  .dash-top-panel      { grid-column: span 6; margin-top: 0 !important; }
+  .middle-area         { grid-column: span 6; margin: 0 !important; }
+  .wide-panel          { grid-column: span 12; margin-top: 0 !important; }
+  .card-stack          { grid-column: span 6; margin-top: 0 !important; padding-bottom: 0 !important; }
+  .advanced-reports-bg { grid-column: span 6; margin-top: 0 !important; }
+
+  /* নিচের বার → ডান দিকে floating pill */
+  .bottom-bar {
+    left: auto !important;
+    right: 28px;
+    transform: none !important;
+    width: auto !important;
+    max-width: none !important;
+    height: 62px;
+    padding: 0 18px;
+    gap: 12px;
+    bottom: 20px;
+    box-shadow: 0 12px 34px rgba(15,23,42,.18);
+  }
+  .fab-btn { transform: none !important; width: 50px; height: 50px; font-size: 22px; }
+
+  /* মোডাল → সেন্টার ডায়ালগ */
+  .modal { align-items: center !important; justify-content: center; padding: 24px; }
+  .modal-box {
+    border-radius: 20px !important;
+    max-width: 640px;
+    max-height: 86vh;
+    animation: fadeIn .2s ease !important;
+    box-shadow: 0 20px 60px rgba(15,23,42,.25);
+  }
+
+  /* লিস্ট → গ্রিড */
+  #productsList, #partiesTable, #suppliersTable, #srTable,
+  #invoiceViewContainer, #transactionsList, #approvalsList, #deliveryList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    align-content: start;
+  }
+  #productsList > *, #partiesTable > *, #suppliersTable > *, #srTable > *,
+  #invoiceViewContainer > *, #transactionsList > *,
+  #approvalsList > *, #deliveryList > * {
+    margin-bottom: 0 !important;
+  }
+
+  /* ইনভয়েস/স্টেটমেন্ট বড় */
+  #invoiceModal .modal-box,
+  #partyStatementModal .modal-box { max-width: 900px; }
+
+  /* নতুন বিক্রয় স্ক্রিন → সেন্টার বড় ডায়ালগ */
+  #newSaleModal.open {
+    background: rgba(15,23,42,.5) !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 30px 20px !important;
+    overflow-y: auto;
+  }
+  #newSaleModal .ns-header,
+  #newSaleModal .ns-content,
+  #newSaleModal .ns-footer {
+    width: 100%;
+    max-width: 780px;
+  }
+  #newSaleModal .ns-header { border-radius: 16px 16px 0 0; padding: 15px 22px; }
+  #newSaleModal .ns-content {
+    flex: 0 0 auto;
+    overflow-y: visible;
+    background: #F8FAFC;
+    padding-bottom: 20px;
+  }
+  #newSaleModal .ns-footer {
+    position: relative !important;
+    border-radius: 0 0 16px 16px;
+    box-shadow: none;
+    padding: 15px 22px;
+  }
+}
+
+/* ========== আরও প্রশস্ত ডেস্কটপ (≥1280px) ========== */
+@media (min-width: 1280px) {
+  .phone-wrapper { padding-left: 280px; }
+  .sidebar { width: 280px; }
+
+  .dash-top-panel      { grid-column: span 4; }
+  .middle-area         { grid-column: span 4; }
+  .wide-panel          { grid-column: span 4; }
+  .card-stack          { grid-column: span 6; }
+  .advanced-reports-bg { grid-column: span 6; }
+
+  #productsList, #partiesTable, #suppliersTable, #srTable,
+  #invoiceViewContainer, #transactionsList, #approvalsList, #deliveryList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
