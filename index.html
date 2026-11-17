@@ -240,6 +240,183 @@ body.modal-open {
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
+/* ============================================================ */
+/* DESKTOP / PC APP LAYOUT (≥ 900px) — SR VERSION              */
+/* Mobile / APK (< 900px) unchanged — safe to add              */
+/* ============================================================ */
+@media (min-width: 900px) {
+  html, body { overflow-x: hidden; }
+  body { align-items: stretch; }
+
+  /* ফোন-ফ্রেম সরিয়ে full-width ওয়েবসাইট */
+  .phone-wrapper {
+    max-width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding-left: 260px;
+  }
+
+  /* সাইডবার সবসময় বাঁ দিকে দৃশ্যমান */
+  .sidebar {
+    left: 0 !important;
+    width: 260px;
+    border-right: 1px solid rgba(0,0,0,.06);
+    box-shadow: 4px 0 24px rgba(15,23,42,.06);
+  }
+  .overlay { display: none !important; }
+  .menu-btn { display: none !important; }
+
+  /* হেডার sticky */
+  .app-header {
+    border-radius: 0 !important;
+    padding: 14px 28px;
+    position: sticky;
+    top: 0;
+  }
+
+  /* কনটেন্ট wide area */
+  .content-area {
+    padding: 20px 28px 100px;
+    margin-top: 0 !important;
+  }
+
+  .glass-content {
+    border-radius: 18px;
+    padding: 24px;
+    min-height: auto;
+    max-width: 1200px;
+    margin: 10px auto 0;
+  }
+
+  /* ড্যাশবোর্ড → মাল্টি-কলাম গ্রিড */
+  #dashboard.active {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  #dashboard > * { margin-bottom: 0 !important; }
+
+  .dash-top-panel      { grid-column: span 6; margin-top: 0 !important; }
+  .middle-area         { grid-column: span 6; margin: 0 !important; }
+  .wide-panel          { grid-column: span 12; margin-top: 0 !important; }
+  .card-stack          { grid-column: span 6; margin-top: 0 !important; padding-bottom: 0 !important; }
+  .advanced-reports-bg { grid-column: span 6; margin-top: 0 !important; }
+
+  /* নিচের বার → ডান দিকে floating pill */
+  .bottom-bar {
+    left: auto !important;
+    right: 28px;
+    transform: none !important;
+    width: auto !important;
+    max-width: none !important;
+    height: 62px;
+    padding: 0 18px;
+    gap: 12px;
+    bottom: 20px;
+    box-shadow: 0 12px 34px rgba(15,23,42,.18);
+  }
+  .fab-btn { transform: none !important; width: 50px; height: 50px; font-size: 22px; }
+
+  /* মোডাল → সেন্টার ডায়ালগ */
+  .modal { align-items: center !important; justify-content: center; padding: 24px; }
+  .modal-box {
+    border-radius: 20px !important;
+    max-width: 640px;
+    max-height: 86vh;
+    animation: fadeIn .2s ease !important;
+    box-shadow: 0 20px 60px rgba(15,23,42,.25);
+  }
+
+  /* সব লিস্ট → গ্রিড (inline flex override) */
+  #productsList, #partiesTable, #suppliersTable, #srTable,
+  #invoiceViewContainer, #transactionsList, #deliveryList,
+  #expenseList, #totalSalesList, #todaySalesList {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+    align-content: start;
+    flex-direction: unset !important;
+  }
+  #productsList > *, #partiesTable > *, #suppliersTable > *, #srTable > *,
+  #invoiceViewContainer > *, #transactionsList > *,
+  #deliveryList > *, #expenseList > *,
+  #totalSalesList > *, #todaySalesList > * {
+    margin-bottom: 0 !important;
+  }
+
+  /* ইনভয়েস / স্টেটমেন্ট বড় */
+  #invoiceModal .modal-box,
+  #partyStatementModal .modal-box { max-width: 900px; }
+
+  /* নতুন বিক্রয় স্ক্রিন → সেন্টার বড় ডায়ালগ */
+  #newSaleModal.open {
+    background: rgba(15,23,42,.5) !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 30px 20px !important;
+    overflow-y: auto;
+  }
+  #newSaleModal .ns-header,
+  #newSaleModal .ns-content,
+  #newSaleModal .ns-footer {
+    width: 100%;
+    max-width: 780px;
+  }
+  #newSaleModal .ns-header {
+    border-radius: 16px 16px 0 0 !important;
+    padding: 15px 22px;
+    position: relative !important;
+    top: auto !important;
+  }
+  #newSaleModal .ns-content {
+    flex: 0 0 auto;
+    overflow-y: visible;
+    background: #F8FAFC;
+    padding-bottom: 20px;
+  }
+  #newSaleModal .ns-footer {
+    position: relative !important;
+    border-radius: 0 0 16px 16px;
+    box-shadow: none;
+    padding: 15px 22px;
+  }
+
+  /* আইটেম যোগ মডাল */
+  #addItemModal .modal-box,
+  #salesReturnItemModal .modal-box,
+  #productSearchModal .modal-box {
+    max-width: 520px;
+    border-radius: 20px !important;
+  }
+
+  /* লগইন স্ক্রিন সেন্টার */
+  #loginScreen .login-box { max-width: 420px; }
+}
+
+/* ========== আরও প্রশস্ত ডেস্কটপ (≥1280px) ========== */
+@media (min-width: 1280px) {
+  .phone-wrapper { padding-left: 280px; }
+  .sidebar { width: 280px; }
+
+  .dash-top-panel      { grid-column: span 4; }
+  .middle-area         { grid-column: span 4; }
+  .wide-panel          { grid-column: span 4; }
+  .card-stack          { grid-column: span 6; }
+  .advanced-reports-bg { grid-column: span 6; }
+
+  #productsList, #partiesTable, #suppliersTable, #srTable,
+  #invoiceViewContainer, #transactionsList, #deliveryList,
+  #expenseList, #totalSalesList, #todaySalesList {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
 </style>
 <div class="modal" id="partyStatementModal" style="z-index: 130; align-items: center; justify-content: center; padding: 10px;">
   <div class="modal-box" style="border-radius: 16px; width: 100%; max-width: 800px; max-height: 95vh; padding: 0; background: white;">
