@@ -1307,5 +1307,511 @@ html.no-scroll, body.no-scroll {
       if(sidebar) observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
   })();
 </script>
+<!-- ================= SAMPLE FEATURE (NEW) ================= -->
+<script>
+(function() {
+  'use strict';
+
+  // ==================== Helpers ====================
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function fmtDate(d) {
+    if (!d) return '-';
+    try { return new Date(d).toLocaleDateString('bn-BD', { day:'numeric', month:'short', year:'numeric' }); }
+    catch(e) { return d; }
+  }
+  function productFullName(p) {
+    if (!p) return '';
+    return (p.packSize || '').trim() ? `${p.name} (${p.packSize})` : (p.name || '');
+  }
+  function productStock(productId) {
+    return (window.db.batches || []).filter(b => b.productId === productId)
+      .reduce((a, b) => a + Number(b.qty || 0), 0);
+  }
+  function rootBasePath() {
+    return (window.currentBusinessId && window.currentBusinessId !== 'root')
+      ? 'businesses/' + window.currentBusinessId + '/'
+      : '';
+  }
+  function logAct(type, details) {
+    const logId = Date.now().toString(36) + Math.random().toString(36).slice(2,5);
+    database.ref(rootBasePath() + 'activityLogs/' + logId).set({
+      id: logId, type: type, details: details,
+      timestamp: new Date().toISOString(),
+      user: (typeof currentUserEmail !== 'undefined' ? currentUserEmail : ''),
+      userName: window.currentUserName || ''
+    });
+  }
+
+  // ==================== Menu / Sidebar / Home / Section injection ====================
+  function injectMenuButton() {
+    const grid = document.querySelector('#actionMenuModal .action-menu-grid');
+    if (!grid || document.getElementById('sampleMenuBtn')) return;
+    const btn = document.createElement('div');
+    btn.id = 'sampleMenuBtn';
+    btn.className = 'action-item';
+    btn.setAttribute('onclick', 'openSampleModal()');
+    btn.innerHTML = '<div class="a-icon"><i class="fa-solid fa-gift"></i></div><div class="a-text">সেম্পল</div>';
+    grid.appendChild(btn);
+  }
+
+  function injectSidebarMenu() {
+    const menu = document.querySelector('#sidebar .side-menu');
+    if (!menu || document.getElementById('sampleSidebarItem')) return;
+    const item = document.createElement('div');
+    item.id = 'sampleSidebarItem';
+    item.className = 'side-menu-item';
+    item.setAttribute('onclick', 'switchView(\'samplesList\')');
+    item.innerHTML = '<div class="side-menu-left"><i class="fa-solid fa-gift"></i> সেম্পল</div>';
+    const target = [...menu.children].find(c => c.textContent.includes('লেনদেন এডিট'));
+    if (target && target.nextSibling) menu.insertBefore(item, target.nextSibling);
+    else menu.appendChild(item);
+  }
+  function injectHomeCard() {
+    const grid = document.querySelector('#dashboard .new-features-grid');
+    if (!grid || document.getElementById('sampleHomeCard')) return;
+    const card = document.createElement('div');
+    card.id = 'sampleHomeCard';
+    card.className = 'feature-card';
+    card.style.gridColumn = '1 / -1'; // <--- এই লাইনটি নতুন যোগ হলো
+    card.setAttribute('onclick', 'switchView(\'samplesList\')');
+    card.innerHTML = `<div class="fc-icon" style="background:linear-gradient(135deg,#8B5CF6,#6D28D9);"><i class="fa-solid fa-gift"></i></div><div class="fc-title">সেম্পল</div>`;
+    grid.appendChild(card);
+  }
+
+  function injectSampleSection() {
+    if (document.getElementById('samplesList')) return;
+    const container = document.getElementById('otherViewsContainer');
+    if (!container) return;
+    const section = document.createElement('section');
+    section.id = 'samplesList';
+    section.className = 'view';
+    section.innerHTML = `
+      <div class="section-title">🎁 সেম্পল লিস্ট <button class="btn-add" onclick="openSampleModal()">+ নতুন সেম্পল</button></div>
+      <div id="samplesStatsBar" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:15px;"></div>
+      <input type="text" id="samplesListSearchInput" placeholder="🔍 সার্চ (পার্টি / SR / পণ্য)..." oninput="renderSamplesList(this.value)" style="width:100%; padding:14px 15px; border-radius:14px; border:1px solid #e2e8f0; font-size:14px; margin-bottom:15px; outline:none;">
+      <div id="samplesListContainer"></div>`;
+    container.appendChild(section);
+  }
+
+  function injectSampleModal() {
+    if (!document.getElementById('sampleModal')) {
+      const modal = document.createElement('div');
+      modal.className = 'modal';
+      modal.id = 'sampleModal';
+      modal.innerHTML = `
+        <div class="modal-box">
+          <div class="modal-head">
+            <h3 style="color:var(--primary)">🎁 সেম্পল দিন</h3>
+            <button class="close-btn" onclick="closeSampleModal()"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="form-group"><label>পার্টি *</label><select id="sampleParty"><option value="">সিলেক্ট করুন</option></select></div>
+          <div class="form-group"><label>এসআর (কে দিচ্ছেন)</label><select id="sampleSR"><option value="">সিলেক্ট করুন</option></select></div>
+          <div class="form-group"><label>তারিখ</label><input type="date" id="sampleDate"></div>
+          <div style="background:#F8FAFC; padding:12px; border-radius:12px; margin-bottom:15px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <strong style="font-size:14px;">পণ্য লিস্ট</strong>
+              <button type="button" onclick="addSampleItem()" style="background:var(--primary); color:white; border:none; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer;"><i class="fa-solid fa-plus"></i> পণ্য যোগ</button>
+            </div>
+            <div id="sampleItemsList"></div>
+          </div>
+          <div class="form-group"><label>নোট (ঐচ্ছিক)</label><textarea id="sampleNote" rows="2" style="resize:none;" placeholder="সেম্পল দেওয়ার কারণ..."></textarea></div>
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeSampleModal()">বাতিল</button>
+            <button type="button" class="btn-submit" onclick="saveSample()">✅ সেম্পল সেভ করুন</button>
+          </div>
+        </div>`;
+      document.body.appendChild(modal);
+    }
+    if (!document.getElementById('sampleProductSearchModal')) {
+      const sm = document.createElement('div');
+      sm.className = 'modal';
+      sm.id = 'sampleProductSearchModal';
+      sm.style.zIndex = '200';
+      sm.innerHTML = `
+        <div class="modal-box">
+          <div class="modal-head">
+            <h3>🔍 পণ্য সিলেক্ট করুন</h3>
+            <button class="close-btn" onclick="closeSampleProductSearch()"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <input type="text" id="sampleProdSearchInput" placeholder="🔍 পণ্যের নাম / প্যাক সাইজ / কোড..." oninput="filterSampleProductList(this.value)" style="width:100%; padding:12px 15px; border-radius:12px; border:1px solid #e2e8f0; font-size:15px; background:#F8FAFC; margin-bottom:15px; outline:none;">
+          <div id="sampleProductSearchList" style="max-height:55vh; overflow-y:auto;"></div>
+        </div>`;
+      document.body.appendChild(sm);
+    }
+  }
+
+  function runInjection() {
+    injectMenuButton(); injectSampleModal(); injectSidebarMenu(); injectHomeCard(); injectSampleSection();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', runInjection);
+  else runInjection();
+  setInterval(runInjection, 1500);
+
+  // ==================== State ====================
+  window.sampleItems = [];
+  window.sampleProductSearchTargetIdx = null;
+  if (!window.db) window.db = {};
+
+  // ==================== Product Picker ====================
+  window.openSampleProductSearch = function(idx) {
+    window.sampleProductSearchTargetIdx = idx;
+    const inp = document.getElementById('sampleProdSearchInput');
+    if (inp) inp.value = '';
+    renderSampleProductSearchList('');
+    document.getElementById('sampleProductSearchModal').classList.add('open');
+    setTimeout(() => { if (inp) inp.focus(); }, 150);
+  };
+  window.closeSampleProductSearch = function() {
+    document.getElementById('sampleProductSearchModal').classList.remove('open');
+    window.sampleProductSearchTargetIdx = null;
+  };
+  window.filterSampleProductList = function(s) { renderSampleProductSearchList(s); };
+  window.renderSampleProductSearchList = function(search) {
+    const c = document.getElementById('sampleProductSearchList');
+    if (!c) return;
+    const products = window.db.products || [];
+    const s = (search || '').toLowerCase().trim();
+    const list = s ? products.filter(p =>
+      (p.name||'').toLowerCase().includes(s) ||
+      (p.code||'').toLowerCase().includes(s) ||
+      (p.packSize||'').toLowerCase().includes(s)
+    ) : products;
+    if (list.length === 0) {
+      c.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:30px 10px;">কোনো পণ্য পাওয়া যায়নি</div>';
+      return;
+    }
+    list.sort((a,b) => (a.name||'').localeCompare(b.name||''));
+    c.innerHTML = list.map(p => {
+      const stock = productStock(p.id);
+      const color = stock <= 0 ? '#EF4444' : (stock < 10 ? '#F59E0B' : '#10B981');
+      const packTag = p.packSize ? `<span style="background:#EFF6FF; color:#1d4bb0; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:700; margin-left:6px;">${esc(p.packSize)}</span>` : '';
+      return `<div onclick="selectSampleProduct('${p.id}')" style="padding:12px 15px; border-bottom:1px solid #eee; cursor:pointer; background:white;" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background='white'">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+          <div style="font-weight:600; font-size:14px; color:#1E293B; flex:1;">${esc(p.name)}${packTag}</div>
+          <div style="font-size:12px; font-weight:700; color:${color}; white-space:nowrap;">📦 ${stock} পিস</div>
+        </div>
+        ${p.code ? `<div style="font-size:11px; color:#94a3b8; margin-top:3px;">কোড: ${esc(p.code)}</div>` : ''}
+      </div>`;
+    }).join('');
+  };
+  window.selectSampleProduct = function(pid) {
+    const idx = window.sampleProductSearchTargetIdx;
+    if (idx === null || idx === undefined || !window.sampleItems[idx]) return;
+    window.sampleItems[idx].productId = pid;
+    renderSampleItems();
+    closeSampleProductSearch();
+  };
+
+  // ==================== Items Render ====================
+  window.renderSampleItems = function() {
+    const c = document.getElementById('sampleItemsList');
+    if (!c) return;
+    if (window.sampleItems.length === 0) {
+      c.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:13px; padding:12px;">কোনো পণ্য যোগ করা হয়নি</div>';
+      return;
+    }
+    const products = window.db.products || [];
+    c.innerHTML = window.sampleItems.map((item, idx) => {
+      const sel = item.productId ? products.find(p => p.id === item.productId) : null;
+      let stockInfo = '', label = '🔍 পণ্য সিলেক্ট করুন';
+      if (sel) {
+        const stock = productStock(item.productId);
+        const low = (item.qty||0) > stock;
+        const packTag = sel.packSize ? ` <span style="background:#EFF6FF; color:#1d4bb0; padding:1px 6px; border-radius:4px; font-size:10px; font-weight:700;">${esc(sel.packSize)}</span>` : '';
+        label = `🔍 ${esc(sel.name)}${packTag}`;
+        stockInfo = `<div style="font-size:11px; margin-top:5px; color:${low?'var(--red)':'#10B981'}; font-weight:600;">📦 স্টক: ${stock} পিস${low?' ⚠️ পরিমাণ বেশি!':''}</div>`;
+      }
+      return `<div style="background:white; border:1px solid #e2e8f0; border-radius:10px; padding:10px; margin-bottom:8px;">
+        <div style="display:flex; gap:5px; align-items:center;">
+          <div onclick="openSampleProductSearch(${idx})" style="flex:1; padding:10px 12px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; cursor:pointer; background:white; color:${sel?'#1E293B':'#94a3b8'}; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-weight:${sel?'600':'400'};">${label}</div>
+          <input type="number" min="1" value="${item.qty||1}" onchange="updateSampleItem(${idx}, 'qty', this.value)" style="width:65px; padding:8px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; text-align:center;">
+          <button type="button" onclick="removeSampleItem(${idx})" style="background:#FEE2E2; color:#EF4444; border:none; width:34px; height:34px; border-radius:8px; cursor:pointer; flex-shrink:0;"><i class="fa-solid fa-trash"></i></button>
+        </div>
+        ${stockInfo}
+      </div>`;
+    }).join('');
+  };
+  window.addSampleItem = function() { window.sampleItems.push({ productId:'', qty:1 }); renderSampleItems(); };
+  window.removeSampleItem = function(i) { window.sampleItems.splice(i,1); renderSampleItems(); };
+  window.updateSampleItem = function(i, f, v) { if (window.sampleItems[i]) window.sampleItems[i][f] = (f==='qty') ? Number(v) : v; };
+
+  // ==================== Open/Close ====================
+  window.openSampleModal = function() {
+    const parties = window.db.parties || [];
+    const srs = window.db.srs || [];
+    if (parties.length === 0) {
+      if (!confirm('কোনো পার্টি নেই। নতুন পার্টি যোগ করবেন?')) return;
+      if (window.openForm) { switchView('parties'); openForm('party'); }
+      return;
+    }
+    document.getElementById('sampleParty').innerHTML = '<option value="">সিলেক্ট করুন</option>' + parties.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+    document.getElementById('sampleSR').innerHTML = '<option value="">সিলেক্ট করুন</option>' + srs.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+    document.getElementById('sampleDate').value = new Date().toISOString().slice(0,10);
+    document.getElementById('sampleNote').value = '';
+    window.sampleItems = [];
+    renderSampleItems();
+    document.getElementById('sampleModal').classList.add('open');
+  };
+  window.closeSampleModal = function() {
+    document.getElementById('sampleModal').classList.remove('open');
+    window.sampleItems = [];
+  };
+
+  // ==================== Stock ====================
+  function deductSampleStock(pid, qty) {
+    let rem = qty;
+    const batches = (window.db.batches || [])
+      .filter(b => b.productId === pid && Number(b.qty) > 0)
+      .sort((a,b) => new Date(a.date||0) - new Date(b.date||0));
+    const prefix = rootBasePath() + 'batches/';
+    batches.forEach(b => {
+      if (rem <= 0) return;
+      const have = Number(b.qty);
+      const take = Math.min(have, rem);
+      const left = have - take;
+      const key = b.key || b.id;
+      if (left <= 0) database.ref(prefix + key).remove();
+      else database.ref(prefix + key).update({ qty: left });
+      rem -= take;
+    });
+  }
+  function restoreSampleStock(pid, qty) {
+    const bId = 'RST-' + Date.now().toString(36) + Math.random().toString(36).slice(2,4);
+    database.ref(rootBasePath() + 'batches/' + bId).set({
+      id: bId, productId: pid, qty: Number(qty),
+      batchNo: 'SAMPLE_RESTORE', purchaseRate: 0,
+      date: new Date().toISOString()
+    });
+  }
+
+  // ==================== Save Sample ====================
+  window.saveSample = function() {
+    const partyId = document.getElementById('sampleParty').value;
+    const srId = document.getElementById('sampleSR').value;
+    const dateVal = document.getElementById('sampleDate').value;
+    const note = document.getElementById('sampleNote').value.trim();
+    if (!partyId) return alert('পার্টি সিলেক্ট করুন!');
+    if (!window.sampleItems.length) return alert('কমপক্ষে একটি পণ্য যোগ করুন!');
+    for (const it of window.sampleItems) {
+      if (!it.productId) return alert('সব পণ্য সিলেক্ট করুন!');
+      if (!it.qty || it.qty <= 0) return alert('সঠিক পরিমাণ দিন!');
+    }
+    for (const it of window.sampleItems) {
+      const stock = productStock(it.productId);
+      const prod = (window.db.products || []).find(p => p.id === it.productId);
+      if (stock < it.qty) return alert(`"${prod ? productFullName(prod) : 'পণ্য'}" এর পর্যাপ্ত স্টক নেই! বর্তমান: ${stock}, প্রয়োজন: ${it.qty}।`);
+    }
+    const party = (window.db.parties || []).find(p => p.id === partyId);
+    const sr = (window.db.srs || []).find(s => s.id === srId);
+    const txnDate = dateVal ? new Date(dateVal + 'T12:00:00').toISOString() : new Date().toISOString();
+    const prefix = rootBasePath() + 'transactions/';
+    window.sampleItems.forEach((item, idx) => {
+      const prod = (window.db.products || []).find(p => p.id === item.productId);
+      const txnId = 'SMP-' + Date.now().toString(36).toUpperCase() + idx + Math.random().toString(36).slice(2,4).toUpperCase();
+      database.ref(prefix + txnId).set({
+        id: txnId, date: txnDate, type: 'sample', status: 'active',
+        partyId: partyId, partyName: party ? party.name : '',
+        srId: srId || '', srName: sr ? sr.name : '',
+        productId: item.productId,
+        productName: prod ? prod.name : '',
+        packSize: prod ? (prod.packSize || '') : '',
+        qty: Number(item.qty), rate: 0, total: 0, paid: 0, due: 0, amount: 0,
+        note: note || 'Sample',
+        createdBy: (typeof currentUserEmail !== 'undefined' ? currentUserEmail : ''),
+        creatorName: window.currentUserName || '',
+        createdAt: new Date().toISOString()
+      });
+      deductSampleStock(item.productId, Number(item.qty));
+    });
+    const summary = window.sampleItems.map(i => {
+      const p = (window.db.products || []).find(x => x.id === i.productId);
+      return `${p ? productFullName(p) : '?'} × ${i.qty}`;
+    }).join(', ');
+    logAct('সেম্পল', `${party ? party.name : 'পার্টি'} কে${sr ? ' (SR: '+sr.name+')' : ''} সেম্পল: ${summary}`);
+    alert('✅ সেম্পল সফলভাবে রেকর্ড হয়েছে!\nস্টক আপডেট হয়েছে। (কোনো টাকা যোগ/বিয়োগ হয়নি)');
+    closeSampleModal();
+  };
+
+  // ==================== Sample Card ====================
+  window.renderSampleCard = function(t, showActions) {
+    const isVoided = t.status === 'voided';
+    const packTag = t.packSize ? ` <span style="background:#EFF6FF; color:#1d4bb0; padding:1px 6px; border-radius:4px; font-size:10px; font-weight:700;">${esc(t.packSize)}</span>` : '';
+    const statusBadge = isVoided
+      ? '<span style="background:#FEE2E2; color:#EF4444; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:700;">❌ বাতিল</span>'
+      : '<span style="background:#D1FAE5; color:#10B981; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:700;">✅ সক্রিয়</span>';
+    return `<div style="background:white; border:1px solid #e2e8f0; border-radius:16px; padding:15px; margin-bottom:10px; opacity:${isVoided?'0.7':'1'}; border-left:4px solid ${isVoided?'#EF4444':'#8B5CF6'};">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+        <div style="font-size:13px; font-weight:700; color:#8B5CF6;">🎁 ${esc(t.id)}</div>
+        <div>${statusBadge}</div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+        <div style="background:#F8FAFC; padding:8px 10px; border-radius:8px;">
+          <div style="font-size:10px; color:#64748B; font-weight:600;">পার্টি</div>
+          <div style="font-size:13px; font-weight:600; color:#1E293B;">${esc(t.partyName||'-')}</div>
+        </div>
+        <div style="background:#F8FAFC; padding:8px 10px; border-radius:8px;">
+          <div style="font-size:10px; color:#64748B; font-weight:600;">SR</div>
+          <div style="font-size:13px; font-weight:600; color:#1E293B;">${esc(t.srName||'—')}</div>
+        </div>
+      </div>
+      <div style="background:#F5F3FF; padding:10px; border-radius:8px; margin-bottom:10px;">
+        <div style="font-size:10px; color:#64748B; font-weight:600; margin-bottom:3px;">পণ্য</div>
+        <div style="font-size:14px; font-weight:700; color:#1E293B;">${esc(t.productName||'-')}${packTag}<span style="color:#8B5CF6;"> × ${t.qty} পিস</span></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:11px; color:#64748B; flex-wrap:wrap; gap:5px;">
+        <span>📅 ${fmtDate(t.date)}</span>
+        <span>👤 দিয়েছেন: ${esc(t.creatorName||t.createdBy||'-')}</span>
+      </div>
+      ${showActions ? `<div style="display:flex; gap:8px; margin-top:12px;">
+        ${isVoided
+          ? `<button onclick="restoreSampleTxn('${t.id}')" style="flex:1; background:#D1FAE5; color:#10B981; border:none; padding:10px; border-radius:10px; font-weight:600; font-size:13px; cursor:pointer;">♻️ পুনরায় সক্রিয়</button>`
+          : `<button onclick="voidSampleTxn('${t.id}')" style="flex:1; background:#FEE2E2; color:#EF4444; border:none; padding:10px; border-radius:10px; font-weight:600; font-size:13px; cursor:pointer;">🚫 বাতিল করুন</button>`
+        }
+      </div>` : ''}
+    </div>`;
+  };
+
+  // ==================== Sample List View ====================
+  window.renderSamplesList = function(search) {
+    injectSampleSection();
+    const c = document.getElementById('samplesListContainer');
+    const stats = document.getElementById('samplesStatsBar');
+    if (!c) return;
+    const all = (window.db.transactions || []).filter(t => t.type === 'sample');
+    const active = all.filter(t => t.status !== 'voided');
+    if (stats) {
+      const totalPieces = active.reduce((a, t) => a + Number(t.qty || 0), 0);
+      const parties = new Set(active.map(t => t.partyId)).size;
+      stats.innerHTML = `
+        <div style="background:white; padding:12px; border-radius:12px; text-align:center; border:1px solid #e2e8f0;">
+          <div style="font-size:11px; color:#64748B; font-weight:600;">মোট সেম্পল</div>
+          <div style="font-size:20px; font-weight:700; color:#8B5CF6;">${active.length}</div>
+        </div>
+        <div style="background:white; padding:12px; border-radius:12px; text-align:center; border:1px solid #e2e8f0;">
+          <div style="font-size:11px; color:#64748B; font-weight:600;">মোট পিস</div>
+          <div style="font-size:20px; font-weight:700; color:#10B981;">${totalPieces}</div>
+        </div>
+        <div style="background:white; padding:12px; border-radius:12px; text-align:center; border:1px solid #e2e8f0;">
+          <div style="font-size:11px; color:#64748B; font-weight:600;">পার্টি সংখ্যা</div>
+          <div style="font-size:20px; font-weight:700; color:#3B82F6;">${parties}</div>
+        </div>`;
+    }
+    const s = (search || '').toLowerCase().trim();
+    let list = all;
+    if (s) list = list.filter(t =>
+      (t.partyName||'').toLowerCase().includes(s) ||
+      (t.srName||'').toLowerCase().includes(s) ||
+      (t.productName||'').toLowerCase().includes(s) ||
+      (t.creatorName||'').toLowerCase().includes(s) ||
+      (t.id||'').toLowerCase().includes(s)
+    );
+    list.sort((a,b) => new Date(b.date||0) - new Date(a.date||0));
+    if (list.length === 0) {
+      c.innerHTML = '<div style="text-align:center; color:#94a3b8; padding:40px 10px;">কোনো সেম্পল পাওয়া যায়নি</div>';
+      return;
+    }
+    c.innerHTML = list.map(t => window.renderSampleCard(t, true)).join('');
+  };
+
+  // ==================== Void / Restore ====================
+  window.voidSampleTxn = function(txnId) {
+    const txn = (window.db.transactions || []).find(t => t.id === txnId);
+    if (!txn || txn.type !== 'sample') return alert('সেম্পল লেনদেন পাওয়া যায়নি');
+    if (txn.status === 'voided') return alert('এটি ইতিমধ্যে বাতিল');
+    if (!confirm(`"${txn.productName}" × ${txn.qty} পিস সেম্পল বাতিল করবেন?\n\nস्टক ফেরত আসবে।`)) return;
+    const pass = prompt('বাতিল করতে পাসওয়ার্ড দিন:');
+    if (!pass) return;
+    const user = auth.currentUser;
+    if (!user) return alert('সেশন পাওয়া যায়নি');
+    const cred = firebase.auth.EmailAuthProvider.credential(user.email, pass);
+    user.reauthenticateWithCredential(cred).then(() => {
+      restoreSampleStock(txn.productId, txn.qty);
+      database.ref(rootBasePath() + 'transactions/' + txnId).update({
+        status: 'voided',
+        voidedAt: new Date().toISOString(),
+        voidedBy: (typeof currentUserEmail !== 'undefined' ? currentUserEmail : '')
+      });
+      logAct('সেম্পল বাতিল', `সেম্পল ${txn.id} বাতিল। ${txn.productName} × ${txn.qty} স্টকে ফেরত`);
+      alert('✅ সেম্পল বাতিল হয়েছে এবং স্টক ফেরত আনা হয়েছে');
+    }).catch(() => alert('ভুল পাসওয়ার্ড!'));
+  };
+  window.restoreSampleTxn = function(txnId) {
+    const txn = (window.db.transactions || []).find(t => t.id === txnId);
+    if (!txn || txn.type !== 'sample') return alert('সেম্পল লেনদেন পাওয়া যায়নি');
+    if (txn.status !== 'voided') return alert('এটি ইতিমধ্যে সক্রিয়');
+    const stock = productStock(txn.productId);
+    if (stock < txn.qty) return alert(`পর্যাপ্ত স্টক নেই! বর্তমান: ${stock}, প্রয়োজন: ${txn.qty}।`);
+    const pass = prompt('পুনরায় সক্রিয় করতে পাসওয়ার্ড দিন:');
+    if (!pass) return;
+    const user = auth.currentUser;
+    if (!user) return alert('সেশন পাওয়া যায়নি');
+    const cred = firebase.auth.EmailAuthProvider.credential(user.email, pass);
+    user.reauthenticateWithCredential(cred).then(() => {
+      deductSampleStock(txn.productId, txn.qty);
+      database.ref(rootBasePath() + 'transactions/' + txnId).update({ status: 'active', voidedAt: null, voidedBy: null });
+      logAct('সেম্পল সক্রিয়', `সেম্পল ${txn.id} পুনরায় সক্রিয়`);
+      alert('✅ সেম্পল পুনরায় সক্রিয় হয়েছে');
+    }).catch(() => alert('ভুল পাসওয়ার্ড!'));
+  };
+
+  // ==================== Override renderTransactionsList ====================
+  (function() {
+    function apply() {
+      if (!window.renderTransactionsList || window._sampleTxnOverride) return;
+      const original = window.renderTransactionsList;
+      window._sampleTxnOverride = true;
+      window.renderTransactionsList = function(search) {
+        const all = window.db.transactions || [];
+        const samples = all.filter(t => t.type === 'sample');
+        const nonSamples = all.filter(t => t.type !== 'sample');
+        window.db.transactions = nonSamples;
+        try { if (typeof original === 'function') original(search); }
+        catch(e) { console.error('original renderTransactionsList:', e); }
+        window.db.transactions = all;
+        const c = document.getElementById('transactionsList');
+        if (!c) return;
+        const s = (search || '').toLowerCase().trim();
+        let fs = samples;
+        if (s) fs = fs.filter(t =>
+          (t.partyName||'').toLowerCase().includes(s) ||
+          (t.srName||'').toLowerCase().includes(s) ||
+          (t.productName||'').toLowerCase().includes(s) ||
+          (t.id||'').toLowerCase().includes(s)
+        );
+        if (fs.length > 0) {
+          fs.sort((a,b) => new Date(b.date||0) - new Date(a.date||0));
+          const headerHtml = `<div style="font-size:13px; font-weight:700; color:#8B5CF6; margin:5px 0 10px; display:flex; align-items:center; gap:6px;"><i class="fa-solid fa-gift"></i> সেম্পল লেনদেন (${fs.length})</div>`;
+          c.innerHTML = headerHtml + fs.map(t => window.renderSampleCard(t, true)).join('') + '<div style="height:15px;"></div>' + c.innerHTML;
+        }
+        // Sample view autorefresh
+        if (document.getElementById('samplesList')?.classList.contains('active')) {
+          try { renderSamplesList(document.getElementById('samplesListSearchInput')?.value || ''); } catch(e) {}
+        }
+      };
+    }
+    const t = setInterval(() => { if (window.renderTransactionsList && !window._sampleTxnOverride) { apply(); clearInterval(t); } }, 500);
+    setTimeout(() => clearInterval(t), 20000);
+  })();
+
+  // ==================== Override switchView ====================
+  (function() {
+    function apply() {
+      if (!window.switchView || window._sampleSwitchOverride) return;
+      const original = window.switchView;
+      window._sampleSwitchOverride = true;
+      window.switchView = function(name) {
+        if (name === 'samplesList') injectSampleSection();
+        const r = (typeof original === 'function') ? original(name) : undefined;
+        if (name === 'samplesList') setTimeout(() => renderSamplesList(''), 100);
+        return r;
+      };
+    }
+    const t = setInterval(() => { if (window.switchView && !window._sampleSwitchOverride) { apply(); clearInterval(t); } }, 500);
+    setTimeout(() => clearInterval(t), 20000);
+  })();
+
+})();
+</script>
+<!-- ================= SAMPLE FEATURE END ================= -->
 </body>
 </html>
