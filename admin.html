@@ -224,6 +224,22 @@ html.no-scroll, body.no-scroll {
 /* DESKTOP / PC APP LAYOUT (≥ 900px)                            */
 /* Mobile / APK (< 900px) unchanged — safe to add              */
 /* ============================================================ */
+/* ===== ডেস্কটপ গ্রিড ভিউতে টেবিল কাটা বন্ধ ===== */
+#partiesTable table, #suppliersTable table, #srTable table,
+#productsList table, #invoiceViewContainer table,
+#transactionsList table, #approvalsList table, #deliveryList table {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+#partiesTable > *, #suppliersTable > *, #srTable > *,
+#productsList > *, #invoiceViewContainer > *,
+#transactionsList > *, #approvalsList > *, #deliveryList > * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
 @media (min-width: 900px) {
   html, body { overflow-x: hidden; }
   body { align-items: stretch; }
