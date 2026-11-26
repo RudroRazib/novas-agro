@@ -609,7 +609,15 @@ body.modal-open {
     <div class="ns-content">
       <div class="ns-invoice-row"><div><span>ইনভয়েস নম্বর : <strong id="nsInvoiceNo" style="color:var(--primary);">--</strong></span><br><span style="font-size:12px; color:var(--text-muted);">ইনভয়েস তারিখ : <span id="nsInvoiceDate">--</span></span></div><button class="btn-inv-list" onclick="openInvoiceList()"><i class="fa-solid fa-list"></i> ইনভয়েস লিস্ট</button></div>
       <div id="editInvoicePrintRow" style="display:none; margin-bottom: 15px;"><button class="btn-inv-list" style="width: 100%; justify-content: center; background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD;" onclick="previewEditInvoice()"><i class="fa-solid fa-print"></i> এই ইনভয়েসটি পুনরায় প্রিন্ট করুন</button></div>
-      <div class="ns-customer-box"><select id="nsCustomer" required><option value="">কাস্টমার যোগ করুন</option></select></div>
+      <div class="ns-customer-box" style="position: relative; padding: 0;">
+  <div style="padding: 14px 15px; display: flex; align-items: center; gap: 10px;">
+    <i class="fa-solid fa-search" style="color: var(--text-muted); font-size: 14px;"></i>
+    <input type="text" id="nsCustomerSearch" placeholder="কাস্টমার সার্চ করুন (নাম বা ফোন)" oninput="filterNSCustomers(this.value)" onfocus="showNSCustomerList()" style="flex: 1; border: none; font-size: 15px; outline: none; background: transparent; color: var(--text); min-width: 0;">
+    <i class="fa-solid fa-chevron-down" style="color: var(--text-muted); font-size: 12px; cursor: pointer; padding: 5px;" onclick="toggleNSCustomerList()"></i>
+  </div>
+  <input type="hidden" id="nsCustomer" value="">
+  <div id="nsCustomerList" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 12px; max-height: 260px; overflow-y: auto; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,.1); margin-top: 5px; -webkit-overflow-scrolling: touch;"></div>
+</div>
       <div class="ns-add-item-btn" onclick="openAddItemModal()"><i class="fa-solid fa-circle-plus"></i> আইটেম যোগ করুন</div>
       <div class="ns-items-list" id="nsItemsList"></div>
       <div class="ns-form-row"><div class="ns-label">ডিসকাউন্ট</div><div class="ns-input-group ns-discount-row"><div class="symbol-box"><input type="number" id="nsDiscPercent" value="" placeholder="0" oninput="calcSaleTotals('percent')"><span>%</span></div><div class="symbol-box"><input type="number" id="nsDiscFlat" value="" placeholder="0" oninput="calcSaleTotals('flat')"><span>৳</span></div></div></div>
@@ -729,6 +737,70 @@ body.modal-open {
   };
   window.renderParties = function(searchTerm = '') { const container = document.getElementById('partiesTable'); if(!container) return; let parties = [...window.db.parties]; if(searchTerm) { const lower = searchTerm.toLowerCase(); parties = parties.filter(p => { const name = (p.name || '').toLowerCase(); const phone = (p.phone || '').toLowerCase(); const addr = (p.address || '').toLowerCase(); return name.includes(lower) || phone.includes(lower) || addr.includes(lower); }); } const rowsHtml = parties.map(p => { let pDue = calculatePartyDue(p); return `<tr><td onclick="openPartyProfile('${p.id}')" style="color:var(--primary); font-weight:600; cursor:pointer;">${esc(p.name)}</td><td style="font-weight:600;">${money(pDue)}</td></tr>`; }).join('') || '<tr><td colspan="2" style="text-align:center; padding:20px; color:#999;">কোনো পার্টি পাওয়া যায়নি</td></tr>'; container.innerHTML = `<div class="table-wrap"><table><thead><tr><th>নাম</th><th>বাকী</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`; };
   window.renderExpenses = function() { const container = document.getElementById('expenseList'); const totalEl = document.getElementById('expenseTotalView'); if(!container) return; let expenses = window.db.transactions.filter(t => t.type === 'cash_out' && t.note && t.note.includes('খরচ:')); expenses.sort((a,b) => new Date(b.date) - new Date(a.date)); let total = expenses.filter(t => !t.isVoided).reduce((sum, t) => sum + Number(t.amount || 0), 0); if(totalEl) totalEl.innerText = money(total); if(expenses.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">কোনো খরচ পাওয়া যায়নি</div>'; return; } container.innerHTML = expenses.map(t => { let note = (t.note || '').replace('খরচ: ', ''); let date = new Date(t.date).toLocaleDateString('en-GB'); let time = new Date(t.date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); let isVoidedStyle = t.isVoided ? 'opacity: 0.6; background: #FEE2E2;' : ''; let voidBadge = t.isVoided ? `<span style="background:#EF4444; color:white; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold; margin-left:5px;">বাতিলকৃত</span>` : ''; return `<div class="invoice-list-item" style="${isVoidedStyle} padding-bottom:10px;"><div class="inv-list-header" style="cursor:pointer;" onclick="editTransaction('${t.id}')"><div><div class="inv-list-inv" style="color:var(--red);"><i class="fa-solid fa-receipt"></i> খরচ ${voidBadge}</div><div class="inv-list-cust">${esc(note)}</div><div class="inv-list-date">${date} • ${time}</div></div><div class="inv-list-amounts"><div class="inv-list-total" style="color:var(--red);">৳ ${Number(t.amount || 0).toFixed(2)}</div></div></div><div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px; border-top:1px dashed #e2e8f0; padding-top:10px;">${t.isVoided ? `<button onclick="editTransaction('${t.id}')" style="background:#FEF3C7; color:#B45309; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-rotate-left"></i> সচল করুন</button>` : `<button onclick="editTransaction('${t.id}')" style="background:#EFF6FF; color:var(--primary); border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-pen"></i> এডিট করুন</button><button onclick="voidTransaction('${t.id}')" style="background:#FEE2E2; color:#EF4444; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-ban"></i> বাতিল</button>`}</div></div>`; }).join(''); };
+  /* ========== Searchable Customer Select (New Sale) ========== */
+function renderNSCustomerList(search = '') {
+  const list = document.getElementById('nsCustomerList');
+  if (!list) return;
+  let parties = [...(window.db.parties || [])];
+  if (search && search.trim()) {
+    const lower = search.trim().toLowerCase();
+    parties = parties.filter(p =>
+      (p.name || '').toLowerCase().includes(lower) ||
+      (p.phone || '').toLowerCase().includes(lower)
+    );
+  }
+  if (parties.length === 0) {
+    list.innerHTML = '<div style="padding: 15px; text-align: center; color: #999; font-size: 13px;">কোনো কাস্টমার পাওয়া যায়নি</div>';
+    return;
+  }
+  list.innerHTML = parties.map(p => {
+    const due = calculatePartyDue(p);
+    const dueText = due > 0 ? `বাকি: ৳${due.toFixed(2)}` : (due < 0 ? `অগ্রিম: ৳${Math.abs(due).toFixed(2)}` : '');
+    const dueColor = due > 0 ? 'var(--red)' : 'var(--green)';
+    const nameAttr = esc(p.name).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return `<div data-cust-id="${p.id}" data-cust-name="${nameAttr}" onclick="selectNSCustomer(this.dataset.custId, this.dataset.custName)" style="padding: 12px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${esc(p.name)}</div>
+        ${p.phone ? `<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">📞 ${esc(p.phone)}</div>` : ''}
+      </div>
+      ${dueText ? `<div style="font-size: 11px; font-weight: 700; color: ${dueColor}; white-space: nowrap;">${dueText}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+function showNSCustomerList() {
+  const list = document.getElementById('nsCustomerList');
+  if (!list) return;
+  renderNSCustomerList(document.getElementById('nsCustomerSearch').value);
+  list.style.display = 'block';
+}
+function hideNSCustomerList() {
+  const list = document.getElementById('nsCustomerList');
+  if (list) list.style.display = 'none';
+}
+function toggleNSCustomerList() {
+  const list = document.getElementById('nsCustomerList');
+  if (!list) return;
+  if (list.style.display === 'block') hideNSCustomerList();
+  else showNSCustomerList();
+}
+function filterNSCustomers(search) {
+  const hidden = document.getElementById('nsCustomer');
+  if (hidden && hidden.value) {
+    const cur = window.db.parties.find(p => p.id === hidden.value);
+    if (!cur || cur.name !== search) hidden.value = '';
+  }
+  renderNSCustomerList(search);
+  document.getElementById('nsCustomerList').style.display = 'block';
+}
+function selectNSCustomer(id, name) {
+  document.getElementById('nsCustomer').value = id;
+  document.getElementById('nsCustomerSearch').value = name;
+  hideNSCustomerList();
+}
+document.addEventListener('click', function(e) {
+  const box = document.getElementById('nsCustomerSearch')?.closest('.ns-customer-box');
+  if (box && !box.contains(e.target)) hideNSCustomerList();
+});
   window.openNewSale = function() {
     closeActionMenu();
     window.currentSaleItems = []; window.currentSaleType = 'cash'; window.editingSaleId = null; window.editingItemIndex = null;
@@ -739,7 +811,9 @@ body.modal-open {
     window.db.transactions.filter(t => t.type === 'sales' && t.invoiceNo).forEach(t => { let num = parseInt(t.invoiceNo.replace('INV-', '')); if(!isNaN(num) && num > maxInvNo) maxInvNo = num; });
     document.getElementById('nsInvoiceNo').innerText = 'INV-' + String(maxInvNo + 1).padStart(2, '0');
     document.getElementById('nsInvoiceDate').innerText = new Date().toLocaleDateString('en-GB');
-    document.getElementById('nsCustomer').innerHTML = `<option value="">কাস্টমার যোগ করুন</option>` + window.db.parties.map(p => { let due = calculatePartyDue(p); let dueText = due > 0 ? ` - বাকি: ৳${due}` : (due < 0 ? ` - অগ্রিম: ৳${Math.abs(due)}` : ''); return `<option value="${p.id}">${esc(p.name)}${dueText}</option>`; }).join('');
+    document.getElementById('nsCustomer').value = '';
+document.getElementById('nsCustomerSearch').value = '';
+hideNSCustomerList();
     document.getElementById('nsDiscPercent').value = ''; document.getElementById('nsDiscFlat').value = ''; document.getElementById('nsDelivery').value = 0; document.getElementById('nsPaid').value = 0;
     if(document.getElementById('nsDeliveryRequired')) document.getElementById('nsDeliveryRequired').checked = false;
     setSaleType('cash'); renderSaleItems(); document.getElementById('newSaleModal').classList.add('open');
@@ -760,7 +834,10 @@ body.modal-open {
     let voidBadge = t.isVoided ? `<span style="background:#EF4444; color:white; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold; margin-left:5px;">বাতিলকৃত</span>` : '';
     return `<div class="invoice-list-item" style="${isVoidedStyle} padding-bottom:10px;"><div class="inv-list-header" style="cursor:pointer;" onclick="editExistingInvoice('${t.id}')"><div><div class="inv-list-inv">${t.invoiceNo || 'N/A'} ${srBadge} ${voidBadge}</div><div class="inv-list-cust">কাস্টমার: <strong>${esc(pName)}</strong></div><div class="inv-list-date">${date}</div></div><div class="inv-list-amounts"><div class="inv-list-total">৳ ${Number(t.total).toFixed(2)}</div><div class="inv-list-due" style="color:${due > 0 ? 'var(--red)' : 'var(--green)'};">বাকি: ৳ ${due.toFixed(2)}</div></div></div><div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px; border-top:1px dashed #e2e8f0; padding-top:10px;">${t.isVoided ? `<button onclick="editExistingInvoice('${t.id}')" style="background:#FEF3C7; color:#B45309; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-rotate-left"></i> সচল করুন</button>` : `<button onclick="editExistingInvoice('${t.id}')" style="background:#EFF6FF; color:var(--primary); border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-pen"></i> এডিট করুন</button><button onclick="voidTransaction('${t.id}')" style="background:#FEE2E2; color:#EF4444; border:none; padding:5px 12px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:600;"><i class="fa-solid fa-ban"></i> বাতিল</button>`}</div></div>`;
   }
-  window.editExistingInvoice = function(txnId) { const txn = window.db.transactions.find(t => t.id === txnId); if(!txn) return; if (txn.srPhone !== currentSR.phone && txn.srId !== currentSR.id) { return alert('দুঃখিত! এটি আপনার করা বিক্রয় নয়।'); } closeInvoiceList(); window.editingSaleId = txn.id; window.editingItemIndex = null; document.getElementById('editInvoicePrintRow').style.display = 'block'; document.getElementById('nsSaveBtn').innerText = 'আপডেট করুন'; document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> বিক্রয় এডিট`; document.getElementById('nsInvoiceNo').innerText = txn.invoiceNo || 'INV-EDIT'; document.getElementById('nsInvoiceDate').innerText = new Date(txn.date).toLocaleDateString('en-GB'); document.getElementById('nsCustomer').innerHTML = window.db.parties.map(p => { let due = calculatePartyDue(p); let dueText = due > 0 ? ` - বাকি: ৳${due}` : (due < 0 ? ` - অগ্রিম: ৳${Math.abs(due)}` : ''); return `<option value="${p.id}">${esc(p.name)}${dueText}</option>`; }).join(''); document.getElementById('nsCustomer').value = txn.partyId; window.currentSaleItems = txn.items ? JSON.parse(JSON.stringify(txn.items)) : []; renderSaleItems(); document.getElementById('nsDiscPercent').value = ''; document.getElementById('nsDiscFlat').value = txn.discount || ''; document.getElementById('nsDelivery').value = txn.delivery || 0; document.getElementById('nsPaid').value = txn.paid || 0; if(txn.due > 0) { window.currentSaleType = 'credit'; document.getElementById('btnCashToggle').classList.remove('active'); document.getElementById('btnCreditToggle').classList.add('active'); } else { window.currentSaleType = 'cash'; document.getElementById('btnCashToggle').classList.add('active'); document.getElementById('btnCreditToggle').classList.remove('active'); } if(document.getElementById('nsDeliveryRequired')) { document.getElementById('nsDeliveryRequired').checked = (txn.deliveryStatus === 'pending'); } calcSaleTotals(); document.getElementById('newSaleModal').classList.add('open'); };
+  window.editExistingInvoice = function(txnId) { const txn = window.db.transactions.find(t => t.id === txnId); if(!txn) return; if (txn.srPhone !== currentSR.phone && txn.srId !== currentSR.id) { return alert('দুঃখিত! এটি আপনার করা বিক্রয় নয়।'); } closeInvoiceList(); window.editingSaleId = txn.id; window.editingItemIndex = null; document.getElementById('editInvoicePrintRow').style.display = 'block'; document.getElementById('nsSaveBtn').innerText = 'আপডেট করুন'; document.querySelector('#newSaleModal .ns-header-left').innerHTML = `<span class="ns-back" onclick="closeNewSale()"><i class="fa-solid fa-arrow-left"></i></span> বিক্রয় এডিট`; document.getElementById('nsInvoiceNo').innerText = txn.invoiceNo || 'INV-EDIT'; document.getElementById('nsInvoiceDate').innerText = new Date(txn.date).toLocaleDateString('en-GB'); document.getElementById('nsCustomer').value = txn.partyId;
+const _selectedParty = window.db.parties.find(p => p.id === txn.partyId);
+document.getElementById('nsCustomerSearch').value = _selectedParty ? _selectedParty.name : '';
+hideNSCustomerList(); window.currentSaleItems = txn.items ? JSON.parse(JSON.stringify(txn.items)) : []; renderSaleItems(); document.getElementById('nsDiscPercent').value = ''; document.getElementById('nsDiscFlat').value = txn.discount || ''; document.getElementById('nsDelivery').value = txn.delivery || 0; document.getElementById('nsPaid').value = txn.paid || 0; if(txn.due > 0) { window.currentSaleType = 'credit'; document.getElementById('btnCashToggle').classList.remove('active'); document.getElementById('btnCreditToggle').classList.add('active'); } else { window.currentSaleType = 'cash'; document.getElementById('btnCashToggle').classList.add('active'); document.getElementById('btnCreditToggle').classList.remove('active'); } if(document.getElementById('nsDeliveryRequired')) { document.getElementById('nsDeliveryRequired').checked = (txn.deliveryStatus === 'pending'); } calcSaleTotals(); document.getElementById('newSaleModal').classList.add('open'); };
   window.renderTransactionsList = function(searchTerm = '') {
     const container = document.getElementById('transactionsList'); if(!container) return;
     let txns = window.db.transactions; txns.sort((a,b) => new Date(b.date) - new Date(a.date));
@@ -1525,6 +1602,110 @@ body.modal-open {
     setTimeout(() => clearInterval(t), 20000);
   })();
 
+})();
+/* ========== Auto Searchable Party Select in Quick Forms ========== */
+function makePartySelectSearchable(selectEl) {
+  if (!selectEl || selectEl.dataset.searchable === '1') return;
+  if (selectEl.tagName !== 'SELECT') return;
+  const opts = Array.from(selectEl.options).filter(o => o.value);
+  if (opts.length === 0) return;
+  const partyIds = new Set((window.db.parties || []).map(p => p.id));
+  const looksLikeParty = opts.some(o => partyIds.has(o.value));
+  if (!looksLikeParty) return;
+
+  selectEl.dataset.searchable = '1';
+  selectEl.style.display = 'none';
+
+  const wrapper = document.createElement('div');
+  wrapper.style.cssText = 'position: relative; width: 100%;';
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'কাস্টমার সার্চ করুন (নাম বা ফোন)';
+  input.style.cssText = 'width: 100%; padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #F8FAFC; color: var(--text); outline: none;';
+
+  const list = document.createElement('div');
+  list.style.cssText = 'display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 12px; max-height: 220px; overflow-y: auto; z-index: 200; box-shadow: 0 4px 15px rgba(0,0,0,.1); margin-top: 5px; -webkit-overflow-scrolling: touch;';
+
+  selectEl.parentNode.insertBefore(wrapper, selectEl);
+  wrapper.appendChild(input);
+  wrapper.appendChild(list);
+  wrapper.appendChild(selectEl);
+
+  function render(filter = '') {
+    let parties = [...(window.db.parties || [])];
+    if (filter && filter.trim()) {
+      const lower = filter.trim().toLowerCase();
+      parties = parties.filter(p =>
+        (p.name || '').toLowerCase().includes(lower) ||
+        (p.phone || '').toLowerCase().includes(lower)
+      );
+    }
+    if (parties.length === 0) {
+      list.innerHTML = '<div style="padding: 12px; text-align: center; color: #999; font-size: 13px;">কোনো কাস্টমার পাওয়া যায়নি</div>';
+      return;
+    }
+    list.innerHTML = parties.map(p => {
+      const due = calculatePartyDue(p);
+      const dueText = due > 0 ? `বাকি: ৳${due.toFixed(2)}` : (due < 0 ? `অগ্রিম: ৳${Math.abs(due).toFixed(2)}` : '');
+      const dueColor = due > 0 ? 'var(--red)' : 'var(--green)';
+      const nameAttr = esc(p.name).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      return `<div data-id="${p.id}" data-name="${nameAttr}" style="padding: 10px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${esc(p.name)}</div>
+          ${p.phone ? `<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">📞 ${esc(p.phone)}</div>` : ''}
+        </div>
+        ${dueText ? `<div style="font-size: 11px; font-weight: 700; color: ${dueColor}; white-space: nowrap;">${dueText}</div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  input.addEventListener('focus', () => { render(input.value); list.style.display = 'block'; });
+  input.addEventListener('input', () => {
+    if (selectEl.value) {
+      const cur = window.db.parties.find(p => p.id === selectEl.value);
+      if (!cur || cur.name !== input.value) selectEl.value = '';
+    }
+    render(input.value);
+    list.style.display = 'block';
+  });
+
+  list.addEventListener('click', (e) => {
+    const item = e.target.closest('[data-id]');
+    if (item) {
+      selectEl.value = item.dataset.id;
+      input.value = item.dataset.name;
+      list.style.display = 'none';
+      selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!wrapper.contains(e.target)) list.style.display = 'none';
+  });
+
+  if (selectEl.value) {
+    const cur = (window.db.parties || []).find(p => p.id === selectEl.value);
+    if (cur) input.value = cur.name;
+  }
+  selectEl.addEventListener('change', () => {
+    const cur = (window.db.parties || []).find(p => p.id === selectEl.value);
+    if (cur) input.value = cur.name;
+  });
+}
+
+// Auto-apply যখন quickFormModal ওপেন হয় বা ফিল্ড populate হয়
+(function setupQuickFormSearchable() {
+  const qfModal = document.getElementById('quickFormModal');
+  const qfFields = document.getElementById('quickFormFields');
+  if (!qfModal || !qfFields) return;
+  const apply = () => {
+    if (qfModal.classList.contains('open')) {
+      qfFields.querySelectorAll('select').forEach(makePartySelectSearchable);
+    }
+  };
+  new MutationObserver(apply).observe(qfModal, { attributes: true, attributeFilter: ['class'] });
+  new MutationObserver(apply).observe(qfFields, { childList: true, subtree: true });
 })();
 </script>
 <!-- ================= SR SAMPLE FEATURE END ================= -->
