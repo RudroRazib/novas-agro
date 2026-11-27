@@ -1960,5 +1960,324 @@ window.openNewSale = function() {
 };    
 </script>
 <!-- ================= SAMPLE FEATURE END ================= -->
+<style>
+/* নোটিফিকেশন প্যানেল: বেল চাপলে ফুল স্ক্রিনে খুলবে, পেছনে আর কিছু দেখা যাবে না */
+#alertsModal { align-items: stretch !important; padding: 0 !important; }
+#alertsModal .modal-box { width: 100% !important; max-width: 100% !important; max-height: 100vh !important; height: 100vh; height: 100dvh; border-radius: 0 !important; padding: 20px 16px 120px; overflow-y: auto; }
+</style>
+<!-- ================= DUE & COLLECTION NOTIFICATIONS (IN-APP) ================= -->
+<script>
+(function() {
+  'use strict';
+
+  // ===== নিয়ম — বদলাতে চাইলে শুধু এই সংখ্যাগুলো বদলান =====
+  var DUE_LIMIT = 10000;            // টাকা: পার্টির বাকি এর বেশি হলে নোটিফিকেশন
+  var NO_COLLECT_DAYS = 7;          // দিন: এতদিন কালেকশন না দিলে নোটিফিকেশন
+  var NOTIFY_HOUR = 9;              // সকাল ৯টা (অ্যাপ খোলা থাকলে ব্রাউজার নোটিফিকেশন)
+  var LOW_STOCK = 5;                // পিস: চালু পণ্যের স্টক এত বা এর কম হলে নোটিফিকেশন
+  var STOCK_LOOKBACK_DAYS = 30;     // দিন: এই সময়ে বিক্রি হয়েছে এমন পণ্যের স্টকই দেখা হবে
+  var SUPPLIER_DUE_LIMIT = 10000;   // টাকা: সাপ্লায়ারকে দেনা এর বেশি হলে নোটিফিকেশন (শুধু অ্যাডমিন)
+  var DELIVERY_MIN_DAYS = 1;        // দিন: ডেলিভারি এতদিন বাকি থাকলে নোটিফিকেশন
+
+  function escA(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function fmtMoney(n) { return '৳ ' + Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 }); }
+  function fmtDate(d) { try { return new Date(d).toLocaleDateString('en-GB'); } catch (e) { return '-'; } }
+  function isSR() { try { return typeof currentSR !== 'undefined' && !!currentSR; } catch (e) { return false; } }
+  function mySR() { try { return (typeof currentSR !== 'undefined') ? currentSR : null; } catch (e) { return null; } }
+
+  function calcDue(party) {
+    try { if (typeof calculatePartyDue === 'function') return Number(calculatePartyDue(party) || 0); } catch (e) {}
+    var due = Number(party.previousDue || 0);
+    (window.db.transactions || []).forEach(function(t) {
+      if (t.partyId !== party.id || t.isVoided) return;
+      if (t.type === 'sales') due += Number(t.due != null ? t.due : ((t.total || 0) - (t.paid || 0)));
+      else if (t.type === 'cash_in' || t.type === 'due_collect') due -= Number(t.amount || 0);
+      else if (t.type === 'sales_return') due -= Number((t.total || 0) - (t.paid || 0));
+    });
+    return due;
+  }
+
+  function calcSupplierDueFn(supplierId) {
+    try { if (typeof calculateSupplierDue === 'function') return Number(calculateSupplierDue(supplierId) || 0); } catch (e) {}
+    var due = 0;
+    (window.db.transactions || []).forEach(function(t) {
+      if (t.supplierId !== supplierId || t.isVoided) return;
+      if (t.type === 'purchase') due += (Number(t.total || 0) - Number(t.paid || 0));
+      else if (t.type === 'due_pay' || t.type === 'cash_out') due -= Number(t.amount || 0);
+      else if (t.type === 'purchase_return') due -= (Number(t.total || 0) - Number(t.paid || 0));
+    });
+    return due;
+  }
+
+  function productStock(pid) {
+    return (window.db.batches || []).filter(function(b) { return b.productId === pid; })
+      .reduce(function(a, b) { return a + Number(b.qty || 0); }, 0);
+  }
+
+  function isMyTxn(t) {
+    if (!isSR()) return true;
+    var sr = mySR(); if (!sr) return false;
+    return (t.srId === sr.id || t.srPhone === sr.phone || t.createdBy === sr.phone);
+  }
+
+  // SR অ্যাপে শুধু নিজের পার্টির নোটিফিকেশন; অ্যাডমিন অ্যাপে সব পার্টির।
+  function isMyParty(party) {
+    if (!isSR()) return true;
+    var sr = mySR(); if (!sr) return false;
+    var txns = window.db.transactions || [], i, t;
+    for (i = 0; i < txns.length; i++) { t = txns[i];
+      if (t.partyId === party.id && (t.srId === sr.id || t.srPhone === sr.phone || t.createdBy === sr.phone)) return true; }
+    var ap = window.db.approvedSales || [], j, s;
+    for (j = 0; j < ap.length; j++) { s = ap[j];
+      if ((s.partyId === party.id || s.customerName === party.name) && (s.srId === sr.id || s.srPhone === sr.phone || s.createdBy === sr.phone)) return true; }
+    return false;
+  }
+
+  function lastPayInfo(partyId) {
+    var lastPay = null, lastSale = null;
+    (window.db.transactions || []).forEach(function(t) {
+      if (t.partyId !== partyId || t.isVoided) return;
+      var d = new Date(t.date); if (isNaN(d.getTime())) return;
+      if (t.type === 'sales') {
+        if (!lastSale || d > lastSale) lastSale = d;
+        if (Number(t.paid || 0) > 0 && (!lastPay || d > lastPay)) lastPay = d;
+      } else if (t.type === 'cash_in' || t.type === 'due_collect') {
+        if (Number(t.amount || t.paid || 0) > 0 && (!lastPay || d > lastPay)) lastPay = d;
+      }
+    });
+    return { lastPay: lastPay, lastSale: lastSale };
+  }
+
+  function soldInLastDays(days) {
+    var out = {}, now = new Date(), ms = days * 86400000;
+    (window.db.transactions || []).forEach(function(t) {
+      if (t.type !== 'sales' || t.isVoided) return;
+      var d = new Date(t.date); if (isNaN(d.getTime())) return;
+      if ((now - d) > ms) return;
+      (t.items || []).forEach(function(it) { if (it.productId) out[it.productId] = 1; });
+      if (t.productId) out[t.productId] = 1;
+    });
+    return out;
+  }
+
+  // ===== পড়া / না-পড়া — আজকের জন্য মনে রাখা হয়; আগামীকাল আবার নতুন আসবে =====
+  function todayStr() { return new Date().toDateString(); }
+  function readStoreKey() {
+    if (isSR()) { var sr = mySR(); return 'novasNotifRead_sr_' + (sr ? (sr.id || sr.phone || 'x') : 'x'); }
+    return 'novasNotifRead_admin';
+  }
+  function getReadMap() { try { return JSON.parse(localStorage.getItem(readStoreKey()) || '{}') || {}; } catch (e) { return {}; } }
+  function isRead(key) { try { return getReadMap()[key] === todayStr(); } catch (e) { return false; } }
+  function markRead(key) { try { var m = getReadMap(); m[key] = todayStr(); localStorage.setItem(readStoreKey(), JSON.stringify(m)); } catch (e) {} }
+
+  // ===== সব নোটিফিকেশন হিসাব =====
+  function computeAlerts() {
+    var now = new Date();
+    function mkSection(id, title, color) { return { id: id, title: title, color: color, items: [] }; }
+    var dueS = mkSection('due', '🔴 বেশি বাকি', '#DC2626');
+    var nocollS = mkSection('nocoll', '🟠 ৭ দিন কালেকশন নেই', '#D97706');
+    var delS = mkSection('delivery', '🚚 ডেলিভারি বাকি', '#2563EB');
+    var stockS = mkSection('stock', '📦 স্টক কম / শেষ', '#B45309');
+    var supS = mkSection('supplier', '💰 সাপ্লায়ার দেনা বেশি', '#047857');
+    var dmgS = mkSection('damage', '⚠️ ড্যামেজ পরিশোধ বাকি', '#DC2626');
+
+    // পার্টির বাকি + কালেকশন
+    (window.db.parties || []).forEach(function(p) {
+      if (!isMyParty(p)) return;
+      var due = calcDue(p);
+      if (!(due > 0)) return; // বাকি না থাকলে কোনো নোটিফিকেশন না
+      if (due > DUE_LIMIT) dueS.items.push({ key: 'due:' + p.id, title: p.name, sub: 'বাকি: <b style="color:#DC2626;">' + fmtMoney(due) + '</b>', phone: p.phone || '', action: 'party:' + p.id, ord: due });
+      var info = lastPayInfo(p.id), ref = info.lastPay || info.lastSale;
+      if (ref) {
+        var days = Math.floor((now - ref) / 86400000);
+        if (days >= NO_COLLECT_DAYS) nocollS.items.push({ key: 'nocoll:' + p.id, title: p.name, sub: 'বাকি: <b style="color:#DC2626;">' + fmtMoney(due) + '</b> • শেষ কালেকশন: ' + (info.lastPay ? fmtDate(info.lastPay) + ' (' + days + ' দিন আগে)' : 'কখনো হয়নি (' + days + ' দিন)'), phone: p.phone || '', action: 'party:' + p.id, ord: days });
+      }
+    });
+    dueS.items.sort(function(a, b) { return b.ord - a.ord; });
+    nocollS.items.sort(function(a, b) { return b.ord - a.ord; });
+
+    // ডেলিভারি বাকি (pending + ১ দিনের বেশি)
+    (window.db.transactions || []).forEach(function(t) {
+      if (t.type !== 'sales' || t.isVoided) return;
+      if ((t.deliveryStatus || 'delivered') !== 'pending') return;
+      if (!isMyTxn(t)) return;
+      var d = new Date(t.date); if (isNaN(d.getTime())) return;
+      var days = Math.floor((now - d) / 86400000);
+      if (days < DELIVERY_MIN_DAYS) return;
+      var party = (window.db.parties || []).find(function(x) { return x.id === t.partyId; });
+      delS.items.push({ key: 'delivery:' + t.id, title: (party ? party.name : 'পার্টি') + (t.invoiceNo ? ' — ' + t.invoiceNo : ''), sub: 'ডেলিভারি বাকি ' + days + ' দিন • মোট ' + fmtMoney(t.total), phone: party ? (party.phone || '') : '', action: 'delivery', ord: days });
+    });
+    delS.items.sort(function(a, b) { return b.ord - a.ord; });
+
+    // স্টক কম / শেষ (শুধু গত ৩০ দিনে বিক্রি হয়েছে এমন পণ্য)
+    var sold = soldInLastDays(STOCK_LOOKBACK_DAYS);
+    (window.db.products || []).forEach(function(prod) {
+      if (!sold[prod.id]) return;
+      var st = productStock(prod.id);
+      if (st > LOW_STOCK) return;
+      stockS.items.push({ key: 'stock:' + prod.id, title: prod.name + (prod.packSize ? ' (' + prod.packSize + ')' : ''), sub: st <= 0 ? '⛔ স্টক শেষ!' : 'স্টক কম — মাত্র ' + st + ' পিস আছে', phone: '', action: 'products', ord: st });
+    });
+    stockS.items.sort(function(a, b) { return a.ord - b.ord; });
+
+    // সাপ্লায়ার দেনা + ড্যামেজ (শুধু অ্যাডমিন)
+    if (!isSR()) {
+      (window.db.suppliers || []).forEach(function(s) {
+        var due = calcSupplierDueFn(s.id);
+        if (due > SUPPLIER_DUE_LIMIT) supS.items.push({ key: 'supplier:' + s.id, title: s.name, sub: 'সাপ্লায়ারকে দেনা: <b style="color:#DC2626;">' + fmtMoney(due) + '</b>', phone: s.phone || '', action: 'suppliers', ord: due });
+      });
+      supS.items.sort(function(a, b) { return b.ord - a.ord; });
+      (window.db.transactions || []).forEach(function(t) {
+        if (t.type !== 'damage' || t.settled) return;
+        var prod = (window.db.products || []).find(function(x) { return x.id === t.productId; });
+        var sup = (window.db.suppliers || []).find(function(x) { return x.id === t.supplierId; });
+        dmgS.items.push({ key: 'damage:' + t.id, title: (prod ? prod.name : 'পণ্য') + ' × ' + Number(t.qty || 0) + ' পিস', sub: 'ড্যামেজের ' + fmtMoney(t.total) + ' পরিশোধ বাকি' + (sup ? ' • ' + sup.name : ''), phone: '', action: 'damages', ord: new Date(t.date).getTime() || 0 });
+      });
+      dmgS.items.sort(function(a, b) { return b.ord - a.ord; });
+    }
+
+    var all = [dueS, nocollS, delS, stockS, supS, dmgS].filter(function(s) { return s.items.length > 0; });
+    var unread = 0, total = 0;
+    all.forEach(function(s) { s.items.forEach(function(it) { total++; if (!isRead(it.key)) unread++; }); });
+    return { sections: all, unread: unread, total: total };
+  }
+
+  function rowHtml(it) {
+    var read = isRead(it.key);
+    return '<div onclick="notifOpen(\'' + it.key + '\', \'' + it.action + '\')" style="background:white; border:1px solid #e2e8f0; border-radius:12px; padding:12px 14px; margin-bottom:8px; cursor:pointer;' + (read ? ' opacity:.55;' : '') + '">'
+      + '<div style="font-weight:700; font-size:14px; color:#1E293B;">' + escA(it.title) + (read ? ' <span style="font-size:11px; color:#10B981; font-weight:600;">✓ পড়া হয়েছে</span>' : '') + '</div>'
+      + '<div style="font-size:12px; color:#64748B; margin-top:3px;">' + it.sub + '</div>'
+      + (it.phone ? '<div style="font-size:11px; color:#94a3b8; margin-top:2px;">📞 ' + escA(it.phone) + '</div>' : '')
+      + '</div>';
+  }
+
+  function renderAlertsPanel() {
+    var body = document.getElementById('alertsBody'); if (!body) return;
+    var a = window._dueAlerts || computeAlerts();
+    var html = '';
+    html += '<div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:12px; padding:10px 12px; font-size:12px; color:#1E40AF; margin-bottom:14px;">📌 নিয়ম: বাকি <b>' + fmtMoney(DUE_LIMIT) + '</b>-এর বেশি, <b>' + NO_COLLECT_DAYS + ' দিন</b> কালেকশন নেই, স্টক কম/শেষ, ডেলিভারি বাকি, সাপ্লায়ার দেনা বেশি, ড্যামেজ বাকি — এসব হলে নোটিফিকেশন আসে। কোনোটায় চাপ দিলে সেটা পড়া হয়ে সংখ্যা কমে যাবে।</div>';
+    if (a.unread > 0) html += '<button onclick="markAllNotifRead()" style="width:100%; background:#F8FAFC; color:#475569; border:1px solid #e2e8f0; padding:10px; border-radius:12px; font-weight:600; font-size:13px; cursor:pointer; margin-bottom:14px;">✓ সব পড়া হয়েছে</button>';
+    if (a.total === 0) {
+      html += '<div style="text-align:center; color:#10B981; padding:30px 10px; font-size:15px; font-weight:600;">✅ আপাতত কোনো নোটিফিকেশন নেই</div>';
+    } else {
+      a.sections.forEach(function(s) {
+        var un = 0; s.items.forEach(function(it) { if (!isRead(it.key)) un++; });
+        html += '<div style="font-size:13px; font-weight:700; color:' + s.color + '; margin:12px 0 8px;">' + s.title + ' (' + (un > 0 ? un + 'টি নতুন' : 'সব পড়া হয়েছে') + ')</div>';
+        html += s.items.map(function(it) { return rowHtml(it); }).join('');
+      });
+    }
+    body.innerHTML = html;
+    var nb = document.getElementById('alertsNotifBtn');
+    if (nb) {
+      if (!('Notification' in window)) nb.style.display = 'none';
+      else if (Notification.permission === 'granted') { nb.innerHTML = '✅ ব্রাউজার নোটিফিকেশন চালু আছে'; nb.disabled = true; }
+      else { nb.innerHTML = '🔔 ব্রাউজার নোটিফিকেশন চালু করুন'; nb.disabled = false; }
+    }
+  }
+
+  function injectModal() {
+    if (document.getElementById('alertsModal')) return;
+    var m = document.createElement('div');
+    m.className = 'modal'; m.id = 'alertsModal'; m.style.zIndex = '110';
+    m.innerHTML = '<div class="modal-box">'
+      + '<div class="modal-head"><h3 style="color:var(--primary)">🔔 নোটিফিকেশন</h3><button class="close-btn" onclick="closeAlerts()">✕</button></div>'
+      + '<div id="alertsBody"></div>'
+      + '<button id="alertsNotifBtn" onclick="enableBrowserNotif()" style="width:100%; background:#EFF6FF; color:var(--primary); border:1px solid #BFDBFE; padding:12px; border-radius:12px; font-weight:600; font-size:14px; cursor:pointer; margin-top:6px;">🔔 ব্রাউজার নোটিফিকেশন চালু করুন</button>'
+      + '<div style="font-size:11px; color:#94a3b8; text-align:center; margin-top:8px;">সকাল ' + NOTIFY_HOUR + 'টার নোটিফিকেশন পেতে অ্যাপ খোলা থাকতে হবে — অ্যাপ বন্ধ থাকলে জানাতে সার্ভারের পুশ লাগবে।</div>'
+      + '</div>'
+      + '<nav class="bottom-bar">'
+      + '<div class="nav-btn-buy" onclick="closeAlerts(); switchView(\'dashboard\')"><i class="fa-solid fa-house"></i> হোম</div>'
+      + '<div class="fab-btn" onclick="closeAlerts(); openActionMenu()"><i class="fa-solid fa-plus"></i></div>'
+      + '<div class="nav-btn-sell" onclick="closeAlerts(); openNewSale()"><i class="fa-solid fa-cash-register"></i> বিক্রি</div>'
+      + '</nav>';
+    document.body.appendChild(m);
+    m.addEventListener('click', function(e) { if (e.target === m) closeAlerts(); });
+  }
+
+  window.closeAlerts = function() { var m = document.getElementById('alertsModal'); if (m) m.classList.remove('open'); };
+  window.openAlerts = function() { injectModal(); renderAlertsPanel(); document.getElementById('alertsModal').classList.add('open'); };
+  window.toggleNotifications = function() { window.openAlerts(); };
+
+  // কোনো নোটিফিকেশনে চাপ দিলে: সেটা পড়া হবে, সংখ্যা কমবে, তারপর ওই জায়গায় যাবে
+  window.notifOpen = function(key, action) {
+    try { markRead(key); } catch (e) {}
+    try { refreshAlerts(); } catch (e) {}
+    closeAlerts();
+    try {
+      if (action.indexOf('party:') === 0) { openPartyProfile(action.slice(6)); }
+      else if (action === 'products') { switchView('products'); }
+      else if (action === 'delivery') { switchView('delivery'); }
+      else if (action === 'suppliers') { switchView('suppliers'); }
+      else if (action === 'damages') { switchView('damages'); }
+    } catch (e) {}
+  };
+  window.markAllNotifRead = function() {
+    try {
+      var a = window._dueAlerts; if (!a) return;
+      var m = getReadMap(), t = todayStr();
+      a.sections.forEach(function(s) { s.items.forEach(function(it) { m[it.key] = t; }); });
+      localStorage.setItem(readStoreKey(), JSON.stringify(m));
+      refreshAlerts(); renderAlertsPanel();
+    } catch (e) {}
+  };
+
+  window.enableBrowserNotif = function() {
+    try {
+      if (!('Notification' in window)) return alert('এই ব্রাউজারে নোটিফিকেশন সাপোর্ট করে না।');
+      Notification.requestPermission().then(function(p) {
+        renderAlertsPanel();
+        if (p === 'granted') {
+          var a = window._dueAlerts || computeAlerts();
+          try { new Notification('Novas Agro নোটিফিকেশন চালু হয়েছে', { body: a.unread > 0 ? ('এখন ' + a.unread + 'টি নতুন নোটিফিকেশন আছে।') : 'আপাতত কোনো নোটিফিকেশন নেই।' }); } catch (e) {}
+        } else { alert('নোটিফিকেশন পারমিশন দেওয়া হয়নি। ব্রাউজার সেটিংস থেকে চালু করতে হবে।'); }
+      });
+    } catch (e) { alert('নোটিফিকেশন চালু করা যায়নি।'); }
+  };
+
+  function refreshAlerts() {
+    if (!window.db || !window.db.parties) return;
+    var a; try { a = computeAlerts(); } catch (e) { return; }
+    window._dueAlerts = a;
+    var badge = document.getElementById('notiBadge');
+    if (badge) {
+      var extra = isSR() ? 0 : ((window.db.partyRequests || []).length); // অ্যাডমিন: আগের পার্টি রিকোয়েস্ট সংখ্যাও ব্যাজে থাকবে
+      var total = a.unread + extra;
+      if (total > 0) { badge.style.display = 'flex'; badge.textContent = total; }
+      else { badge.style.display = 'none'; }
+    }
+    var m = document.getElementById('alertsModal');
+    if (m && m.classList.contains('open')) renderAlertsPanel();
+  }
+  window.refreshDueAlerts = refreshAlerts;
+
+  function wrapRenderAll() {
+    if (!window.renderAll || window._alertsWrapped) return;
+    var orig = window.renderAll; window._alertsWrapped = true;
+    window.renderAll = function() { var r = orig.apply(this, arguments); try { refreshAlerts(); } catch (e) {} return r; };
+    try { refreshAlerts(); } catch (e) {}
+  }
+
+  // ৯টার টিকার: অ্যাপ খোলা থাকলে সকাল ৯টায় একবার ব্রাউজার নোটিফিকেশন
+  function tick9am() {
+    try {
+      var n = new Date();
+      if (n.getHours() !== NOTIFY_HOUR || n.getMinutes() >= 5) return;
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      var key = 'dueAlert9am_' + n.toDateString();
+      if (localStorage.getItem(key)) return;
+      var a = window._dueAlerts; if (!a || a.unread === 0) return;
+      localStorage.setItem(key, '1');
+      new Notification('Novas Agro নোটিফিকেশন', { body: a.unread + 'টি নতুন নোটিফিকেশন আছে। অ্যাপ খুলে দেখুন।' });
+    } catch (e) {}
+  }
+  setInterval(tick9am, 60000);
+
+  var wt = setInterval(function() { if (window.renderAll && !window._alertsWrapped) { wrapRenderAll(); clearInterval(wt); } }, 500);
+  setTimeout(function() { clearInterval(wt); }, 20000);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function() { injectModal(); });
+  else injectModal();
+})();
+</script>
+<!-- ================= DUE & COLLECTION NOTIFICATIONS END ================= -->
+
 </body>
 </html>
