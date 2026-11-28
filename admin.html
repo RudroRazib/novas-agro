@@ -793,6 +793,17 @@ html.no-scroll, body.no-scroll {
     <div id="customerSearchList" style="max-height: 50vh; overflow-y: auto;"></div>
   </div>
 </div>
+<!-- Supplier Search Modal -->
+<div class="modal" id="supplierSearchModal" style="z-index: 115;">
+  <div class="modal-box" style="border-radius: 24px; max-width: 400px; margin: auto;">
+    <div class="modal-head">
+      <h3>সাপ্লায়ার সিলেক্ট করুন</h3>
+      <button class="close-btn" onclick="closeSupplierSearchModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <input type="text" id="supplierSearchInputNew" placeholder="🔍 নাম বা ফোন দিয়ে সার্চ..." oninput="filterSupplierSearchList(this.value)" style="width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 15px; background: #F8FAFC; margin-bottom: 15px; outline: none;">
+    <div id="supplierSearchList" style="max-height: 50vh; overflow-y: auto;"></div>
+  </div>
+</div>
 <script>
   const firebaseConfig = { apiKey: "AIzaSyD4-daxO-6RYTHN-1tTt0WsUzFmYWyGpSk", authDomain: "novas-agro.firebaseapp.com", databaseURL: "https://novas-agro-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "novas-agro", storageBucket: "novas-agro.firebasestorage.app", messagingSenderId: "71814265788", appId: "1:71814265788:web:8e1054a70772a9ad30c9b9" };
   firebase.initializeApp(firebaseConfig);
@@ -2135,47 +2146,131 @@ window.selectCustomerFromSearch = function(element) {
     closeCustomerSearchModal();
 };
 
-// বিক্রি রিটার্ন ও বাকি আদায়ের ফর্মে অটোমেটিক সার্চ বসানোর কোড
+// ================= SUPPLIER SEARCH LOGIC =================
+window.supplierSearchTargetDisplay = null;
+window.supplierSearchTargetInput = null;
+
+window.openSupplierSearchModal = function(displayId, inputId) {
+    window.supplierSearchTargetDisplay = displayId;
+    window.supplierSearchTargetInput = inputId;
+    document.getElementById('supplierSearchInputNew').value = '';
+    renderSupplierSearchList('');
+    document.getElementById('supplierSearchModal').classList.add('open');
+    document.getElementById('supplierSearchInputNew').focus();
+};
+
+window.closeSupplierSearchModal = function() {
+    document.getElementById('supplierSearchModal').classList.remove('open');
+};
+
+window.renderSupplierSearchList = function(searchTerm) {
+    const listContainer = document.getElementById('supplierSearchList');
+    let filtered = window.db.suppliers || [];
+
+    if (searchTerm) {
+        searchTerm = searchTerm.toLowerCase();
+        filtered = filtered.filter(s =>
+            (s.name && s.name.toLowerCase().includes(searchTerm)) ||
+            (s.phone && s.phone.includes(searchTerm))
+        );
+    }
+
+    if (filtered.length === 0) {
+        listContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#64748B;">কোনো সাপ্লায়ার পাওয়া যায়নি</div>';
+        return;
+    }
+
+    listContainer.innerHTML = filtered.map(s => `
+        <div class="cust-search-item" data-id="${s.id}" data-name="${esc(s.name)}" data-phone="${s.phone || ''}" onclick="selectSupplierFromSearch(this)" style="padding: 12px 15px; border-bottom: 1px solid #e2e8f0; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 600; color: var(--text); font-size: 15px;">${esc(s.name)}</div>
+            <div style="font-size: 12px; color: var(--text-muted);">${s.phone || ''}</div>
+        </div>
+    `).join('');
+};
+
+window.filterSupplierSearchList = function(val) {
+    renderSupplierSearchList(val);
+};
+
+window.selectSupplierFromSearch = function(element) {
+    const id = element.getAttribute('data-id');
+    const name = element.getAttribute('data-name');
+    const phone = element.getAttribute('data-phone');
+
+    if (window.supplierSearchTargetInput) {
+        let inputEl = document.getElementById(window.supplierSearchTargetInput);
+        if(inputEl) {
+            inputEl.value = id;
+            inputEl.dispatchEvent(new Event('change'));
+        }
+    }
+
+    if (window.supplierSearchTargetDisplay) {
+        const displayEl = document.getElementById(window.supplierSearchTargetDisplay);
+        if (displayEl) {
+            displayEl.innerHTML = `<span>${esc(name)} ${phone ? '(' + esc(phone) + ')' : ''}</span> <i class="fa-solid fa-check" style="font-size: 14px; color:var(--green);"></i>`;
+            displayEl.style.color = 'var(--text)';
+            displayEl.style.fontWeight = '600';
+        }
+    }
+    closeSupplierSearchModal();
+};
+
+// কুইক ফর্মে সার্চ বসানোর কোড — সাপ্লায়ার ফর্মে (ক্রয়/ক্রয় রিটার্ন/বাকি পরিশোধ) সাপ্লায়ার সার্চ, পার্টি ফর্মে (বিক্রি রিটার্ন/বাকি আদায়) কাস্টমার সার্চ
 const originalQuickForm = window.openQuickForm;
 window.openQuickForm = function(type) {
     originalQuickForm(type);
-    
-    // যদি ফর্মটি বিক্রি রিটার্ন বা বাকি আদায়ের হয়
-    if (type === 'sales_return' || type === 'due_collect' || type === 'purchase' || type === 'purchase_return' || type === 'due_pay') {
+
+    const isSupplierForm = (type === 'purchase' || type === 'purchase_return' || type === 'due_pay');
+    if (type === 'sales_return' || type === 'due_collect' || isSupplierForm) {
         setTimeout(() => {
             let allSelects = document.querySelectorAll('#quickFormFields select');
-            let partySelect = null;
-            
-            // ফর্মের ভেতরের কাস্টমার/পার্টি ড্রপডাউনটি খুঁজে বের করা
+            let targetSelect = null;
+
+            // সাপ্লায়ার ফর্মে সাপ্লায়ার ড্রপডাউন, পার্টি ফর্মে পার্টি/কাস্টমার ড্রপডাউন খোঁজা
             for (let sel of allSelects) {
-                if (sel.id.toLowerCase().includes('party') || sel.id.toLowerCase().includes('customer') || sel.innerHTML.includes('কাস্টমার') || sel.innerHTML.includes('পার্টি') || sel.innerHTML.includes('সিলেক্ট')) {
-                    partySelect = sel;
-                    break;
+                const sid = (sel.id || '').toLowerCase();
+                if (isSupplierForm ? sid.includes('supplier') : (sid.includes('party') || sid.includes('customer'))) { targetSelect = sel; break; }
+            }
+            if (!targetSelect) {
+                for (let sel of allSelects) {
+                    if (sel.innerHTML.includes('সিলেক্ট')) { targetSelect = sel; break; }
                 }
             }
-            
-            if (!partySelect && allSelects.length > 0) {
-                partySelect = allSelects[0]; // যদি না পাওয়া যায়, তবে প্রথম ড্রপডাউন ধরবে
+            if (!targetSelect && allSelects.length > 0) {
+                targetSelect = allSelects[0];
             }
 
-            // যদি ড্রপডাউন পাওয়া যায় এবং আগে থেকে সার্চ বসানো না থাকে
-            if (partySelect && !partySelect.hasAttribute('data-search-enabled')) {
-                partySelect.setAttribute('data-search-enabled', 'true');
-                partySelect.style.display = 'none'; // পুরনো ড্রপডাউন লুকানো হলো
-                
+            if (targetSelect && !targetSelect.hasAttribute('data-search-enabled')) {
+                // সিলেকশন যেন ফর্মে জমা হয় — আইডি না থাকলে আইডি বসানো
+                if (!targetSelect.id) targetSelect.id = 'qr_sel_' + Date.now();
+                targetSelect.setAttribute('data-search-enabled', 'true');
+                targetSelect.style.display = 'none'; // পুরনো ড্রপডাউন লুকানো হলো
+
                 let displayDiv = document.createElement('div');
                 let displayId = 'qr_cust_display_' + Date.now();
                 displayDiv.id = displayId;
                 displayDiv.style = "padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 12px; background: white; cursor: pointer; color: #64748B; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;";
-                displayDiv.innerHTML = '<span>কাস্টমার সার্চ করুন...</span> <i class="fa-solid fa-search" style="font-size: 14px;"></i>';
-                
+                displayDiv.innerHTML = isSupplierForm ? '<span>সাপ্লায়ার সার্চ করুন...</span> <i class="fa-solid fa-search" style="font-size: 14px;"></i>' : '<span>কাস্টমার সার্চ করুন...</span> <i class="fa-solid fa-search" style="font-size: 14px;"></i>';
+
+                // এডিটের সময় আগের সিলেকশন দেখানো
+                if (targetSelect.value) {
+                    const opt = targetSelect.options[targetSelect.selectedIndex];
+                    if (opt) {
+                        displayDiv.innerHTML = `<span>${esc(opt.text)}</span> <i class="fa-solid fa-check" style="font-size: 14px; color:var(--green);"></i>`;
+                        displayDiv.style.color = 'var(--text)';
+                        displayDiv.style.fontWeight = '600';
+                    }
+                }
+
                 displayDiv.onclick = function() {
-                    openCustomerSearchModal(displayId, partySelect.id);
+                    if (isSupplierForm) openSupplierSearchModal(displayId, targetSelect.id);
+                    else openCustomerSearchModal(displayId, targetSelect.id);
                 };
-                
-                partySelect.parentNode.insertBefore(displayDiv, partySelect.nextSibling);
+
+                targetSelect.parentNode.insertBefore(displayDiv, targetSelect.nextSibling);
             }
-        }, 150); 
+        }, 150);
     }
 };
 
