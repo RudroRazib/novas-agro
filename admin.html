@@ -671,7 +671,7 @@ html.no-scroll, body.no-scroll {
         <div id="srProfileContent"></div>
       </section>
       <section id="products" class="view"><div class="section-title">পণ্য ও স্টক <button class="btn-add" onclick="openForm('product')">+ পণ্য</button></div><input type="text" id="productSearchInput" placeholder="🔍 সার্চ..." oninput="renderProducts(this.value)"><div id="productsList"></div></section>
-      <section id="users" class="view"><div class="section-title">ইউজার (SR) <button class="btn-add" onclick="openForm('sr')">+ নতুন</button></div><div id="srTable"></div></section>
+      <section id="users" class="view"><div class="section-title">ইউজার (SR) <button class="btn-add" onclick="openForm('sr')">+ নতুন</button> <button class="btn-add" style="background:#0EA5E9;" onclick="repairSRLogins(this)">🔐 SR লগইন চালু করুন</button></div><div id="srTable"></div></section>
     </div>
   </main>
 
@@ -798,6 +798,12 @@ html.no-scroll, body.no-scroll {
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
   const auth = firebase.auth();
+  function srEmailForPhone(phone) { return String(phone || '').replace(/\D/g, '') + '@sr.novasagro'; }
+  var __srCreatorApp = null;
+  function getSRCreatorAuth() {
+    if (!__srCreatorApp) { try { __srCreatorApp = firebase.app('sr-creator'); } catch (e) { __srCreatorApp = firebase.initializeApp(firebaseConfig, 'sr-creator'); } }
+    return __srCreatorApp.auth();
+  }
   const categoryData = { "ইনজেকশন আইটেম": ["ভ্যাকসিন","এন্টিবায়োটিক","ভিটামিন"], "ফুড প্রিমিক্স": ["প্রিবায়োটিক","প্রোটিন","মিনারেল"], "ওষুধ": ["ট্যাবলেট","সিরাপ","পাউডার"], "যন্ত্রপাতি": ["সিরিঞ্জ","নিডল","গ্লাভস"] };
   window.db = { products: [], batches: [], srs: [], parties: [], suppliers: [], transactions: [], partyRequests: [], pendingSales: [], approvedSales: [], deliveries: [], activityLogs: [], srTargets: [], companyDetails: {}, dashboardOverrides: {} };
   window.currentProfilePartyId = null; window.backupTaken = false; window.currentBusinessId = null;
@@ -859,7 +865,7 @@ html.no-scroll, body.no-scroll {
   };
   async function loadPartnersList() {
     const container = document.getElementById('partnersListContainer'); if(!container) return;
-    let usersSnap = await database.ref('users').once('value');
+    let usersSnap = await database.ref('users').orderByChild('businessId').equalTo(window.currentBusinessId).once('value');
     let html = `<div class="settings-item" style="border:none; padding-bottom:0;"><div class="settings-item-left"><span class="settings-item-title">বর্তমান অংশীদার</span></div></div>`;
     let count = 0;
     if(usersSnap.exists()) { const users = usersSnap.val(); for(let uid in users) { if(users[uid].businessId === window.currentBusinessId) { count++; const role = users[uid].role === 'owner' ? '(মালিক)' : ''; let deleteBtn = ''; if(window.currentUserRole === 'owner' && uid !== auth.currentUser.uid) { deleteBtn = `<button class="btn-edit-icon" onclick="deletePartner('${uid}', '${users[uid].email}')" style="background:#fee2e2; color:#ef4444; width:30px; height:30px; font-size:12px;"><i class="fa-solid fa-trash"></i></button>`; } html += `<div class="settings-item"><div class="settings-item-left"><span class="settings-item-title" style="font-size:14px;">${esc(users[uid].email)}</span><span class="settings-item-desc">${role}</span></div>${deleteBtn}</div>`; } } }
@@ -929,8 +935,100 @@ html.no-scroll, body.no-scroll {
   };
   
   window.deleteProduct = function(id) { const prod = window.db.products.find(p => p.id === id); if(!prod) return; if(confirm(`"${prod.name}" ডিলিট করবেন?`)) { dbRef('products/' + id).remove().then(() => { window.db.batches.filter(b => b.productId === id).forEach(b => { dbRef('batches/' + (b.key || b.id)).remove(); }); logActivity('পণ্য ডিলিট', `পণ্য ডিলিট: ${prod.name}`); alert('পণ্য ডিলিট হয়েছে!'); }); } };
-  window.saveSRToDB = function(data, id = null) { const nid = id || Date.now().toString(36); dbRef('srs/' + nid).update({ id: nid, name: data.name, phone: data.phone, address: data.address || '', imageUrl: data.imageUrl || '' }); database.ref('srDirectory/' + data.phone).set({ businessId: window.currentBusinessId, srId: nid }); logActivity('এসআর', `এসআর ${id ? 'এডিট' : 'যোগ'}: ${data.name}`); };
-  window.deleteSR = function(id) { if(confirm('এই এসআর ডিলিট করবেন?')) { dbRef('srs/' + id).once('value').then(snap => { const srData = snap.val(); dbRef('srs/' + id).remove(); if (srData && srData.phone) { database.ref('srDirectory/' + srData.phone).remove(); } logActivity('এসআর', `এসআর ${srData ? srData.name : ''} ডিলিট হয়েছে।`); }); } };
+  window.saveSRToDB = async function(data, id = null) {
+    try {
+      const nid = id || Date.now().toString(36);
+      const phoneDigits = String(data.phone || '').replace(/\D/g, '');
+      if (!id) {
+        if (!phoneDigits || !/^[0-9]{6}$/.test(String(data.pin || ''))) { alert('SR-এর ফোন নম্বর আর ৬ সংখ্যার পিন দিন!'); return; }
+      }
+      if (id) {
+        const oldRec = (window.db.srs || []).find(s => (s.id || s.key) === id);
+        if (oldRec && oldRec.authUid && String(oldRec.phone || '').replace(/\D/g, '') !== phoneDigits) { alert('এই SR-এর ফোন নম্বর বদলানো যাবে না। নতুন নম্বরে চালাতে হলে SR ডিলিট করে নতুন করে যোগ করুন।'); return; }
+      }
+      await dbRef('srs/' + nid).update({ id: nid, name: data.name, phone: data.phone, address: data.address || '', imageUrl: data.imageUrl || '' });
+      logActivity('এসআর', `এসআর ${id ? 'এডিট' : 'যোগ'}: ${data.name}`);
+      if (id) return;
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) { alert('SR যোগ হয়েছে, তবে লগইন চালু করতে ইন্টারনেট লাগবে। নেট চালু করে SR লিস্ট থেকে "লগইন চালু করুন" চাপুন।'); return; }
+      try {
+        const creatorAuth = getSRCreatorAuth();
+        const cred = await creatorAuth.createUserWithEmailAndPassword(srEmailForPhone(data.phone), String(data.pin));
+        const uid = cred.user.uid;
+        await database.ref('srAuth/' + uid).set({ businessId: window.currentBusinessId, srId: nid, phone: data.phone });
+        await dbRef('srs/' + nid).update({ authUid: uid });
+        try { await creatorAuth.signOut(); } catch (e) {}
+        alert('SR যোগ হয়েছে এবং লগইন চালু হয়েছে! SR ফোন নম্বর আর পিন দিয়ে লগইন করতে পারবে।');
+      } catch (e) {
+        if (e && e.code === 'auth/email-already-in-use') { alert('এই ফোন নম্বরে লগইন আগেই আছে। SR লিস্ট থেকে "লগইন চালু করুন" চাপুন।'); }
+        else { alert('SR যোগ হয়েছে, তবে লগইন চালু হয়নি (' + (e && e.message ? e.message : 'আবার চেষ্টা করুন') + ')। SR লিস্ট থেকে "লগইন চালু করুন" চাপুন।'); }
+        try { await getSRCreatorAuth().signOut(); } catch (e2) {}
+      }
+    } catch (e) { alert('সমস্যা হয়েছে: ' + (e && e.message ? e.message : e)); }
+  };
+  window.repairSRLogins = async function(btn) {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) { alert('লগইন চালু করতে ইন্টারনেট লাগবে। নেট চালু করে আবার চাপুন।'); return; }
+      const list = (window.db.srs || []).filter(s => s && s.phone);
+      if (!list.length) { alert('কোনো SR নেই।'); return; }
+      const noPin = list.filter(s => !s.authUid && !s.pin);
+      const todo = list.filter(s => !s.authUid && s.pin);
+      if (!todo.length) {
+        if (noPin.length) { alert('এই SR-দের পিন সেট হয়নি, তাই লগইন চালু করা যায়নি:\n' + noPin.map(s => s.name || s.phone).join('\n') + '\n\nSR ডিলিট করে পিনসহ নতুন করে যোগ করুন।'); return; }
+        alert('সব SR-এর লগইন চালু আছে।'); return;
+      }
+      let queue = [];
+      try { queue = JSON.parse(localStorage.getItem('novasSRMigrateQueue') || '[]'); } catch (e) { queue = []; }
+      const saveQueue = () => { try { localStorage.setItem('novasSRMigrateQueue', JSON.stringify(queue)); } catch (e) {} };
+      const creatorAuth = getSRCreatorAuth();
+      const finishMapping = async (srId, uid, phone) => {
+        await database.ref('srAuth/' + uid).set({ businessId: window.currentBusinessId, srId: srId, phone: phone });
+        await dbRef('srs/' + srId).update({ authUid: uid });
+        try { await dbRef('srs/' + srId + '/pin').remove(); } catch (e) {}
+        queue = queue.filter(q => !(q.srId === srId && q.uid === uid)); saveQueue();
+      };
+      for (const q of queue.slice()) {
+        try {
+          const srQ = (window.db.srs || []).find(x => (x.id || x.key) === q.srId);
+          if (!srQ || !srQ.phone) { queue = queue.filter(x => x !== q); saveQueue(); continue; }
+          await finishMapping(q.srId, q.uid, srQ.phone);
+        } catch (e) {}
+      }
+      let done = 0; const failed = [];
+      for (let i = 0; i < todo.length; i++) {
+        const sr = todo[i];
+        if (btn) { try { btn.textContent = 'চলছে... ' + (i + 1) + '/' + todo.length; btn.disabled = true; } catch (e) {} }
+        try {
+          const srId = sr.id || sr.key;
+          const pin = String(sr.pin);
+          let uid = null;
+          try {
+            const cred = await creatorAuth.createUserWithEmailAndPassword(srEmailForPhone(sr.phone), pin);
+            uid = cred.user.uid;
+          } catch (e) {
+            if (e && e.code === 'auth/email-already-in-use') {
+              const cred2 = await creatorAuth.signInWithEmailAndPassword(srEmailForPhone(sr.phone), pin);
+              uid = cred2.user.uid;
+              try { await creatorAuth.signOut(); } catch (e2) {}
+            } else { throw e; }
+          }
+          queue.push({ srId: srId, uid: uid }); saveQueue();
+          await finishMapping(srId, uid, sr.phone);
+          try { await creatorAuth.signOut(); } catch (e) {}
+          done++;
+        } catch (e) { failed.push((sr.name || sr.phone) + ': ' + (e && e.message ? e.message : e)); }
+      }
+      try { await creatorAuth.signOut(); } catch (e) {}
+      if (btn) { try { btn.textContent = '🔐 SR লগইন চালু করুন'; btn.disabled = false; } catch (e) {} }
+      let msg = done + ' জন SR-এর লগইন চালু হয়েছে।';
+      if (failed.length) msg += '\n\nহয়নি:\n' + failed.join('\n');
+      if (noPin.length) msg += '\n\nপিন সেট হয়নি (ডিলিট করে পিনসহ নতুন করে যোগ করুন):\n' + noPin.map(s => s.name || s.phone).join('\n');
+      alert(msg);
+    } catch (e) {
+      alert('সমস্যা হয়েছে: ' + (e && e.message ? e.message : e));
+      if (btn) { try { btn.textContent = '🔐 SR লগইন চালু করুন'; btn.disabled = false; } catch (e2) {} }
+    }
+  };
+  window.deleteSR = function(id) { if(confirm('এই এসআর ডিলিট করবেন?')) { dbRef('srs/' + id).once('value').then(snap => { const srData = snap.val(); dbRef('srs/' + id).remove(); if (srData && srData.authUid) { try { database.ref('srAuth/' + srData.authUid).remove(); } catch (e) {} } logActivity('এসআর', `এসআর ${srData ? srData.name : ''} ডিলিট হয়েছে।`); }); } };
   window.openAddStockModal = function(id, name) { if(!id) return alert('পণ্য তালিকা থেকে স্টক পরিবর্তন করুন।'); document.getElementById('addStockProdId').value = id; document.getElementById('addStockProdName').innerText = "পণ্য: " + name; document.getElementById('newStockQty').value = ''; document.getElementById('newStockRate').value = ''; document.getElementById('addStockSupplier').innerHTML = `<option value="">সিলেক্ট</option>` + window.db.suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join(''); document.getElementById('addStockModal').classList.add('open'); };
   window.closeAddStockModal = function() { document.getElementById('addStockModal').classList.remove('open'); };
   window.saveAddStock = function() { const pId = document.getElementById('addStockProdId').value; const supplierId = document.getElementById('addStockSupplier').value; const qty = Number(document.getElementById('newStockQty').value); const rate = Number(document.getElementById('newStockRate').value) || 0; if(!supplierId) return alert('সাপ্লায়ার সিলেক্ট!'); if(!qty || qty <= 0) return alert('সঠিক পরিমাণ দিন!'); let bId = Date.now().toString(36) + 's'; dbRef('batches/' + bId).set({ id: bId, productId: pId, qty: qty, batchNo: 'MANUAL_ADD', purchaseRate: rate, date: new Date().toISOString() }); if(rate > 0) dbRef('products/' + pId).update({ purchaseRate: rate, netPurchaseRate: rate }); const txnId = 'TXN-' + Date.now().toString(36).toUpperCase(); const total = qty * rate; dbRef('transactions/' + txnId).set({ id: txnId, date: new Date().toISOString(), type: 'purchase', productId: pId, qty: qty, rate: rate, total: total, paid: 0, due: total, supplierId: supplierId, createdBy: currentUserEmail, creatorName: window.currentUserName }); logActivity('স্টক যোগ', `${window.db.products.find(p => p.id === pId)?.name} নতুন ${qty} পিস যোগ।`); alert('স্টক যোগ হয়েছে!'); closeAddStockModal(); };
@@ -947,11 +1045,11 @@ html.no-scroll, body.no-scroll {
   window.closeRestoreDataModal = function() { document.getElementById('restoreDataModal').classList.remove('open'); };
   window.executeRestoreData = function() { const jsonStr = document.getElementById('restoreDataTextArea').value.trim(); if(!jsonStr) return alert('ব্যাকআপ পেস্ট করুন!');
     try { const parsedData = JSON.parse(jsonStr); if(!confirm("সব ডাটা মুছে ফেলবে এবং ফিরিয়ে আনবে।")) return; const firebaseData = {}; for (let table in parsedData) { if (Array.isArray(parsedData[table])) { firebaseData[table] = {}; parsedData[table].forEach(row => { const rKey = row.key || row.id; if (rKey) { const cleanRow = { ...row }; delete cleanRow.key; firebaseData[table][rKey] = cleanRow; } }); } else if (typeof parsedData[table] === 'object' && parsedData[table] !== null) { firebaseData[table] = parsedData[table]; } }
-        if (window.currentBusinessId === 'root') { database.ref().set(firebaseData).then(() => { alert('রিস্টোর সফল!'); closeRestoreDataModal(); setTimeout(() => location.reload(), 1000); }); } else { database.ref('businesses/' + window.currentBusinessId).set(firebaseData).then(() => { alert('রিস্টোর সফল!'); closeRestoreDataModal(); setTimeout(() => location.reload(), 1000); }); } } catch (e) { alert('সঠিক JSON নয়।'); }
+        if (window.currentBusinessId === 'root') { Promise.all(Object.keys(firebaseData).map(k => database.ref(k).set(firebaseData[k]))).then(() => { alert('রিস্টোর সফল!'); closeRestoreDataModal(); setTimeout(() => location.reload(), 1000); }); } else { database.ref('businesses/' + window.currentBusinessId).set(firebaseData).then(() => { alert('রিস্টোর সফল!'); closeRestoreDataModal(); setTimeout(() => location.reload(), 1000); }); } } catch (e) { alert('সঠিক JSON নয়।'); }
   };
   window.promptResetPassword = function() { if(!window.backupTaken) return alert('আগে ব্যাকআপ নিন!'); document.getElementById('resetPasswordInput').value = ''; document.getElementById('resetModal').classList.add('open'); };
   window.closeResetModal = function() { document.getElementById('resetModal').classList.remove('open'); };
-  window.executeReset = function() { const pass = document.getElementById('resetPasswordInput').value; if(!pass) return alert('পাসওয়ার্ড দিন!'); const user = auth.currentUser; const cred = firebase.auth.EmailAuthProvider.credential(user.email, pass); user.reauthenticateWithCredential(cred).then(() => { if(confirm("সব ডাটা মুছে ফেলবেন?")) { if(window.currentBusinessId === 'root') { database.ref().remove().then(() => { alert('মুছে ফেলা হয়েছে!'); closeResetModal(); location.reload(); }); } else { database.ref('businesses/' + window.currentBusinessId).remove().then(() => { alert('মুছে ফেলা হয়েছে!'); closeResetModal(); location.reload(); }); } } }).catch(() => alert('ভুল পাসওয়ার্ড!')); };
+  window.executeReset = function() { const pass = document.getElementById('resetPasswordInput').value; if(!pass) return alert('পাসওয়ার্ড দিন!'); const user = auth.currentUser; const cred = firebase.auth.EmailAuthProvider.credential(user.email, pass); user.reauthenticateWithCredential(cred).then(() => { if(confirm("সব ডাটা মুছে ফেলবেন?")) { if(window.currentBusinessId === 'root') { Promise.all(['products','batches','srs','parties','suppliers','transactions','partyRequests','pendingSales','approvedSales','deliveries','activityLogs','srTargets','companyDetails','dashboardOverrides'].map(k => database.ref(k).remove())).then(() => { alert('মুছে ফেলা হয়েছে!'); closeResetModal(); location.reload(); }); } else { database.ref('businesses/' + window.currentBusinessId).remove().then(() => { alert('মুছে ফেলা হয়েছে!'); closeResetModal(); location.reload(); }); } } }).catch(() => alert('ভুল পাসওয়ার্ড!')); };
   function calculatePartyDue(party) { let due = Number(party.previousDue || 0); window.db.approvedSales.filter(s => (s.customerName === party.name || s.partyId === party.id) && !s.isVoided).forEach(s => { due += (Number(s.total || 0) - Number(s.paid || 0)); }); window.db.transactions.filter(t => t.partyId === party.id && !t.isVoided).forEach(t => { let tTotal = Number(t.total || 0), tPaid = Number(t.paid || 0), tAmount = Number(t.amount || 0); if (t.type === 'sales') due += ((t.due !== undefined && t.due !== null) ? Number(t.due) : (tTotal - tPaid)); if (t.type === 'due_collect' || t.type === 'cash_in') due -= tAmount; if (t.type === 'sales_return') due -= (tTotal - tPaid); }); return due; }
   function calculateSupplierDue(supplierId) { let due = 0; window.db.transactions.filter(t => t.supplierId === supplierId && !t.isVoided).forEach(t => { if(t.type === 'purchase') due += (Number(t.total) - Number(t.paid)); if(t.type === 'due_pay' || t.type === 'cash_out') due -= Number(t.amount); if(t.type === 'purchase_return') due -= (Number(t.total) - Number(t.paid)); }); return due; }
   function calculateSystemCash() { let inCash = 0, outCash = 0; window.db.approvedSales.filter(s => !s.isVoided).forEach(s => { inCash += Number(s.paid || 0); }); window.db.transactions.filter(t => !t.isVoided).forEach(t => { if(t.type === 'sales') inCash += Number(t.paid || 0); if(t.type === 'due_collect' || t.type === 'cash_in' || t.type === 'purchase_return') inCash += Number(t.paid || t.amount || 0); if(t.type === 'purchase') outCash += Number(t.paid || 0); if(t.type === 'due_pay' || t.type === 'expense' || t.type === 'cash_out' || t.type === 'sales_return') outCash += Number(t.paid || t.amount || 0); }); return { in: inCash, out: outCash, balance: inCash - outCash }; }
@@ -1114,7 +1212,7 @@ html.no-scroll, body.no-scroll {
     } else if(type === 'supplier') {
       showModal(editId ? 'সাপ্লায়ার এডিট' : 'সাপ্লায়ার যোগ', `<div class="form-group"><label>নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div><div class="form-group"><label>ফোন</label><input type="text" name="phone" value="${p.phone || ''}"></div><div class="form-group"><label>ঠিকানা</label><input type="text" name="address" value="${p.address || ''}"></div>`, (fd) => { saveSupplierToDB(Object.fromEntries(fd.entries()), editId); });
     } else if(type === 'sr') {
-      showModal(editId ? 'এসআর এডিট' : 'নতুন এসআর', `<div class="img-preview-box"><div class="img-preview" id="srImagePreview">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%; height:100%; object-fit:cover;">` : '🧑‍💼'}</div><div style="flex: 1;"><label style="font-size: 13px; display:block; margin-bottom:5px;">ছবির লিংক</label><input type="url" name="imageUrl" value="${p.imageUrl || ''}" placeholder="https://..." style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size:13px;" oninput="document.getElementById('srImagePreview').innerHTML = this.value ? '<img src=\\''+this.value+'\\' style=\\'width:100%; height:100%; object-fit:cover;\\'>' : '🧑‍💼';"></div></div><div class="form-group"><label>নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div><div class="form-group"><label>মোবাইল *</label><input type="text" name="phone" value="${p.phone || ''}" required></div><div class="form-group"><label>ঠিকানা</label><input type="text" name="address" value="${p.address || ''}"></div>`, (fd) => { saveSRToDB(Object.fromEntries(fd.entries()), editId); });
+      showModal(editId ? 'এসআর এডিট' : 'নতুন এসআর', `<div class="img-preview-box"><div class="img-preview" id="srImagePreview">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:100%; height:100%; object-fit:cover;">` : '🧑‍💼'}</div><div style="flex: 1;"><label style="font-size: 13px; display:block; margin-bottom:5px;">ছবির লিংক</label><input type="url" name="imageUrl" value="${p.imageUrl || ''}" placeholder="https://..." style="width:100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size:13px;" oninput="document.getElementById('srImagePreview').innerHTML = this.value ? '<img src=\\''+this.value+'\\' style=\\'width:100%; height:100%; object-fit:cover;\\'>' : '🧑‍💼';"></div></div><div class="form-group"><label>নাম *</label><input type="text" name="name" value="${p.name || ''}" required></div><div class="form-group"><label>মোবাইল *</label><input type="text" name="phone" value="${p.phone || ''}" required></div>${editId ? '' : '<div class="form-group"><label>লগইন পিন * (৬ সংখ্যা)</label><input type="text" name="pin" value="" required minlength="6" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" placeholder="123456"></div>'}<div class="form-group"><label>ঠিকানা</label><input type="text" name="address" value="${p.address || ''}"></div>`, (fd) => { saveSRToDB(Object.fromEntries(fd.entries()), editId); });
     }
   };
   window.testProductImage = function() { const u = document.getElementById('prodImageLink').value; const p = document.getElementById('productImagePreview'); if(u) p.innerHTML = `<img src="${u}" style="width:100%; height:100%; object-fit:cover;">`; else p.innerHTML = '📦'; };
@@ -2433,8 +2531,8 @@ window.openNewSale = function() {
      আর বাদ যায় না — শুধু PERMISSION_DENIED হলে বাদ যায়; রিপ্লেতে
      প্রতিটা লেখায় ১৫ সেকেন্ডের সময়সীমা (আটকে থাকবে না)
      ============================================================ */
-  var ROLE = 'sr';
-  try { if (typeof firebase !== 'undefined' && firebase.auth) ROLE = 'admin'; } catch (e) {}
+  var ROLE = 'admin';
+  try { if (typeof currentSR !== 'undefined') ROLE = 'sr'; } catch (e) {}
   var LS = {
     get: function(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set: function(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
